@@ -245,6 +245,8 @@ private fun ScreenContent(
                     items(state.expenses, key = { it.id }) { expense ->
                         if (expense.category == ExpenseCategory.CASH_FLOW) {
                             ExpenseItem(
+                                modifier = Modifier
+                                    .animateItemPlacement(),
                                 name = expense.name,
                                 amount = expense.amountFormatted,
                                 date = expense.dateFormatted,
