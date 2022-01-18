@@ -159,13 +159,13 @@ class CashFlowDetailsViewModel @Inject constructor(
                                 expense.value = useCases.getExpenseById(insertedId)
                                 editModeActive.value = false
                                 showAddCashFlowButton.value = true
-                                eventsChannel.send(
+                                if (isNew) onAddCashFlowClick()
+                                /*eventsChannel.send(
                                     CashFlowDetailsEvents.ShowSnackbar(
                                         if (isNew) R.string.expense_added
                                         else R.string.expense_updated
                                     )
-                                )
-                                if (isNew) onAddCashFlowClick()
+                                )*/
                             }
                         }
                     }
