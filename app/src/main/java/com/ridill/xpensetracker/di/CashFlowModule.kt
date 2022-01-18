@@ -45,6 +45,6 @@ object CashFlowModule {
         getOverallAmount = GetOverallAmountUseCase(cashFlowRepository),
         mapToCashFlowStatus = MapToCashFlowStatusUseCase(),
         getCashFlowById = GetCashFlowByIdUseCase(cashFlowRepository),
-        clearCashFlow = ClearCashFlowUseCase(cashFlowRepository, expenseRepository)
+        strikeOffCashFlow = StrikeOffCashFlowUseCase(cashFlowRepository, expenseRepository)
     )
 }

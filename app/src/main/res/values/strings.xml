@@ -63,9 +63,9 @@
     <string name="cash_flow_added">Cash Flow Added</string>
     <string name="cash_flow_deleted">Cash Flow Deleted!</string>
     <string name="edit">Edit</string>
-    <string name="clear_cash_flow">Clear cash flow</string>
-    <string name="confirm_clear_cash_flow">Clear Cash Flow?</string>
-    <string name="clear_this_cash_flow">clear this cash flow</string>
+    <string name="strike_off">Strike Off</string>
+    <string name="confirm_cash_flow_strike_off">Strike This Cash Flow Off?</string>
+    <string name="strike_this_cash_flow_off">strike this cash flow off</string>
     <string name="confirm_action_message">Are you sure you want to %s? This action is irreversible and cannot be undone.</string>
     <string name="cash_flow_cleared">Cash Flow Cleared!</string>
     <string name="search">Search</string>

@@ -14,5 +14,5 @@ data class CashFlowDetailsUseCases(
     val getOverallAmount: GetOverallAmountUseCase,
     val mapToCashFlowStatus: MapToCashFlowStatusUseCase,
     val getCashFlowById: GetCashFlowByIdUseCase,
-    val clearCashFlow: ClearCashFlowUseCase
+    val strikeOffCashFlow: StrikeOffCashFlowUseCase
 )

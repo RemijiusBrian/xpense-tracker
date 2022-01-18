@@ -255,13 +255,13 @@ private fun ScreenContent(
         }
         if (state.showClearCashFlowConfirmation) {
             ConfirmationDialog(
-                title = stringResource(R.string.confirm_clear_cash_flow),
+                title = stringResource(R.string.confirm_cash_flow_strike_off),
                 text = stringResource(
                     R.string.confirm_action_message,
-                    stringResource(R.string.clear_this_cash_flow)
+                    stringResource(R.string.strike_this_cash_flow_off)
                 ),
-                onDismiss = actions::onClearCashFlowDismiss,
-                onConfirm = actions::onClearCashFlowConfirm
+                onDismiss = actions::onStrikeOffDismiss,
+                onConfirm = actions::onStrikeOffConfirm
             )
         }
     }

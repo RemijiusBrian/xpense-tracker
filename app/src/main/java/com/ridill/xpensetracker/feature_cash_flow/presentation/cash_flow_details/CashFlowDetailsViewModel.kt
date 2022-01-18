@@ -76,7 +76,7 @@ class CashFlowDetailsViewModel @Inject constructor(
     val activeCashFlow: LiveData<CashFlow?> = _activeCashFlow
 
     // Show Clear Confirmation Dialog
-    private val showClearConfirmationDialog =
+    private val showStrikeOffConfirmationDialog =
         savedStateHandle.getLiveData("showClearConfirmationDialog", false)
 
     // Ui State
@@ -86,7 +86,7 @@ class CashFlowDetailsViewModel @Inject constructor(
         cashFlow,
         aggregateAmount,
         cashFLowStatus,
-        showClearConfirmationDialog.asFlow()
+        showStrikeOffConfirmationDialog.asFlow()
     ).map { (
                 editMode,
                 showAddCashFlowButton,
@@ -117,8 +117,8 @@ class CashFlowDetailsViewModel @Inject constructor(
                 editModeActive.value = !editModeActive.value!!
 
             }
-            CashFlowDetailsOptions.CLEAR_CASH_FLOW -> {
-                showClearConfirmationDialog.value = true
+            CashFlowDetailsOptions.STRIKE_OFF -> {
+                showStrikeOffConfirmationDialog.value = true
             }
         }.exhaustive
     }
@@ -159,7 +159,13 @@ class CashFlowDetailsViewModel @Inject constructor(
                                 expense.value = useCases.getExpenseById(insertedId)
                                 editModeActive.value = false
                                 showAddCashFlowButton.value = true
-                                eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.expense_added))
+                                eventsChannel.send(
+                                    CashFlowDetailsEvents.ShowSnackbar(
+                                        if (isNew) R.string.expense_added
+                                        else R.string.expense_updated
+                                    )
+                                )
+                                if (isNew) onAddCashFlowClick()
                             }
                         }
                     }
@@ -247,15 +253,15 @@ class CashFlowDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onClearCashFlowDismiss() {
-        showClearConfirmationDialog.value = false
+    override fun onStrikeOffDismiss() {
+        showStrikeOffConfirmationDialog.value = false
     }
 
-    override fun onClearCashFlowConfirm() {
+    override fun onStrikeOffConfirm() {
         viewModelScope.launch {
             expense.value?.let {
-                showClearConfirmationDialog.value = false
-                useCases.clearCashFlow(it)
+                showStrikeOffConfirmationDialog.value = false
+                useCases.strikeOffCashFlow(it)
                 eventsChannel.send(
                     CashFlowDetailsEvents.NavigateBackWithResult(
                         RESULT_CASH_FLOW_CLEARED

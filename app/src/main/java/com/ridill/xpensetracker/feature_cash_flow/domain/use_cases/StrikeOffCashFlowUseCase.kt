@@ -4,7 +4,7 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepo
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 
-class ClearCashFlowUseCase(
+class StrikeOffCashFlowUseCase(
     private val cashFlowRepository: CashFlowRepository,
     private val expenseRepository: ExpenseRepository
 ) {
