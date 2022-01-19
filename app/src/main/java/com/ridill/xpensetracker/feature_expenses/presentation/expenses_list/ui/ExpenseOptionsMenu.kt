@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.domain.model.SortOrder
-import com.ridill.xpensetracker.core.presentation.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseMenuOption
 import com.ridill.xpensetracker.feature_expenses.domain.model.SortCriteria
 

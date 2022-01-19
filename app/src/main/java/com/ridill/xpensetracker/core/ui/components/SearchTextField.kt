@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.components
+package com.ridill.xpensetracker.core.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,8 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingSmall
-import com.ridill.xpensetracker.core.presentation.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
+import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
 
 @Composable
 fun SearchTextField(

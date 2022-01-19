@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.flowlayout.FlowRow
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingExtraSmall
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingSmall
+import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
+import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Composable

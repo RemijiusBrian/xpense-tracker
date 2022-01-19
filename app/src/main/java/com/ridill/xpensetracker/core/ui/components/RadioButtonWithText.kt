@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.components
+package com.ridill.xpensetracker.core.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row

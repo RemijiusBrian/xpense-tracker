@@ -17,9 +17,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingSmall
-import com.ridill.xpensetracker.core.presentation.ui.theme.SpacingExtraSmall
-import com.ridill.xpensetracker.core.presentation.util.numberSliderTransition
+import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
+import com.ridill.xpensetracker.core.ui.theme.SpacingExtraSmall
+import com.ridill.xpensetracker.core.ui.util.numberSliderTransition
 
 @Composable
 fun ExpenditureOverview(

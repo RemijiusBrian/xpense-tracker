@@ -1,7 +1,7 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.model
 
 import android.os.Parcelable
-import com.ridill.xpensetracker.core.presentation.util.TextUtil
+import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowEntity
 import kotlinx.parcelize.Parcelize
 import java.util.*

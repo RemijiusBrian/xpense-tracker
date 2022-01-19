@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.navigation.Destination
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingListBottom
+import com.ridill.xpensetracker.core.ui.navigation.Destination
+import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_CASH_FLOW_CLEARED
@@ -39,9 +39,9 @@ import java.util.*
 
 @Composable
 fun Expenses(
-    viewModel: ExpensesViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val viewModel: ExpensesViewModel = hiltViewModel()
     val state by viewModel.state.observeAsState(ExpensesState.initial)
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()

@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.components.ConfirmationDialog
+import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT

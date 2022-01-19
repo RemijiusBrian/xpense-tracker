@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation
+package com.ridill.xpensetracker.core.ui
 
 import androidx.lifecycle.ViewModel
 import com.ridill.xpensetracker.core.data.preferences.AppDatastore

@@ -3,8 +3,8 @@ package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.navigation.Destination
-import com.ridill.xpensetracker.core.presentation.util.TextUtil
+import com.ridill.xpensetracker.core.ui.navigation.Destination
+import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense

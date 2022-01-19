@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.components
+package com.ridill.xpensetracker.core.ui.components
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ridill.xpensetracker.core.presentation.navigation.Destination
+import com.ridill.xpensetracker.core.ui.navigation.Destination
 
 @Composable
 fun BottomNav(

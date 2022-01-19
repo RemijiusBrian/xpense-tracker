@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.navigation
+package com.ridill.xpensetracker.core.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

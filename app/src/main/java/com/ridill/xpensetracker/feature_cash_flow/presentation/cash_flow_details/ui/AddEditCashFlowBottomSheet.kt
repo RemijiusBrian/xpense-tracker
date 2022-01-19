@@ -32,9 +32,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingMedium
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingSmall
-import com.ridill.xpensetracker.core.presentation.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
+import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
 import kotlin.math.roundToInt
 
 @Composable

@@ -27,9 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.ui.theme.PaddingMedium
-import com.ridill.xpensetracker.core.presentation.ui.theme.SpacingMedium
-import com.ridill.xpensetracker.core.presentation.util.numberSliderTransition
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.util.numberSliderTransition
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowStatus
 
 @Composable

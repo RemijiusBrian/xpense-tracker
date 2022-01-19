@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.util
+package com.ridill.xpensetracker.core.ui.util
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween

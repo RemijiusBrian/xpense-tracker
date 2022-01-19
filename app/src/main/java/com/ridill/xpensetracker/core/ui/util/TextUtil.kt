@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.util
+package com.ridill.xpensetracker.core.ui.util
 
 import java.text.NumberFormat
 import java.text.SimpleDateFormat

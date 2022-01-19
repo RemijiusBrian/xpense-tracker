@@ -22,10 +22,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.presentation.components.BackArrowButton
-import com.ridill.xpensetracker.core.presentation.components.ConfirmationDialog
-import com.ridill.xpensetracker.core.presentation.navigation.Destination
-import com.ridill.xpensetracker.core.presentation.ui.theme.*
+import com.ridill.xpensetracker.core.ui.components.BackArrowButton
+import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
+import com.ridill.xpensetracker.core.ui.navigation.Destination
+import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOptions

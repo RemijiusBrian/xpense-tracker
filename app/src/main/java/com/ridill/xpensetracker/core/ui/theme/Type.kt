@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.core.presentation.ui.theme
+package com.ridill.xpensetracker.core.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
