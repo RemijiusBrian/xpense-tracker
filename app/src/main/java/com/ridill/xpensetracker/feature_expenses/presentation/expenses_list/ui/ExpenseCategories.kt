@@ -5,6 +5,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -15,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.flowlayout.FlowRow
 import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
@@ -27,10 +28,10 @@ fun ExpenseCategories(
     selectedCategory: ExpenseCategory?,
     onCategorySelect: (ExpenseCategory) -> Unit
 ) {
-    FlowRow(
+    LazyRow(
         modifier = modifier,
     ) {
-        categories.forEach { category ->
+        items(categories) { category ->
             CategoryChip(
                 label = category.label,
                 isSelected = selectedCategory == category,

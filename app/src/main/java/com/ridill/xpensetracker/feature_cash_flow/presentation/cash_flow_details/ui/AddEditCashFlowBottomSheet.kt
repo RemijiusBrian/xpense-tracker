@@ -130,60 +130,73 @@ fun AddEditCashFlowBottomSheet(
                 )
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
-            val swipeableState = rememberSwipeableState(
-                initialValue = lending,
-                confirmStateChange = { newValue ->
-                    onLendingChange(newValue)
-                    true
-                }
-            )
-            val maxWidth =
-                with(LocalDensity.current) { (TotalWidth - (SliderSize + 16.dp)).toPx() }
-            val anchors = mapOf(0f to true, maxWidth to false)
-
-            Box(
+            LendingSlider(
                 modifier = Modifier
-                    .padding(horizontal = PaddingMedium)
-                    .width(TotalWidth)
-                    .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colors.primaryVariant)
-                    .padding(PaddingSmall)
-                    .align(Alignment.End)
-                    .swipeable(
-                        state = swipeableState,
-                        anchors = anchors,
-                        orientation = Orientation.Horizontal,
+                    .align(Alignment.End),
+                lending = lending,
+                onLendingChange = onLendingChange
+            )
+        }
+    }
+}
+
+@Composable
+private fun LendingSlider(
+    modifier: Modifier = Modifier,
+    lending: Boolean,
+    onLendingChange: (Boolean) -> Unit
+) {
+    val swipeableState = rememberSwipeableState(
+        initialValue = lending,
+        confirmStateChange = { newValue ->
+            onLendingChange(newValue)
+            true
+        }
+    )
+    val maxWidth =
+        with(LocalDensity.current) { (TotalWidth - (SliderSize + 16.dp)).toPx() }
+    val anchors = mapOf(0f to true, maxWidth to false)
+
+    Box(
+        modifier = modifier
+            .padding(horizontal = PaddingMedium)
+            .width(TotalWidth)
+            .clip(RoundedCornerShape(50))
+            .background(MaterialTheme.colors.primaryVariant)
+            .padding(PaddingSmall)
+            .swipeable(
+                state = swipeableState,
+                anchors = anchors,
+                orientation = Orientation.Horizontal,
+            ),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AnimatedContent(targetState = lending) { lending ->
+                Text(
+                    text = stringResource(
+                        if (lending) R.string.lending
+                        else R.string.borrowing
                     ),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AnimatedContent(targetState = lending) { lending ->
-                        Text(
-                            text = stringResource(
-                                if (lending) R.string.lending
-                                else R.string.borrowing
-                            ),
-                            style = MaterialTheme.typography.body2
-                        )
-                    }
-                }
-                Box(
-                    modifier = Modifier
-                        .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colors.primary)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CompareArrows,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.onPrimary
-                    )
-                }
+                    style = MaterialTheme.typography.body2
+                )
             }
+        }
+        Box(
+            modifier = Modifier
+                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                .clip(CircleShape)
+                .background(MaterialTheme.colors.primary)
+        ) {
+            Icon(
+                imageVector = Icons.Default.CompareArrows,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onPrimary
+            )
         }
     }
 }

@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.AttachMoney
-import androidx.compose.material.icons.filled.PersonPin
+import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ridill.xpensetracker.R
 
@@ -21,7 +21,7 @@ enum class ExpenseCategory(
         label = R.string.cash_flow
     ),
     YEARNING(
-        icon = Icons.Default.PersonPin,
+        icon = Icons.Default.Umbrella,
         label = R.string.yearning
     )
 }

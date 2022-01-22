@@ -17,12 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
-import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
+import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_CASH_FLOW_CLEARED
@@ -143,9 +142,9 @@ private fun ScreenContent(
             TopAppBar(
                 title = { Text(stringResource(Destination.Expenses.label)) },
                 backgroundColor = Color.Transparent,
-                elevation = 0.dp
+                elevation = ZeroDp
             )
-        }
+        },
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -156,13 +155,13 @@ private fun ScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = PaddingSmall)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.16f)
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = PaddingMedium),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     ExpenditureLimitCard(
@@ -172,7 +171,7 @@ private fun ScreenContent(
                         limit = state.expenditureLimit,
                         onClick = actions::onExpenditureLimitCardClick
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(SpacingSmall))
                     ExpenditureOverview(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -183,7 +182,7 @@ private fun ScreenContent(
                         isBalanceEmpty = state.isBalanceEmpty
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(SpacingMedium))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -192,7 +191,7 @@ private fun ScreenContent(
                     ExpenseCategories(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = 8.dp),
+                            .padding(horizontal = PaddingSmall),
                         onCategorySelect = actions::onExpenseCategorySelect,
                         selectedCategory = state.selectedExpenseCategory
                     )
@@ -203,7 +202,7 @@ private fun ScreenContent(
                         currentSortOrder = state.selectedSortOrder
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(SpacingSmall))
                 state.selectedExpenseCategory?.let { category ->
                     AnimatedContent(
                         targetState = category,
@@ -214,9 +213,7 @@ private fun ScreenContent(
                             } else {
                                 slideInHorizontally { -it } + fadeIn() with
                                         slideOutHorizontally { it } + fadeOut()
-                            }.using(
-                                SizeTransform(clip = false)
-                            )
+                            } using SizeTransform(clip = false)
                         }
                     ) { selectedCategory ->
                         val message =
@@ -244,7 +241,16 @@ private fun ScreenContent(
                 ) {
                     items(state.expenses, key = { it.id }) { expense ->
                         if (expense.category == ExpenseCategory.CASH_FLOW) {
-                            ExpenseItem(
+                            CashFlowCategoryItem(
+                                modifier = Modifier
+                                    .animateItemPlacement(),
+                                name = expense.name,
+                                amount = expense.amountFormatted,
+                                date = expense.dateFormatted,
+                                onClick = { actions.onExpenseClick(expense) },
+                            )
+                        } else {
+                            ExpenseCategoryItem(
                                 modifier = Modifier
                                     .animateItemPlacement(),
                                 name = expense.name,
@@ -252,34 +258,8 @@ private fun ScreenContent(
                                 date = expense.dateFormatted,
                                 onClick = { actions.onExpenseClick(expense) },
                                 isMonthly = expense.isMonthly,
-                                category = expense.category
+                                onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
                             )
-                        } else {
-                            val dismissState = rememberDismissState(
-                                confirmStateChange = {
-                                    val isDismissed =
-                                        it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart
-                                    if (isDismissed) {
-                                        actions.onExpenseSwipeDeleted(expense)
-                                    }
-                                    true
-                                }
-                            )
-                            SwipeToDismiss(
-                                state = dismissState,
-                                background = {},
-                                modifier = Modifier
-                                    .animateItemPlacement(),
-                            ) {
-                                ExpenseItem(
-                                    name = expense.name,
-                                    amount = expense.amountFormatted,
-                                    date = expense.dateFormatted,
-                                    onClick = { actions.onExpenseClick(expense) },
-                                    isMonthly = expense.isMonthly,
-                                    category = expense.category
-                                )
-                            }
                         }
                     }
                 }
