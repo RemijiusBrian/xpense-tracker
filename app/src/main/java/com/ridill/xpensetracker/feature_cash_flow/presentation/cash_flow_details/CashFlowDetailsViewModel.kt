@@ -160,7 +160,6 @@ class CashFlowDetailsViewModel @Inject constructor(
                     }
                     is Response.Success -> {
                         response.data?.let { insertedId ->
-                            isNew = false
                             expense.value = useCases.getExpenseById(insertedId)
                             eventsChannel.send(
                                 CashFlowDetailsEvents.ProvideHapticFeedback(
@@ -171,6 +170,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                             showAddCashFlowButton.value = true
                             if (isNew) {
                                 onAddCashFlowClick()
+                                isNew = false
                             } else {
                                 eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
                             }

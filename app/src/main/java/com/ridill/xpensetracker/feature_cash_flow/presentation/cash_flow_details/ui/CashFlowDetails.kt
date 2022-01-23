@@ -1,6 +1,5 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
@@ -36,7 +35,6 @@ import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CashFlowDetailsState
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CashFlowDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @Composable
 fun CashFlowDetails(
@@ -50,15 +48,16 @@ fun CashFlowDetails(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
     val hapticFeedback = LocalHapticFeedback.current
 
     // BackPress when bottom sheet open
-    BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-        scope.launch {
+    /*BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) scope.launch {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }
-    }
+        println("AppDebug: Bottom Sheet State - ${bottomSheetScaffoldState.bottomSheetState.currentValue}")
+        println("AppDebug: Bottom Sheet Expanded - ${bottomSheetScaffoldState.bottomSheetState.isExpanded}")
+    }*/
 
     LaunchedEffect(Unit) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
