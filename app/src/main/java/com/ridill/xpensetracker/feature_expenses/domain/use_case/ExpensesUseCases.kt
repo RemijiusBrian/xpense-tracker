@@ -9,7 +9,5 @@ data class ExpensesUseCases(
     val updateExpenditureLimit: UpdateExpenditureLimitUseCase,
     val deleteExpense: DeleteExpenseUseCase,
     val saveExpense: SaveExpenseUseCase,
-    val updateSortCriteria: UpdateSortCriteriaUseCase,
-    val updateSortOrder: UpdateSortOrderUseCase,
     val updateShowPreviousEntries: UpdateShowPreviousEntriesUseCase
 )

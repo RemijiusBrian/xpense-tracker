@@ -32,8 +32,6 @@ class ExpensesViewModel @Inject constructor(
     val expenses = expensePreferences.flatMapLatest { preference ->
         useCases.getExpenses(
             category = preference.category,
-            sortCriteria = preference.sortCriteria,
-            sortOrder = preference.sortOrder,
             showAll = preference.showAllEntries
         )
     }
@@ -73,8 +71,6 @@ class ExpensesViewModel @Inject constructor(
             balance = formatAmount(balance),
             balancePercentage = balancePercentage,
             isBalanceEmpty = preferences.expenditureLimit > 0 && balance <= 0L,
-            selectedSortCriteria = preferences.sortCriteria,
-            selectedSortOrder = preferences.sortOrder,
             showAllExpenses = preferences.showAllEntries,
             showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog,
         )
@@ -151,26 +147,11 @@ class ExpensesViewModel @Inject constructor(
         }
     }
 
-    /*override fun onSortCriteriaSelect(criteria: SortCriteria) {
-        viewModelScope.launch {
-            val expensePreferences = expensePreferences.first()
-            if (criteria == expensePreferences.sortCriteria) {
-//                useCases.updateSortOrder()
-            } else {
-                useCases.updateSortCriteria(criteria)
-            }
-        }
-    }*/
-
     override fun onMenuOptionClick(option: ExpenseMenuOption) {
         viewModelScope.launch {
             when (option) {
                 is ExpenseMenuOption.ShowAllEntries -> {
                     useCases.updateShowPreviousEntries(option.show)
-                }
-                is ExpenseMenuOption.SortOption -> {
-                    useCases.updateSortCriteria(option.criteria)
-                    useCases.updateSortOrder(option.order)
                 }
             }.exhaustive
         }

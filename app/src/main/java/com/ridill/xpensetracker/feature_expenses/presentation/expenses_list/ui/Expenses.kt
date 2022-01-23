@@ -198,8 +198,6 @@ private fun ScreenContent(
                     ExpenseOptionsMenu(
                         onOptionClick = actions::onMenuOptionClick,
                         showAll = state.showAllExpenses,
-                        currentSortCriteria = state.selectedSortCriteria,
-                        currentSortOrder = state.selectedSortOrder
                     )
                 }
                 Spacer(modifier = Modifier.height(SpacingSmall))

@@ -46,8 +46,6 @@ object ExpenseModule {
         deleteExpense = DeleteExpenseUseCase(repository),
         saveExpense = SaveExpenseUseCase(repository),
         updatePreferenceCategory = UpdatePreferenceCategoryUseCase(expenseStore),
-        updateSortCriteria = UpdateSortCriteriaUseCase(expenseStore),
-        updateSortOrder = UpdateSortOrderUseCase(expenseStore),
         getBalance = GetBalanceUseCase(repository, expenseStore),
         updateShowPreviousEntries = UpdateShowPreviousEntriesUseCase(expenseStore)
     )
