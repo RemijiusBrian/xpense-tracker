@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +36,7 @@ import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CashFlowDetailsState
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CashFlowDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun CashFlowDetails(
@@ -47,6 +50,15 @@ fun CashFlowDetails(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
+    val hapticFeedback = LocalHapticFeedback.current
+
+    // BackPress when bottom sheet open
+    BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+        scope.launch {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        }
+    }
 
     LaunchedEffect(Unit) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -87,7 +99,9 @@ fun CashFlowDetails(
                 CashFlowDetailsViewModel.CashFlowDetailsEvents.NavigateBack -> {
                     navController.popBackStack()
                 }
-
+                is CashFlowDetailsViewModel.CashFlowDetailsEvents.ProvideHapticFeedback -> {
+                    hapticFeedback.performHapticFeedback(event.feedbackType)
+                }
             }.exhaustive
         }
     }

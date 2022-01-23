@@ -33,7 +33,7 @@
     <string name="update_expenditure_limit_message">Set a limit to keep you expenses under and keep an eye on the balance from you limit.</string>
     <string name="empty" />
     <string name="cash_flow_details">Cash Flow</string>
-    <string name="error_name_already_exists">Name already exists and updated</string>
+    <string name="error_name_already_exists">Name already exits</string>
     <string name="delete_empty_cash_flow">Delete Empty Cash Flows</string>
     <string name="add_cash_flow">Add Cash Flow</string>
     <string name="all_cleared">All Cleared</string>
@@ -67,4 +67,5 @@
     <string name="borrowed">Borrowed</string>
     <string name="expenditure_limit_updated">Expenditure Limit Updated</string>
     <string name="show_all_entries">Show All</string>
+    <string name="name_updated">Name Updated</string>
 </resources>

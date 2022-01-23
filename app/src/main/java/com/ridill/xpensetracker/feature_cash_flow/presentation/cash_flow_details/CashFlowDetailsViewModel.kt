@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
@@ -30,7 +31,7 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     // Expense Argument
     private val expenseArg = savedStateHandle.get<Long>(NavArgs.CASH_FLOW_EXPENSE)
-    private val isNew = expenseArg == -1L
+    private var isNew = expenseArg == -1L
 
     // Expense
     private val expense =
@@ -45,7 +46,6 @@ class CashFlowDetailsViewModel @Inject constructor(
             } else {
                 expense.value = Expense.CASH_FLOW_DEFAULT
             }
-            println("AppDebug: Expense - ${expense.value}")
         }
     }
 
@@ -112,15 +112,16 @@ class CashFlowDetailsViewModel @Inject constructor(
     val events = eventsChannel.receiveAsFlow()
 
     override fun onMenuOptionSelect(option: CashFlowDetailsOptions) {
-        when (option) {
-            CashFlowDetailsOptions.EDIT -> {
-                editModeActive.value = !editModeActive.value!!
-
-            }
-            CashFlowDetailsOptions.STRIKE_OFF -> {
-                showStrikeOffConfirmationDialog.value = true
-            }
-        }.exhaustive
+        viewModelScope.launch {
+            when (option) {
+                CashFlowDetailsOptions.EDIT -> {
+                    editModeActive.value = !editModeActive.value!!
+                }
+                CashFlowDetailsOptions.STRIKE_OFF -> {
+                    showStrikeOffConfirmationDialog.value = true
+                }
+            }.exhaustive
+        }
     }
 
     override fun onExpenseNameChange(value: String) {
@@ -140,26 +141,38 @@ class CashFlowDetailsViewModel @Inject constructor(
     override fun onConfirmExpenseNameChange() {
         viewModelScope.launch {
             expense.value?.let {
-                if (useCases.doesExpenseAlreadyExist(it.name)) {
-                    expense.value = useCases.getExpenseByName(it.name)
-                    editModeActive.value = false
-                    showAddCashFlowButton.value = true
-                    eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_already_exists))
-                } else {
-                    when (val response = useCases.saveExpense(it)) {
-                        is Response.Error -> {
+                if (isNew) {
+                    if (useCases.doesExpenseAlreadyExist(it.name)) {
+                        expense.value = useCases.getExpenseByName(it.name)
+                        editModeActive.value = false
+                        showAddCashFlowButton.value = true
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_already_exists))
+                        return@launch
+                    }
+                }
+                when (val response = useCases.saveExpense(it)) {
+                    is Response.Error -> {
+                        eventsChannel.send(
+                            CashFlowDetailsEvents.ShowSnackbar(
+                                response.message ?: R.string.error_unknown
+                            )
+                        )
+                    }
+                    is Response.Success -> {
+                        response.data?.let { insertedId ->
+                            isNew = false
+                            expense.value = useCases.getExpenseById(insertedId)
                             eventsChannel.send(
-                                CashFlowDetailsEvents.ShowSnackbar(
-                                    response.message ?: R.string.error_unknown
+                                CashFlowDetailsEvents.ProvideHapticFeedback(
+                                    HapticFeedbackType.LongPress
                                 )
                             )
-                        }
-                        is Response.Success -> {
-                            response.data?.let { insertedId ->
-                                expense.value = useCases.getExpenseById(insertedId)
-                                editModeActive.value = false
-                                showAddCashFlowButton.value = true
-                                if (isNew) onAddCashFlowClick()
+                            editModeActive.value = false
+                            showAddCashFlowButton.value = true
+                            if (isNew) {
+                                onAddCashFlowClick()
+                            } else {
+                                eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
                             }
                         }
                     }
@@ -223,6 +236,11 @@ class CashFlowDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             addCashFlow(activeCashFlow.value!!)
             _activeCashFlow.value = null
+            eventsChannel.send(
+                CashFlowDetailsEvents.ProvideHapticFeedback(
+                    HapticFeedbackType.LongPress
+                )
+            )
             eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
         }
     }
@@ -230,6 +248,11 @@ class CashFlowDetailsViewModel @Inject constructor(
     override fun onCashFlowSwipeDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
             deleteCashFlow(cashFlow)
+            eventsChannel.send(
+                CashFlowDetailsEvents.ProvideHapticFeedback(
+                    HapticFeedbackType.LongPress
+                )
+            )
             eventsChannel.send(CashFlowDetailsEvents.ShowCashFlowDeleteUndo(cashFlow))
         }
     }
@@ -272,6 +295,8 @@ class CashFlowDetailsViewModel @Inject constructor(
         data class ShowCashFlowDeleteUndo(val cashFlow: CashFlow) : CashFlowDetailsEvents()
         data class NavigateBackWithResult(val result: String) : CashFlowDetailsEvents()
         object NavigateBack : CashFlowDetailsEvents()
+        data class ProvideHapticFeedback(val feedbackType: HapticFeedbackType) :
+            CashFlowDetailsEvents()
     }
 }
 

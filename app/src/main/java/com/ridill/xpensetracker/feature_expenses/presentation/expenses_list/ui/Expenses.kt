@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,7 @@ fun Expenses(
     val state by viewModel.state.observeAsState(ExpensesState.initial)
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
+    val hapticFeedback = LocalHapticFeedback.current
 
     val currentBackStackEntry = navController.currentBackStackEntry
     val addEditExpenseResult = currentBackStackEntry
@@ -108,6 +110,9 @@ fun Expenses(
                     scaffoldState.snackbarHostState.showSnackbar(
                         context.getString(event.message)
                     )
+                }
+                is ExpensesViewModel.ExpenseEvents.PerformHapticFeedback -> {
+                    hapticFeedback.performHapticFeedback(event.feedbackType)
                 }
             }.exhaustive
         }

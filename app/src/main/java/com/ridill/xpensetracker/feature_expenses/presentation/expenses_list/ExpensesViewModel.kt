@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
@@ -83,7 +84,7 @@ class ExpensesViewModel @Inject constructor(
     override fun onExpenseClick(expense: Expense) {
         viewModelScope.launch {
             val route = when (expense.category) {
-                ExpenseCategory.YEARNING -> ""
+                ExpenseCategory.YEARNING -> return@launch
                 ExpenseCategory.CASH_FLOW -> Destination.CashFlowDetails.buildRoute(expense.id)
                 ExpenseCategory.EXPENSE -> Destination.AddEditExpense.buildRoute(expense.id)
             }
@@ -103,7 +104,10 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onExpenditureLimitCardClick() {
-        showExpenditureLimitUpdateDialog.value = true
+        viewModelScope.launch {
+            eventsChannel.send(ExpenseEvents.PerformHapticFeedback(HapticFeedbackType.LongPress))
+            showExpenditureLimitUpdateDialog.value = true
+        }
     }
 
     override fun dismissExpenditureLimitUpdateDialog() {
@@ -131,6 +135,7 @@ class ExpensesViewModel @Inject constructor(
     override fun onExpenseSwipeDeleted(expense: Expense) {
         viewModelScope.launch {
             useCases.deleteExpense(expense)
+            eventsChannel.send(ExpenseEvents.PerformHapticFeedback(HapticFeedbackType.LongPress))
             eventsChannel.send(ExpenseEvents.ShowUndoDeleteOption(expense))
         }
     }
@@ -165,5 +170,6 @@ class ExpensesViewModel @Inject constructor(
         data class Navigate(val route: String) : ExpenseEvents()
         data class ShowUndoDeleteOption(val expense: Expense) : ExpenseEvents()
         data class ShowSnackbar(@StringRes val message: Int) : ExpenseEvents()
+        data class PerformHapticFeedback(val feedbackType: HapticFeedbackType) : ExpenseEvents()
     }
 }
