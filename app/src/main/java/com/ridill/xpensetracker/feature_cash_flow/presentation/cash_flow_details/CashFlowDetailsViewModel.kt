@@ -223,8 +223,26 @@ class CashFlowDetailsViewModel @Inject constructor(
     }
 
     private suspend fun addCashFlow(cashFlow: CashFlow) {
-        useCases.saveCashFlow(cashFlow)
-        updateExpense(expense.value!!.copy(amount = aggregateAmount.first()))
+        when (val response = useCases.saveCashFlow(cashFlow)) {
+            is Response.Error -> {
+                eventsChannel.send(
+                    CashFlowDetailsEvents.ShowSnackbar(
+                        response.message
+                            ?: R.string.error_unknown
+                    )
+                )
+            }
+            is Response.Success -> {
+                updateExpense(expense.value!!.copy(amount = aggregateAmount.first()))
+                _activeCashFlow.value = null
+                eventsChannel.send(
+                    CashFlowDetailsEvents.ProvideHapticFeedback(
+                        HapticFeedbackType.LongPress
+                    )
+                )
+                eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
+            }
+        }
     }
 
     private suspend fun deleteCashFlow(cashFlow: CashFlow) {
@@ -235,13 +253,6 @@ class CashFlowDetailsViewModel @Inject constructor(
     override fun onAddEditCashFlowConfirm() {
         viewModelScope.launch {
             addCashFlow(activeCashFlow.value!!)
-            _activeCashFlow.value = null
-            eventsChannel.send(
-                CashFlowDetailsEvents.ProvideHapticFeedback(
-                    HapticFeedbackType.LongPress
-                )
-            )
-            eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
         }
     }
 
@@ -259,7 +270,8 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onUndoCashFlowDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
-            addCashFlow(cashFlow)
+            useCases.saveCashFlow(cashFlow)
+            updateExpense(expense.value!!.copy(amount = aggregateAmount.first()))
         }
     }
 

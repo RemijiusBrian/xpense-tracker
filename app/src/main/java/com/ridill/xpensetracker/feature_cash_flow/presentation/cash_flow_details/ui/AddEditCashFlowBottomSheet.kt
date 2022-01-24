@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
@@ -169,22 +170,18 @@ private fun LendingSlider(
                 anchors = anchors,
                 orientation = Orientation.Horizontal,
             ),
-        contentAlignment = Alignment.CenterStart
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            AnimatedContent(targetState = lending) { lending ->
-                Text(
-                    text = stringResource(
-                        if (lending) R.string.lending
-                        else R.string.borrowing
-                    ),
-                    style = MaterialTheme.typography.body2
-                )
-            }
+        AnimatedContent(targetState = lending) { lent ->
+            Text(
+                text = stringResource(
+                    if (lent) R.string.lending
+                    else R.string.borrowing
+                ),
+                style = MaterialTheme.typography.body2,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
         }
         Box(
             modifier = Modifier
