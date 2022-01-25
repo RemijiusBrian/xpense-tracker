@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
@@ -13,12 +14,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.CompareArrows
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -36,6 +37,7 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
 import kotlin.math.roundToInt
 
 @Composable
@@ -47,12 +49,15 @@ fun AddEditCashFlowBottomSheet(
     lending: Boolean,
     onLendingChange: (Boolean) -> Unit,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
+    onConfirm: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val focusRequester = remember {
         FocusRequester()
     }
+    var repaymentMode by remember { mutableStateOf(false) }
+    var repaymentAmount by remember { mutableStateOf("") }
+    val repaymentToggleRotation by animateFloatAsState(targetValue = if (repaymentMode) 180f else 0f)
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -86,7 +91,7 @@ fun AddEditCashFlowBottomSheet(
                     fontWeight = FontWeight.Bold
                 )
             }
-            IconButton(onClick = onConfirm) {
+            IconButton(onClick = { onConfirm(repaymentAmount) }) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(R.string.confirm)
@@ -127,16 +132,66 @@ fun AddEditCashFlowBottomSheet(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { onConfirm() }
+                    onDone = { onConfirm(repaymentAmount) }
                 )
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
-            LendingSlider(
-                modifier = Modifier
-                    .align(Alignment.End),
-                lending = lending,
-                onLendingChange = onLendingChange
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        repaymentAmount = ""
+                        repaymentMode = !repaymentMode
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    AnimatedVisibility(visible = !repaymentMode) {
+                        Text(
+                            text = stringResource(R.string.repayment),
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowRight,
+                        contentDescription = stringResource(R.string.toggle_repayment),
+                        modifier = Modifier
+                            .rotate(repaymentToggleRotation)
+                    )
+                }
+                Spacer(modifier = Modifier.width(SpacingSmall))
+                AnimatedContent(
+                    targetState = repaymentMode,
+                    transitionSpec = {
+                        if (targetState) {
+                            slideInHorizontally { -(it * 0.1f).roundToInt() } + fadeIn() with
+                                    slideOutHorizontally { (it * 0.1f).roundToInt() } + fadeOut()
+                        } else {
+                            slideInHorizontally { (it * 0.1f).roundToInt() } + fadeIn() with
+                                    slideOutHorizontally { -(it * 0.1f).roundToInt() } + fadeOut()
+                        } using SizeTransform(false)
+                    }
+                ) { repaymentMode ->
+                    if (repaymentMode) {
+                        OutlinedTextField(
+                            value = repaymentAmount,
+                            onValueChange = { repaymentAmount = it },
+                            modifier = Modifier
+                                .width(TotalSliderWidth),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            placeholder = { Text(stringResource(R.string.repaid_amount)) }
+                        )
+                    } else {
+                        LendingSlider(
+                            modifier = Modifier,
+                            lending = lending,
+                            onLendingChange = onLendingChange
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -155,13 +210,14 @@ private fun LendingSlider(
         }
     )
     val maxWidth =
-        with(LocalDensity.current) { (TotalWidth - (SliderSize + 16.dp)).toPx() }
+        with(LocalDensity.current) { (TotalSliderWidth - (SliderSize + 16.dp)).toPx() }
     val anchors = mapOf(0f to true, maxWidth to false)
 
     Box(
         modifier = modifier
-            .padding(horizontal = PaddingMedium)
-            .width(TotalWidth)
+            .width(TotalSliderWidth)
+            .height(TextFieldDefaults.MinHeight)
+            .padding(vertical = PaddingSmall)
             .clip(RoundedCornerShape(50))
             .background(MaterialTheme.colors.primaryVariant)
             .padding(PaddingSmall)
@@ -192,11 +248,11 @@ private fun LendingSlider(
             Icon(
                 imageVector = Icons.Default.CompareArrows,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onPrimary
+                tint = MaterialTheme.colors.onPrimary,
             )
         }
     }
 }
 
 private val SliderSize = 24.dp
-private val TotalWidth = SliderSize * 8
+private val TotalSliderWidth = SliderSize * 8

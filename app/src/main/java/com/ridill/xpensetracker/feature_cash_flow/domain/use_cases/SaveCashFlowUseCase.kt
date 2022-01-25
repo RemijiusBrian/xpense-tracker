@@ -8,10 +8,15 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepo
 class SaveCashFlowUseCase(
     private val repository: CashFlowRepository
 ) {
-    suspend operator fun invoke(cashFlow: CashFlow): Response<Long> {
+    suspend operator fun invoke(
+        cashFlow: CashFlow,
+        repayment: String
+    ): Response<Long> {
         if (cashFlow.name.isEmpty()) return Response.Error(R.string.error_name_empty)
         if (cashFlow.amount <= 0L) return Response.Error(R.string.error_amount_invalid)
 
-        return Response.Success(repository.cacheCashFlow(cashFlow))
+        val repaymentAmount = repayment.toLongOrNull() ?: 0L
+
+        return Response.Success(repository.cacheCashFlow(cashFlow.copy(amount = cashFlow.amount - repaymentAmount)))
     }
 }

@@ -222,8 +222,8 @@ class CashFlowDetailsViewModel @Inject constructor(
         _activeCashFlow.value = activeCashFlow.value?.copy(lending = value)
     }
 
-    private suspend fun addCashFlow(cashFlow: CashFlow) {
-        when (val response = useCases.saveCashFlow(cashFlow)) {
+    private suspend fun addCashFlow(cashFlow: CashFlow, repaymentAmount: String = "") {
+        when (val response = useCases.saveCashFlow(cashFlow, repaymentAmount)) {
             is Response.Error -> {
                 eventsChannel.send(
                     CashFlowDetailsEvents.ShowSnackbar(
@@ -250,9 +250,11 @@ class CashFlowDetailsViewModel @Inject constructor(
         updateExpense(expense.value!!.copy(amount = aggregateAmount.first()))
     }
 
-    override fun onAddEditCashFlowConfirm() {
+    override fun onAddEditCashFlowConfirm(repaymentAmount: String) {
         viewModelScope.launch {
-            addCashFlow(activeCashFlow.value!!)
+            activeCashFlow.value?.let { cashFlow ->
+                addCashFlow(cashFlow, repaymentAmount = repaymentAmount)
+            }
         }
     }
 
@@ -270,7 +272,7 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onUndoCashFlowDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
-            useCases.saveCashFlow(cashFlow)
+            useCases.saveCashFlow(cashFlow, repayment = "")
             updateExpense(expense.value!!.copy(amount = aggregateAmount.first()))
         }
     }

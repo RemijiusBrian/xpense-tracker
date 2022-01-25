@@ -13,7 +13,7 @@ interface CashFlowDetailsActions {
     fun onCashFlowNameChange(value: String)
     fun onCashFlowAmountChange(value: String)
     fun onCashFlowLendingChange(value: Boolean)
-    fun onAddEditCashFlowConfirm()
+    fun onAddEditCashFlowConfirm(repaymentAmount: String)
     fun onCashFlowSwipeDelete(cashFlow: CashFlow)
     fun onUndoCashFlowDelete(cashFlow: CashFlow)
     fun onCashFlowClick(cashFlow: CashFlow)

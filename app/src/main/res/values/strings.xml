@@ -68,4 +68,7 @@
     <string name="expenditure_limit_updated">Expenditure Limit Updated</string>
     <string name="show_all_entries">Show All</string>
     <string name="name_updated">Name Updated</string>
+    <string name="repayment">Repayment</string>
+    <string name="toggle_repayment">Toggle Repayment</string>
+    <string name="repaid_amount">Repaid Amount</string>
 </resources>
