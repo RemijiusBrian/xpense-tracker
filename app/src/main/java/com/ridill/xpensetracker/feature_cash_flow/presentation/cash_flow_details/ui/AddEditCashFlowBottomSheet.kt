@@ -133,7 +133,8 @@ fun AddEditCashFlowBottomSheet(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onConfirm(repaymentAmount) }
-                )
+                ),
+                readOnly = repaymentMode
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
             Row(
