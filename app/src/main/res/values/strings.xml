@@ -71,4 +71,5 @@
     <string name="repayment">Repayment</string>
     <string name="toggle_repayment">Toggle Repayment</string>
     <string name="repaid_amount">Repaid Amount</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.util.exhaustive
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditActions
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
@@ -43,6 +43,7 @@ fun AddEditExpense(
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
 
+    // Collect Events
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {

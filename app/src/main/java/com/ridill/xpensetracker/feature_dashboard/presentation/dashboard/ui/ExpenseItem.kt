@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list.ui
+package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*

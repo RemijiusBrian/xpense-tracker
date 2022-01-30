@@ -2,7 +2,7 @@ package com.ridill.xpensetracker.feature_expenses.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Entity

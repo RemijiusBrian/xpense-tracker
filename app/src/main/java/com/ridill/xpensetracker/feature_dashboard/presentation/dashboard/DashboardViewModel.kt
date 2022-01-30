@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
+package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -8,10 +8,10 @@ import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
 import com.ridill.xpensetracker.core.util.exhaustive
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseMenuOption
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.ExpensesUseCases
+import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpenseMenuOption
+import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -23,10 +23,10 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ExpensesViewModel @Inject constructor(
-    private val useCases: ExpensesUseCases,
+class DashboardViewModel @Inject constructor(
+    private val useCases: DashboardUseCases,
     savedStateHandle: SavedStateHandle
-) : ViewModel(), ExpensesActions {
+) : ViewModel(), DashboardActions {
 
     private val expensePreferences = useCases.getExpensePreference()
 
@@ -64,7 +64,7 @@ class ExpensesViewModel @Inject constructor(
                 balancePercentage,
                 showExpenditureLimitUpdateDialog,
             ) ->
-        ExpensesState(
+        DashboardState(
             expenses = expenses,
             selectedExpenseCategory = preferences.category,
             expenditureLimit = formatAmount(preferences.expenditureLimit),
@@ -103,7 +103,7 @@ class ExpensesViewModel @Inject constructor(
         }
     }
 
-    override fun onExpenditureLimitCardClick() {
+    override fun onExpenditureLimitUpdate() {
         viewModelScope.launch {
             eventsChannel.send(ExpenseEvents.PerformHapticFeedback(HapticFeedbackType.LongPress))
             showExpenditureLimitUpdateDialog.value = true

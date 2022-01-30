@@ -1,9 +1,6 @@
 package com.ridill.xpensetracker.core.ui.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -12,13 +9,11 @@ import com.ridill.xpensetracker.R
 sealed class Destination(
     val route: String,
     @StringRes val label: Int,
-    val icon: ImageVector? = null,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
-    object Expenses : Destination(
-        route = "expenses",
+    object Dashboard : Destination(
+        route = "dashboard",
         label = R.string.app_name,
-        icon = Icons.Outlined.List
     )
 
     object AddEditExpense : Destination(

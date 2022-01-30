@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.core.util.Response
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.use_case.AddEditUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

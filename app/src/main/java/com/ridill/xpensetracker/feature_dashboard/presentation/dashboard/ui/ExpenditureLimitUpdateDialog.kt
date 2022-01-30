@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list.ui
+package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
 
 @Composable
-fun ExpenditureUpdateDialog(
+fun ExpenditureLimitUpdateDialog(
     onDismiss: () -> Unit,
     limit: String,
     onConfirm: (String) -> Unit,

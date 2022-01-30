@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.domain.use_case
+package com.ridill.xpensetracker.feature_dashboard.domain.use_case
 
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import kotlinx.coroutines.flow.Flow

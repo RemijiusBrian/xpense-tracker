@@ -1,8 +1,9 @@
-package com.ridill.xpensetracker.feature_expenses.domain.model
+package com.ridill.xpensetracker.feature_dashboard.domain.model
 
 import android.os.Parcelable
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.parcelize.Parcelize
 import java.util.*
 

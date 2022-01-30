@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list.ui
+package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseMenuOption
+import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpenseMenuOption
 
 @Composable
 fun ExpenseOptionsMenu(

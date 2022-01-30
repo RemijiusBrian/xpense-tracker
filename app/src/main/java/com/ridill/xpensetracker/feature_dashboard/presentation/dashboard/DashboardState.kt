@@ -1,9 +1,9 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
+package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard
 
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
-data class ExpensesState(
+data class DashboardState(
     val expenses: List<Expense> = emptyList(),
     val selectedExpenseCategory: ExpenseCategory? = null,
     val expenditureLimit: String = "",
@@ -15,6 +15,6 @@ data class ExpensesState(
     val showExpenditureLimitUpdateDialog: Boolean = false,
 ) {
     companion object {
-        val initial: ExpensesState = ExpensesState()
+        val INITIAL: DashboardState = DashboardState()
     }
 }

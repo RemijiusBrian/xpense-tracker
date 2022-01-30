@@ -8,7 +8,7 @@ import com.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui.CashFlowDetails
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ui.AddEditExpense
-import com.ridill.xpensetracker.feature_expenses.presentation.expenses_list.ui.Expenses
+import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui.Dashboard
 
 @Composable
 fun Navigation(
@@ -16,14 +16,14 @@ fun Navigation(
 ) {
     AnimatedNavHost(
         navController = navController,
-        startDestination = Destination.Expenses.route,
+        startDestination = Destination.Dashboard.route,
     ) {
         composable(
-            route = Destination.Expenses.route,
+            route = Destination.Dashboard.route,
             exitTransition = { slideOutHorizontallyWithFadeOut(false) },
             popEnterTransition = { slideInHorizontallyWithFadeIn(false) }
         ) {
-            Expenses(navController = navController)
+            Dashboard(navController = navController)
         }
         composable(
             route = Destination.AddEditExpense.route + "?${NavArgs.EXPENSE_ID}={${NavArgs.EXPENSE_ID}}",
