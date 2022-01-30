@@ -43,4 +43,9 @@ sealed class Destination(
     ) {
         fun buildRoute(expenseId: Long): String = "$route?${NavArgs.CASH_FLOW_EXPENSE}=$expenseId"
     }
+
+    object Settings : Destination(
+        route = "settings",
+        label = R.string.settings
+    )
 }

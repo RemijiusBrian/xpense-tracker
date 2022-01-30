@@ -13,4 +13,5 @@ interface DashboardActions {
     fun onExpenseSwipeDeleted(expense: Expense)
     fun onExpenseCategorySelect(category: ExpenseCategory)
     fun onMenuOptionClick(option: ExpenseMenuOption)
+    fun onSettingsOptionClick()
 }

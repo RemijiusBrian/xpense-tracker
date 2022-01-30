@@ -3,7 +3,8 @@ package com.ridill.xpensetracker.di
 import android.app.Application
 import androidx.room.Room
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
-import com.ridill.xpensetracker.core.data.preferences.AppDatastore
+import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManager
+import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,5 +26,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAppDatastore(application: Application): AppDatastore = AppDatastore(application)
+    fun provideAppPreferencesManager(application: Application): AppPreferencesManager =
+        AppPreferencesManagerImpl(application)
 }

@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private val Context.appDatastore by preferencesDataStore(AppDatastore.NAME)
+private val Context.appDatastore by preferencesDataStore(AppPreferencesManagerImpl.NAME)
 
-class AppDatastore(
+class AppPreferencesManagerImpl(
     private val context: Context
-) {
+) : AppPreferencesManager {
     companion object {
         const val NAME = "app_datastore"
     }
 
-    val preferences = context.appDatastore.data
+    override val preferences = context.appDatastore.data
         .catch { exception ->
             if (exception is IOException) emit(emptyPreferences())
             else throw exception
@@ -33,13 +33,13 @@ class AppDatastore(
             )
         }
 
-    suspend fun updateAppTheme(theme: AppTheme) {
+    override suspend fun updateAppTheme(theme: AppTheme) {
         context.appDatastore.edit { preferences ->
             preferences[Keys.APP_THEME] = theme.name
         }
     }
 
     private object Keys {
-        val APP_THEME = stringPreferencesKey("app_theme")
+        val APP_THEME = stringPreferencesKey("APP_THEME")
     }
 }

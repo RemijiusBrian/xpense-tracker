@@ -1,7 +1,8 @@
 package com.ridill.xpensetracker.di
 
 import android.app.Application
-import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardStore
+import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManager
+import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManagerImpl
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.*
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import com.ridill.xpensetracker.feature_expenses.domain.use_case.DeleteExpenseUseCase
@@ -16,17 +17,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object DashboardModule {
 
-    // Expense Store
+    // Dashboard Preferences Manager
     @Singleton
     @Provides
-    fun provideExpenseStore(application: Application): DashboardStore = DashboardStore(application)
+    fun provideDashboardPreferencesManager(application: Application): DashboardPreferencesManager =
+        DashboardPreferencesManagerImpl(application)
 
     // Dashboard UseCases
     @Singleton
     @Provides
     fun provideDashboardUseCases(
         repository: ExpenseRepository,
-        dashboardStore: DashboardStore
+        dashboardStore: DashboardPreferencesManager
     ): DashboardUseCases = DashboardUseCases(
         getExpenses = GetExpensesUseCase(repository),
         getExpenditureForCurrentMonth = GetExpenditureForCurrentMonthUseCase(repository),

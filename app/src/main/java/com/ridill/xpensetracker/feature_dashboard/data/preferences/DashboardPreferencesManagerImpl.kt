@@ -3,22 +3,23 @@ package com.ridill.xpensetracker.feature_dashboard.data.preferences
 import android.content.Context
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpensePreferences
+import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferences
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private val Context.dashboardDatastore by preferencesDataStore(DashboardStore.NAME)
+private val Context.dashboardDatastore by preferencesDataStore(DashboardPreferencesManagerImpl.NAME)
 
-class DashboardStore(
+class DashboardPreferencesManagerImpl(
     private val context: Context
-) {
+) : DashboardPreferencesManager {
+
     companion object {
         const val NAME = "dashboard_datastore"
     }
 
-    val preferences = context.dashboardDatastore.data
+    override val preferences = context.dashboardDatastore.data
         .catch { exception ->
             if (exception is IOException) emit(emptyPreferences())
             else throw exception
@@ -29,34 +30,34 @@ class DashboardStore(
             )
             val showAll = preferences[Keys.SHOW_ALL_ENTRIES] ?: false
 
-            ExpensePreferences(
+            DashboardPreferences(
                 expenditureLimit = expenditureLimit,
                 category = category,
                 showAllEntries = showAll
             )
         }
 
-    suspend fun updateExpenditureLimit(limit: Long) {
+    override suspend fun updateExpenditureLimit(limit: Long) {
         context.dashboardDatastore.edit { preferences ->
             preferences[Keys.EXPENDITURE_LIMIT] = limit
         }
     }
 
-    suspend fun updateExpenseCategory(category: ExpenseCategory) {
+    override suspend fun updateExpenseCategory(category: ExpenseCategory) {
         context.dashboardDatastore.edit { preferences ->
             preferences[Keys.SELECTED_CATEGORY] = category.name
         }
     }
 
-    suspend fun updateShowPreviousEntries(show: Boolean) {
+    override suspend fun updateShowPreviousEntries(show: Boolean) {
         context.dashboardDatastore.edit { preferences ->
             preferences[Keys.SHOW_ALL_ENTRIES] = show
         }
     }
 
     private object Keys {
-        val EXPENDITURE_LIMIT = longPreferencesKey("expenditureLimit")
-        val SELECTED_CATEGORY = stringPreferencesKey("expenseCategory")
-        val SHOW_ALL_ENTRIES = booleanPreferencesKey("showAllEntries")
+        val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
+        val SELECTED_CATEGORY = stringPreferencesKey("SELECTED_CATEGORY")
+        val SHOW_ALL_ENTRIES = booleanPreferencesKey("SHOW_ALL_ENTRIES")
     }
 }

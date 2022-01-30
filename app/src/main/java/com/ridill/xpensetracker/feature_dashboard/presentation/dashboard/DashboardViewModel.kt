@@ -9,9 +9,9 @@ import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpenseMenuOption
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -159,6 +159,12 @@ class DashboardViewModel @Inject constructor(
                     useCases.updateShowPreviousEntries(option.show)
                 }
             }.exhaustive
+        }
+    }
+
+    override fun onSettingsOptionClick() {
+        viewModelScope.launch {
+            eventsChannel.send(ExpenseEvents.Navigate(Destination.Settings.route))
         }
     }
 

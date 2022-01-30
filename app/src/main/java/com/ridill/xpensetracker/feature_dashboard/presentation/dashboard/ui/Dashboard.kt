@@ -153,7 +153,7 @@ private fun ScreenContent(
                 backgroundColor = Color.Transparent,
                 elevation = ZeroDp,
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = actions::onSettingsOptionClick) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = stringResource(R.string.settings)
