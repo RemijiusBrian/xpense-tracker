@@ -134,9 +134,6 @@ private fun ScreenContent(
     actions: DashboardActions,
 ) {
     val listState = rememberLazyListState()
-    /*val showFab by remember {
-        derivedStateOf { listState.firstVisibleItemIndex < 2 }
-    }*/
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -144,12 +141,10 @@ private fun ScreenContent(
             .fillMaxSize(),
         floatingActionButton = {
             state.selectedExpenseCategory?.let {
-//                AnimatedVisibility(visible = showFab) {
                 AddExpenseFab(
                     currentCategory = it,
                     onClick = { actions.addExpenseClick(it) }
                 )
-//                }
             }
         },
         topBar = {
