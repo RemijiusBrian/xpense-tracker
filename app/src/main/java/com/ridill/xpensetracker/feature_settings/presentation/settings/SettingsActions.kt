@@ -6,4 +6,7 @@ interface SettingsActions {
     fun onAppThemePreferenceClick()
     fun onAppThemeDialogDismiss()
     fun onAppThemeDialogConfirm(theme: AppTheme)
+    fun onExpenditureLimitPreferenceClick()
+    fun onExpenditureLimitDialogDismiss()
+    fun onExpenditureLimitDialogConfirm(limit: String)
 }

@@ -4,7 +4,7 @@ import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferen
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.Flow
 
-interface DashboardPreferencesManager {
+interface ExpensePreferenceManager {
 
     val preferences: Flow<DashboardPreferences>
 

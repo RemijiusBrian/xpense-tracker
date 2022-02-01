@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-private val Context.dashboardDatastore by preferencesDataStore(DashboardPreferencesManagerImpl.NAME)
+private val Context.dashboardDatastore by preferencesDataStore(ExpensePreferenceManagerImpl.NAME)
 
-class DashboardPreferencesManagerImpl(
+class ExpensePreferenceManagerImpl(
     private val context: Context
-) : DashboardPreferencesManager {
+) : ExpensePreferenceManager {
 
     companion object {
         const val NAME = "dashboard_datastore"

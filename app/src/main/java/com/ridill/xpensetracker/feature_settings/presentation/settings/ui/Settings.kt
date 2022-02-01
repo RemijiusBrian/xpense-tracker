@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.BrightnessMedium
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +23,7 @@ import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.domain.model.AppTheme
 import com.ridill.xpensetracker.core.ui.components.BackArrowButton
+import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.feature_settings.presentation.settings.SettingsActions
@@ -63,6 +65,15 @@ private fun ScreenContent(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
+            SectionTitle(title = R.string.xpense)
+            PreferencesItem(
+                title = stringResource(R.string.expenditure_limit),
+                summary = state.currentExpenditureLimit,
+                onClick = actions::onExpenditureLimitPreferenceClick,
+                icon = Icons.Default.AccountBalanceWallet
+            )
+            Divider()
+            Spacer(modifier = Modifier.height(SpacingSmall))
             SectionTitle(title = R.string.display)
             PreferencesItem(
                 title = stringResource(R.string.app_theme),
@@ -81,6 +92,17 @@ private fun ScreenContent(
                 onDismiss = actions::onAppThemeDialogDismiss
             )
         }
+
+        // Expenditure Limit Dialog
+        if (state.showExpenditureLimitDialog) {
+            InputDialog(
+                title = R.string.update_expenditure_limit,
+                message = R.string.update_expenditure_limit_message,
+                placeholder = state.currentExpenditureLimit,
+                onDismiss = actions::onExpenditureLimitDialogDismiss,
+                onConfirm = actions::onExpenditureLimitDialogConfirm
+            )
+        }
     }
 }
 
@@ -94,7 +116,8 @@ private fun SectionTitle(
         style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
         color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
         modifier = modifier
-            .padding(horizontal = PaddingMedium, vertical = PaddingSmall)
+            .padding(horizontal = PaddingMedium)
+            .padding(top = PaddingSmall)
     )
 }
 

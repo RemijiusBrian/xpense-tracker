@@ -1,5 +1,6 @@
-package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
+package com.ridill.xpensetracker.core.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -17,12 +18,14 @@ import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
 
 @Composable
-fun ExpenditureLimitUpdateDialog(
+fun InputDialog(
+    @StringRes title: Int? = null,
+    @StringRes message: Int,
+    placeholder: String? = null,
     onDismiss: () -> Unit,
-    limit: String,
-    onConfirm: (String) -> Unit,
+    onConfirm: (String) -> Unit
 ) {
-    var amount by remember { mutableStateOf("") }
+    var input by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -31,26 +34,26 @@ fun ExpenditureLimitUpdateDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.update_expenditure_limit)) },
+        title = title?.let {
+            { Text(stringResource(it)) }
+        },
         text = {
-            Column(
-                modifier = Modifier,
-            ) {
+            Column {
                 Text(
-                    text = stringResource(R.string.update_expenditure_limit_message),
+                    text = stringResource(message),
                     style = MaterialTheme.typography.body2
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
-                    value = amount,
-                    onValueChange = { amount = it },
-                    placeholder = { Text(text = limit) },
+                    value = input,
+                    onValueChange = { input = it },
+                    placeholder = { placeholder?.let { Text(it) } },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(
-                        onDone = { onConfirm(amount) }
+                        onDone = { onConfirm(input) }
                     ),
                     modifier = Modifier
                         .focusRequester(focusRequester)
@@ -58,7 +61,7 @@ fun ExpenditureLimitUpdateDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = { onConfirm(amount) }) {
+            TextButton(onClick = { onConfirm(input) }) {
                 Text(stringResource(R.string.confirm))
             }
         },

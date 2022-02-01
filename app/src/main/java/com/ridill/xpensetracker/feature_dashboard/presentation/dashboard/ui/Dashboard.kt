@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
+import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.util.exhaustive
@@ -273,9 +274,10 @@ private fun ScreenContent(
         }
 
         if (state.showExpenditureLimitUpdateDialog) {
-            ExpenditureLimitUpdateDialog(
+            InputDialog(
+                message = R.string.update_expenditure_limit_message,
+                placeholder = state.expenditureLimit,
                 onDismiss = actions::dismissExpenditureLimitUpdateDialog,
-                limit = state.expenditureLimit,
                 onConfirm = actions::updateExpenditureLimit
             )
         }
