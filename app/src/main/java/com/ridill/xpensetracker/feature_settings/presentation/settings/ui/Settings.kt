@@ -74,9 +74,9 @@ private fun ScreenContent(
             )
             Divider()
             Spacer(modifier = Modifier.height(SpacingSmall))
-            SectionTitle(title = R.string.display)
+            SectionTitle(title = R.string.general)
             PreferencesItem(
-                title = stringResource(R.string.app_theme),
+                title = stringResource(R.string.theme),
                 summary = state.currentAppTheme?.label?.let { stringResource(it) },
                 onClick = actions::onAppThemePreferenceClick,
                 icon = Icons.Default.BrightnessMedium
