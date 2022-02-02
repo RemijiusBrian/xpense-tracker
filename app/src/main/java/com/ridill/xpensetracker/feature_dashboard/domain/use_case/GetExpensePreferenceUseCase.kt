@@ -5,7 +5,7 @@ import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferen
 import kotlinx.coroutines.flow.Flow
 
 class GetExpensePreferenceUseCase(
-    private val expenseStore: ExpensePreferenceManager
+    private val preferenceManager: ExpensePreferenceManager
 ) {
-    operator fun invoke(): Flow<DashboardPreferences> = expenseStore.preferences
+    operator fun invoke(): Flow<DashboardPreferences> = preferenceManager.preferences
 }

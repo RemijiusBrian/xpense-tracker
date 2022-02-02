@@ -7,14 +7,14 @@ import com.ridill.xpensetracker.feature_dashboard.data.preferences.ExpensePrefer
 import kotlinx.coroutines.flow.first
 
 class UpdateExpenditureLimitUseCase(
-    private val dashboardStore: ExpensePreferenceManager
+    private val preferenceManager: ExpensePreferenceManager
 ) {
     suspend operator fun invoke(limit: String): SimpleResponse {
-        val amount = limit.toLongOrNull() ?: dashboardStore.preferences.first().expenditureLimit
+        val amount = limit.toLongOrNull() ?: preferenceManager.preferences.first().expenditureLimit
         if (amount <= 0) {
             return Response.Error(R.string.error_amount_invalid)
         }
-        dashboardStore.updateExpenditureLimit(amount)
+        preferenceManager.updateExpenditureLimit(amount)
         return Response.Success(Unit)
     }
 }

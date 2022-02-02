@@ -8,8 +8,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    appDatastore: AppPreferencesManager
+    appPreferenceManager: AppPreferencesManager
 ) : ViewModel() {
 
-    val appTheme = appDatastore.preferences.map { it.theme }
+    // App Theme
+    val appTheme = appPreferenceManager.preferences.map { it.theme }
 }
