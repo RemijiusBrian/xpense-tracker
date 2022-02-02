@@ -45,7 +45,7 @@ fun XpenseTrackerTheme(
 ) {
     val systemUiController = rememberSystemUiController()
 
-    val systemBarsColor = if (darkTheme) DarkSurfaceVariant else MoneyGreen
+    val systemBarsColor = if (darkTheme) DarkSecondaryContainer else MoneyGreen
     SideEffect {
         systemUiController.setSystemBarsColor(color = systemBarsColor)
     }
