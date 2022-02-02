@@ -25,14 +25,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             val viewModel: MainViewModel = hiltViewModel()
             val appTheme by viewModel.appTheme.collectAsState(initial = AppTheme.SYSTEM_DEFAULT)
-
-            XpenseTrackerTheme(
-                darkTheme = when (appTheme) {
-                    AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
-                    AppTheme.LIGHT -> false
-                    AppTheme.DARK -> true
-                }
-            ) {
+            val darkTheme = when (appTheme) {
+                AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
+                AppTheme.LIGHT -> false
+                AppTheme.DARK -> true
+            }
+            XpenseTrackerTheme(darkTheme) {
                 ScreenContent()
             }
         }

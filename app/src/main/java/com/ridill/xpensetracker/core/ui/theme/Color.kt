@@ -54,5 +54,5 @@ val DarkOutline = Color(0xFF8a938a)
 val DarkInverseOnSurface = Color(0xFF1a1c1a)
 val DarkInverseSurface = Color(0xFFe1e3de)
 
-val Seed = Color(0xFF118c4f)
+val MoneyGreen = Color(0xFF118c4f)
 val Error = Color(0xFFba1b1b)
