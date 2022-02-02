@@ -113,8 +113,9 @@ private fun SectionTitle(
 ) {
     Text(
         stringResource(title),
-        style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold),
-        color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
+        style = MaterialTheme.typography.body2,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colors.primary,
         modifier = modifier
             .padding(horizontal = PaddingMedium)
             .padding(top = PaddingSmall)

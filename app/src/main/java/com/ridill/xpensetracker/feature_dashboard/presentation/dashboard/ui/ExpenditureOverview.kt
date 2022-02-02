@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
@@ -18,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
@@ -70,14 +72,13 @@ private fun ExpenditureLimit(
     Card(
         onClick = onClick,
         modifier = modifier,
-        backgroundColor = MaterialTheme.colors.primary
     ) {
         Column(
             modifier = Modifier
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f),
+                            MaterialTheme.colors.primaryVariant,
                             MaterialTheme.colors.primary
                         ),
                     ),
@@ -93,13 +94,15 @@ private fun ExpenditureLimit(
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colors.onPrimary
                 )
             }
             Text(
                 text = stringResource(R.string.expenditure_limit),
                 style = MaterialTheme.typography.caption,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onPrimary
             )
         }
     }
@@ -120,7 +123,6 @@ private fun CurrentExpenditureAndBalance(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            backgroundColor = MaterialTheme.colors.primary
         ) {
             Column(
                 modifier = Modifier
@@ -128,7 +130,7 @@ private fun CurrentExpenditureAndBalance(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
                                 MaterialTheme.colors.primary,
-                                MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f)
+                                MaterialTheme.colors.primaryVariant
                             ),
                         ),
                         shape = MaterialTheme.shapes.medium
@@ -142,12 +144,14 @@ private fun CurrentExpenditureAndBalance(
                     Text(
                         text = expenditure,
                         style = MaterialTheme.typography.subtitle1,
+                        color = MaterialTheme.colors.onPrimary
                     )
                 }
                 Text(
                     text = stringResource(R.string.current_expenditure),
                     style = MaterialTheme.typography.caption,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.onPrimary
                 )
             }
         }
@@ -156,6 +160,7 @@ private fun CurrentExpenditureAndBalance(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.onPrimary)
         ) {
             val transition = updateTransition(
                 targetState = balancePercent,
