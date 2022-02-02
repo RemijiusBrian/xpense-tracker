@@ -4,7 +4,7 @@ import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 data class DashboardState(
-    val expenses: List<Expense> = emptyList(),
+    val expenses: Map<String, List<Expense>> = emptyMap(),
     val selectedExpenseCategory: ExpenseCategory? = null,
     val expenditureLimit: String = "",
     val currentExpenditure: String = "",

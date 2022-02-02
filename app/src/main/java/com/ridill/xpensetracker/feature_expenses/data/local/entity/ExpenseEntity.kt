@@ -19,7 +19,7 @@ data class ExpenseEntity(
         id = id,
         name = name,
         amount = amount,
-        date = date,
+        dateMillis = date,
         isMonthly = isMonthly,
         category = ExpenseCategory.valueOf(category)
     )

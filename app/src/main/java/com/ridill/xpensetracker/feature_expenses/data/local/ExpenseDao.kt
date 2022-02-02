@@ -2,7 +2,6 @@ package com.ridill.xpensetracker.feature_expenses.data.local
 
 import androidx.room.*
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.Flow
 
@@ -42,7 +41,7 @@ interface ExpenseDao {
     suspend fun getExpenseById(expenseId: Long): ExpenseEntity?
 
     @Query("SELECT * FROM ExpenseEntity WHERE name = :name LIMIT 1")
-    suspend fun getExpenseByName(name: String): Expense?
+    suspend fun getExpenseByName(name: String): ExpenseEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expenseEntity: ExpenseEntity): Long

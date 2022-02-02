@@ -1,6 +1,5 @@
 package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,7 +37,6 @@ import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.R
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETE
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_UPDATED
 import kotlinx.coroutines.flow.collectLatest
-import java.util.*
 
 @Composable
 fun Dashboard(
@@ -205,35 +203,6 @@ private fun ScreenContent(
                     )
                 }
                 Spacer(modifier = Modifier.height(SpacingSmall))
-                state.selectedExpenseCategory?.let { category ->
-                    AnimatedContent(
-                        targetState = category,
-                        transitionSpec = {
-                            if (targetState > initialState) {
-                                slideInHorizontally { it } + fadeIn() with
-                                        slideOutHorizontally { -it } + fadeOut()
-                            } else {
-                                slideInHorizontally { -it } + fadeIn() with
-                                        slideOutHorizontally { it } + fadeOut()
-                            } using SizeTransform(clip = false)
-                        }
-                    ) { selectedCategory ->
-                        val message =
-                            if (!state.showAllExpenses && selectedCategory == ExpenseCategory.EXPENSE) {
-                                Calendar.getInstance(Locale.getDefault())
-                                    .getDisplayName(
-                                        Calendar.MONTH,
-                                        Calendar.LONG,
-                                        Locale.getDefault()
-                                    )
-                            } else stringResource(category.label)
-                        Text(
-                            message,
-                            style = MaterialTheme.typography.caption,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize(),
@@ -242,27 +211,39 @@ private fun ScreenContent(
                     ),
                     state = listState,
                 ) {
-                    items(state.expenses, key = { it.id }) { expense ->
-                        if (expense.category == ExpenseCategory.CASH_FLOW) {
-                            CashFlowCategoryItem(
+                    state.expenses.forEach { (month, expenses) ->
+                        item {
+                            Text(
+                                text = month,
+                                style = MaterialTheme.typography.body2,
+                                fontWeight = FontWeight.Bold,
                                 modifier = Modifier
-                                    .animateItemPlacement(),
-                                name = expense.name,
-                                amount = expense.amountFormatted,
-                                date = expense.dateFormatted,
-                                onClick = { actions.onExpenseClick(expense) },
+                                    .padding(PaddingSmall),
+                                color = MaterialTheme.colors.primary
                             )
-                        } else {
-                            ExpenseCategoryItem(
-                                modifier = Modifier
-                                    .animateItemPlacement(),
-                                name = expense.name,
-                                amount = expense.amountFormatted,
-                                date = expense.dateFormatted,
-                                onClick = { actions.onExpenseClick(expense) },
-                                isMonthly = expense.isMonthly,
-                                onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
-                            )
+                        }
+                        items(expenses, key = { it.id }) { expense ->
+                            if (expense.category == ExpenseCategory.CASH_FLOW) {
+                                CashFlowCategoryItem(
+                                    modifier = Modifier
+                                        .animateItemPlacement(),
+                                    name = expense.name,
+                                    amount = expense.amountFormatted,
+                                    date = expense.dateFormatted,
+                                    onClick = { actions.onExpenseClick(expense) },
+                                )
+                            } else {
+                                ExpenseCategoryItem(
+                                    modifier = Modifier
+                                        .animateItemPlacement(),
+                                    name = expense.name,
+                                    amount = expense.amountFormatted,
+                                    date = expense.dateFormatted,
+                                    onClick = { actions.onExpenseClick(expense) },
+                                    isMonthly = expense.isMonthly,
+                                    onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
+                                )
+                            }
                         }
                     }
                 }

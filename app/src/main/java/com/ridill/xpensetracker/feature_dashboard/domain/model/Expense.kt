@@ -12,10 +12,12 @@ data class Expense(
     val id: Long = 0L,
     val name: String,
     val amount: Long,
-    val date: Long,
+    val dateMillis: Long,
     val isMonthly: Boolean,
     val category: ExpenseCategory
 ) : Parcelable {
+    val date: Date get() = Date(dateMillis)
+
     val dateFormatted: String
         get() = TextUtil.formatDate(date)
 
@@ -26,7 +28,7 @@ data class Expense(
         id = id,
         name = name,
         amount = amount,
-        date = date,
+        date = date.time,
         isMonthly = isMonthly,
         category = category.name
     )
@@ -36,7 +38,7 @@ data class Expense(
             id = 0L,
             name = "",
             amount = 0L,
-            date = System.currentTimeMillis(),
+            dateMillis = System.currentTimeMillis(),
             isMonthly = false,
             category = ExpenseCategory.EXPENSE
         )
@@ -45,7 +47,7 @@ data class Expense(
             id = 0L,
             name = "",
             amount = 0L,
-            date = System.currentTimeMillis(),
+            dateMillis = System.currentTimeMillis(),
             isMonthly = false,
             category = ExpenseCategory.CASH_FLOW
         )

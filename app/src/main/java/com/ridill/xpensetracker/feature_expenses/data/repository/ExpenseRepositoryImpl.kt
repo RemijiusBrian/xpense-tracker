@@ -1,7 +1,7 @@
 package com.ridill.xpensetracker.feature_expenses.data.repository
 
-import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,7 @@ class ExpenseRepositoryImpl(
         dao.getExpenseById(expenseId)?.toExpense()
 
     override suspend fun getExpenseByName(name: String): Expense? =
-        dao.getExpenseByName(name)
+        dao.getExpenseByName(name)?.toExpense()
 
     override suspend fun cacheExpense(expense: Expense): Long =
         dao.insert(expense.toEntity())

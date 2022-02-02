@@ -14,6 +14,9 @@ object TextUtil {
     fun formatDate(dateInMillis: Long): String =
         SimpleDateFormat.getDateInstance().format(Date(dateInMillis))
 
+    fun formatDate(date: Date): String =
+        SimpleDateFormat.getDateInstance().format(date)
+
     val currencySymbol: String
         get() = Currency.getInstance(Locale.getDefault()).symbol
 }
