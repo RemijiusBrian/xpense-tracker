@@ -72,13 +72,14 @@ private fun ExpenditureLimit(
     Card(
         onClick = onClick,
         modifier = modifier,
+        backgroundColor = MaterialTheme.colors.primary
     ) {
         Column(
             modifier = Modifier
                 .background(
                     brush = Brush.horizontalGradient(
                         colors = listOf(
-                            MaterialTheme.colors.primaryVariant,
+                            MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f),
                             MaterialTheme.colors.primary
                         ),
                     ),
@@ -123,6 +124,7 @@ private fun CurrentExpenditureAndBalance(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
+            backgroundColor = MaterialTheme.colors.primary
         ) {
             Column(
                 modifier = Modifier
@@ -130,8 +132,8 @@ private fun CurrentExpenditureAndBalance(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
                                 MaterialTheme.colors.primary,
-                                MaterialTheme.colors.primaryVariant
-                            ),
+                                MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f),
+                                ),
                         ),
                         shape = MaterialTheme.shapes.medium
                     )
