@@ -1,13 +1,13 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.use_cases
 
-import com.ridill.xpensetracker.feature_expenditures.domain.use_case.GetExpenditureByIdUseCase
-import com.ridill.xpensetracker.feature_expenditures.domain.use_case.SaveExpenditureUseCase
+import com.ridill.xpensetracker.feature_expenses.domain.use_case.GetExpenseByIdUseCase
+import com.ridill.xpensetracker.feature_expenses.domain.use_case.SaveExpenseUseCase
 
 data class CashFlowDetailsUseCases(
-    val getExpenditureById: GetExpenditureByIdUseCase,
+    val getExpenseById: GetExpenseByIdUseCase,
     val doesExpenseAlreadyExist: DoesExpenseAlreadyExistUseCase,
     val getExpenseByName: GetExpenseByNameUseCase,
-    val saveExpenditure: SaveExpenditureUseCase,
+    val saveExpense: SaveExpenseUseCase,
     val getCashFlow: GetCashFlowForExpenseUseCase,
     val saveCashFlow: SaveCashFlowUseCase,
     val deleteCashFlow: DeleteCashFlowUseCase,

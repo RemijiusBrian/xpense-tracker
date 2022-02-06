@@ -1,15 +1,15 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.use_cases
 
 import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
-import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
-import com.ridill.xpensetracker.feature_expenditures.domain.repository.ExpenditureRepository
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 
 class StrikeOffCashFlowUseCase(
     private val cashFlowRepository: CashFlowRepository,
-    private val expenditureRepository: ExpenditureRepository
+    private val expenseRepository: ExpenseRepository
 ) {
-    suspend operator fun invoke(expenditure: Expenditure) {
+    suspend operator fun invoke(expense: Expense) {
         cashFlowRepository.clearCache()
-        expenditureRepository.deleteExpenditure(expenditure)
+        expenseRepository.deleteExpense(expense)
     }
 }

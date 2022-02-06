@@ -19,14 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Composable
-fun ExpenditureCategories(
+fun ExpenseCategories(
     modifier: Modifier = Modifier,
-    categories: List<ExpenditureCategory> = ExpenditureCategory.values().toList(),
-    selectedCategory: ExpenditureCategory?,
-    onCategorySelect: (ExpenditureCategory) -> Unit
+    categories: List<ExpenseCategory> = ExpenseCategory.values().toList(),
+    selectedCategory: ExpenseCategory?,
+    onCategorySelect: (ExpenseCategory) -> Unit
 ) {
     LazyRow(
         modifier = modifier,

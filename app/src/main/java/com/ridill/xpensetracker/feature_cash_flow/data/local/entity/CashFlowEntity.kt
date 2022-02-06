@@ -5,12 +5,12 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
-import com.ridill.xpensetracker.feature_expenditures.data.local.entity.ExpenditureEntity
+import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = ExpenditureEntity::class,
+            entity = ExpenseEntity::class,
             parentColumns = ["id"],
             childColumns = ["expenseId"]
         )

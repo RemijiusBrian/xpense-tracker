@@ -34,11 +34,11 @@ import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardActions
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardState
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardViewModel
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
-import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.ADD_EDIT_EXPENDITURE_RESULT
-import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.RESULT_EXPENDITURE_ADDED
-import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.RESULT_EXPENDITURE_DELETED
-import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.RESULT_EXPENDITURE_UPDATED
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETE
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_UPDATED
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -54,16 +54,16 @@ fun Dashboard(
 
     // Add/Edit Expense Result
     val addEditExpenseResult = currentBackStackEntry
-        ?.savedStateHandle?.getLiveData<String>(ADD_EDIT_EXPENDITURE_RESULT)?.observeAsState()
+        ?.savedStateHandle?.getLiveData<String>(ADD_EDIT_EXPENSE_RESULT)?.observeAsState()
     LaunchedEffect(key1 = addEditExpenseResult) {
         currentBackStackEntry?.savedStateHandle
-            ?.remove<String>(ADD_EDIT_EXPENDITURE_RESULT)
+            ?.remove<String>(ADD_EDIT_EXPENSE_RESULT)
 
         addEditExpenseResult?.value?.let { result ->
             val message = when (result) {
-                RESULT_EXPENDITURE_ADDED -> R.string.expense_added
-                RESULT_EXPENDITURE_UPDATED -> R.string.expense_updated
-                RESULT_EXPENDITURE_DELETED -> R.string.expense_deleted
+                RESULT_EXPENSE_ADDED -> R.string.expense_added
+                RESULT_EXPENSE_UPDATED -> R.string.expense_updated
+                RESULT_EXPENSE_DELETE -> R.string.expense_deleted
                 else -> R.string.empty
             }
             context.getString(message).takeIf { it.isNotEmpty() }?.let { msg ->
@@ -106,7 +106,7 @@ fun Dashboard(
                     when (result) {
                         SnackbarResult.Dismissed -> Unit
                         SnackbarResult.ActionPerformed -> {
-                            viewModel.undoExpenseDelete(event.expenditure)
+                            viewModel.undoExpenseDelete(event.expense)
                         }
                     }
                 }
@@ -156,10 +156,10 @@ private fun ScreenContent(
         modifier = Modifier
             .fillMaxSize(),
         floatingActionButton = {
-            state.selectedExpenditureCategory?.let {
+            state.selectedExpenseCategory?.let {
                 AddExpenseFab(
                     currentCategory = it,
-                    onClick = { actions.addExpenditureClick(it) }
+                    onClick = { actions.addExpenseClick(it) }
                 )
             }
         },
@@ -205,12 +205,12 @@ private fun ScreenContent(
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ExpenditureCategories(
+                    ExpenseCategories(
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = PaddingSmall),
-                        onCategorySelect = actions::onExpenditureCategorySelect,
-                        selectedCategory = state.selectedExpenditureCategory
+                        onCategorySelect = actions::onExpenseCategorySelect,
+                        selectedCategory = state.selectedExpenseCategory
                     )
                 }
             }
@@ -220,7 +220,7 @@ private fun ScreenContent(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                if (state.expenditures.isNotEmpty()) {
+                if (state.expenses.isNotEmpty()) {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -229,7 +229,7 @@ private fun ScreenContent(
                         ),
                         state = listState,
                     ) {
-                        state.expenditures.forEach { (month, expenses) ->
+                        state.expenses.forEach { (month, expenses) ->
                             item(key = month) {
                                 DateSeparator(
                                     modifier = Modifier
@@ -241,14 +241,14 @@ private fun ScreenContent(
 
                             if (state.currentlyShownMonth == month) {
                                 items(expenses, key = { it.id }) { expense ->
-                                    if (expense.category == ExpenditureCategory.CASH_FLOW) {
+                                    if (expense.category == ExpenseCategory.CASH_FLOW) {
                                         CashFlowCategoryItem(
                                             modifier = Modifier
                                                 .animateItemPlacement(),
                                             name = expense.name,
                                             amount = expense.amountFormatted,
                                             date = expense.dateFormatted,
-                                            onClick = { actions.onExpenditureClick(expense) },
+                                            onClick = { actions.onExpenseClick(expense) },
                                         )
                                     } else {
                                         ExpenseCategoryItem(
@@ -257,9 +257,9 @@ private fun ScreenContent(
                                             name = expense.name,
                                             amount = expense.amountFormatted,
                                             date = expense.dateFormatted,
-                                            onClick = { actions.onExpenditureClick(expense) },
+                                            onClick = { actions.onExpenseClick(expense) },
                                             isMonthly = expense.isMonthly,
-                                            onSwipeDeleted = { actions.onExpenditureSwipeDeleted(expense) }
+                                            onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
                                         )
                                     }
                                 }
@@ -276,8 +276,8 @@ private fun ScreenContent(
             InputDialog(
                 message = R.string.update_expenditure_limit_message,
                 placeholder = state.expenditureLimit,
-                onDismiss = actions::onExpenditureLimitUpdateDismiss,
-                onConfirm = actions::onExpenditureLimitUpdateConfirm
+                onDismiss = actions::dismissExpenditureLimitUpdateDialog,
+                onConfirm = actions::updateExpenditureLimit
             )
         }
     }

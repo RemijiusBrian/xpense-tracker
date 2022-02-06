@@ -1,11 +1,11 @@
 package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard
 
-import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 data class DashboardState(
-    val expenditures: Map<String, List<Expenditure>> = emptyMap(),
-    val selectedExpenditureCategory: ExpenditureCategory? = null,
+    val expenses: Map<String, List<Expense>> = emptyMap(),
+    val selectedExpenseCategory: ExpenseCategory? = null,
     val expenditureLimit: String = "",
     val currentExpenditure: String = "",
     val balance: String = "",

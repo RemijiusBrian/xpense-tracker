@@ -57,7 +57,7 @@
     <string name="cash_flow_cleared">Cash Flow Cleared!</string>
     <string name="search">Search</string>
     <string name="done">Done</string>
-    <string name="expenditure">Expenditure</string>
+    <string name="expense">Expense</string>
     <string name="lending">Lending</string>
     <string name="borrowing">Borrowing</string>
     <string name="in_debt">In Debt</string>

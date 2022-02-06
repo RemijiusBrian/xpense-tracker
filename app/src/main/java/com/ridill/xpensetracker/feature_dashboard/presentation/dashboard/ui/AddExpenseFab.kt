@@ -6,11 +6,11 @@ import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Composable
 fun AddExpenseFab(
-    currentCategory: ExpenditureCategory,
+    currentCategory: ExpenseCategory,
     onClick: () -> Unit
 ) {
     FloatingActionButton(onClick = onClick) {

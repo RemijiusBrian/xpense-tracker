@@ -1,16 +1,16 @@
 package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard
 
-import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 interface DashboardActions {
-    fun onExpenditureClick(expenditure: Expenditure)
-    fun addExpenditureClick(category: ExpenditureCategory)
+    fun onExpenseClick(expense: Expense)
+    fun addExpenseClick(category: ExpenseCategory)
     fun onExpenditureLimitUpdate()
-    fun onExpenditureLimitUpdateDismiss()
-    fun onExpenditureLimitUpdateConfirm(limit: String)
-    fun onExpenditureSwipeDeleted(expenditure: Expenditure)
-    fun onExpenditureCategorySelect(category: ExpenditureCategory)
+    fun dismissExpenditureLimitUpdateDialog()
+    fun updateExpenditureLimit(limit: String)
+    fun onExpenseSwipeDeleted(expense: Expense)
+    fun onExpenseCategorySelect(category: ExpenseCategory)
     fun onSettingsClick()
     fun onMonthClick(month: String)
 }

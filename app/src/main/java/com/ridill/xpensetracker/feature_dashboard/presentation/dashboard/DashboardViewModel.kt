@@ -7,9 +7,9 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
-import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -27,10 +27,10 @@ class DashboardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DashboardActions {
 
-    private val preferences = useCases.getDashboardPreference()
+    private val expensePreferences = useCases.getExpensePreference()
 
-    private val expenditures = preferences.flatMapLatest { preference ->
-        useCases.getExpenditures(category = preference.category)
+    private val expenses = expensePreferences.flatMapLatest { preference ->
+        useCases.getExpenses(category = preference.category)
     }
 
     // Expenditure Limit + Current Expenditure + Balance
@@ -38,7 +38,7 @@ class DashboardViewModel @Inject constructor(
     private val balanceAmount = useCases.getBalance()
     private val balancePercentage = combineTuple(
         balanceAmount,
-        preferences
+        expensePreferences
     ).map { (balance, preferences) -> balance.toFloat() / preferences.expenditureLimit }
 
     private val showExpenditureLimitUpdateDialog =
@@ -48,19 +48,21 @@ class DashboardViewModel @Inject constructor(
         savedStateHandle.getLiveData("currentlyShownMonth", getCurrentMonth())
 
     private fun getCurrentMonth(): String =
-        SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+        SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(
+            Calendar.getInstance().time
+        )
 
     // Ui State
     val state = combineTuple(
-        expenditures,
-        preferences,
+        expenses,
+        expensePreferences,
         currentExpenditure,
         balanceAmount,
         balancePercentage,
         showExpenditureLimitUpdateDialog.asFlow(),
         currentlyShownMonth.asFlow()
     ).map { (
-                expenditures,
+                expenses,
                 preferences,
                 currentExpenditure,
                 balance,
@@ -69,8 +71,8 @@ class DashboardViewModel @Inject constructor(
                 currentlyShownMonth
             ) ->
         DashboardState(
-            expenditures = expenditures,
-            selectedExpenditureCategory = preferences.category,
+            expenses = expenses,
+            selectedExpenseCategory = preferences.category,
             expenditureLimit = formatAmount(preferences.expenditureLimit),
             currentExpenditure = formatAmount(currentExpenditure),
             balance = formatAmount(balance),
@@ -85,23 +87,23 @@ class DashboardViewModel @Inject constructor(
     private val eventsChannel = Channel<ExpenseEvents>()
     val events = eventsChannel.receiveAsFlow()
 
-    override fun onExpenditureClick(expenditure: Expenditure) {
+    override fun onExpenseClick(expense: Expense) {
         viewModelScope.launch {
-            val route = when (expenditure.category) {
-                ExpenditureCategory.EXPENDITURE -> Destination.AddEditExpense.buildRoute(expenditure.id)
-                ExpenditureCategory.CASH_FLOW -> Destination.CashFlowDetails.buildRoute(expenditure.id)
-                ExpenditureCategory.YEARNING -> return@launch
+            val route = when (expense.category) {
+                ExpenseCategory.EXPENSE -> Destination.AddEditExpense.buildRoute(expense.id)
+                ExpenseCategory.CASH_FLOW -> Destination.CashFlowDetails.buildRoute(expense.id)
+                ExpenseCategory.YEARNING -> return@launch
             }
             eventsChannel.send(ExpenseEvents.Navigate(route))
         }
     }
 
-    override fun addExpenditureClick(category: ExpenditureCategory) {
+    override fun addExpenseClick(category: ExpenseCategory) {
         viewModelScope.launch {
             val route = when (category) {
-                ExpenditureCategory.EXPENDITURE -> Destination.AddEditExpense.route
-                ExpenditureCategory.CASH_FLOW -> Destination.CashFlowDetails.route
-                ExpenditureCategory.YEARNING -> return@launch
+                ExpenseCategory.EXPENSE -> Destination.AddEditExpense.route
+                ExpenseCategory.CASH_FLOW -> Destination.CashFlowDetails.route
+                ExpenseCategory.YEARNING -> return@launch
             }
             eventsChannel.send(ExpenseEvents.Navigate(route))
         }
@@ -114,11 +116,11 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    override fun onExpenditureLimitUpdateDismiss() {
+    override fun dismissExpenditureLimitUpdateDialog() {
         showExpenditureLimitUpdateDialog.value = false
     }
 
-    override fun onExpenditureLimitUpdateConfirm(limit: String) {
+    override fun updateExpenditureLimit(limit: String) {
         viewModelScope.launch {
             when (val response = useCases.updateExpenditureLimit(limit)) {
                 is Response.Error -> {
@@ -136,21 +138,21 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    override fun onExpenditureSwipeDeleted(expenditure: Expenditure) {
+    override fun onExpenseSwipeDeleted(expense: Expense) {
         viewModelScope.launch {
-            useCases.deleteExpenditure(expenditure)
+            useCases.deleteExpense(expense)
             eventsChannel.send(ExpenseEvents.PerformHapticFeedback(HapticFeedbackType.LongPress))
-            eventsChannel.send(ExpenseEvents.ShowUndoDeleteOption(expenditure))
+            eventsChannel.send(ExpenseEvents.ShowUndoDeleteOption(expense))
         }
     }
 
-    fun undoExpenseDelete(expenditure: Expenditure) {
+    fun undoExpenseDelete(expense: Expense) {
         viewModelScope.launch {
-            useCases.saveExpenditure(expenditure)
+            useCases.saveExpense(expense)
         }
     }
 
-    override fun onExpenditureCategorySelect(category: ExpenditureCategory) {
+    override fun onExpenseCategorySelect(category: ExpenseCategory) {
         viewModelScope.launch {
             useCases.updatePreferenceCategory(category)
         }
@@ -173,7 +175,7 @@ class DashboardViewModel @Inject constructor(
     // Events
     sealed class ExpenseEvents {
         data class Navigate(val route: String) : ExpenseEvents()
-        data class ShowUndoDeleteOption(val expenditure: Expenditure) : ExpenseEvents()
+        data class ShowUndoDeleteOption(val expense: Expense) : ExpenseEvents()
         data class ShowSnackbar(@StringRes val message: Int) : ExpenseEvents()
         data class PerformHapticFeedback(val feedbackType: HapticFeedbackType) : ExpenseEvents()
     }

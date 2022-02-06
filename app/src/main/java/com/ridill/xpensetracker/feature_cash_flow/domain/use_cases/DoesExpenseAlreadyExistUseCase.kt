@@ -1,10 +1,10 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.use_cases
 
-import com.ridill.xpensetracker.feature_expenditures.domain.repository.ExpenditureRepository
+import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 
 class DoesExpenseAlreadyExistUseCase(
-    private val expenditureRepository: ExpenditureRepository
+    private val expenseRepository: ExpenseRepository
 ) {
     suspend operator fun invoke(name: String): Boolean =
-        expenditureRepository.getExpenditureByName(name) != null
+        expenseRepository.getExpenseByName(name) != null
 }

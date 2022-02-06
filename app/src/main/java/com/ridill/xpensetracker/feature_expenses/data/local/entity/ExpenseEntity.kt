@@ -1,12 +1,12 @@
-package com.ridill.xpensetracker.feature_expenditures.data.local.entity
+package com.ridill.xpensetracker.feature_expenses.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
-import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
+import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Entity
-data class ExpenditureEntity(
+data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
@@ -15,12 +15,12 @@ data class ExpenditureEntity(
     val isMonthly: Boolean = false,
     val category: String,
 ) {
-    fun toExpenditure(): Expenditure = Expenditure(
+    fun toExpense(): Expense = Expense(
         id = id,
         name = name,
         amount = amount,
         dateMillis = dateMillis,
         isMonthly = isMonthly,
-        category = ExpenditureCategory.valueOf(category)
+        category = ExpenseCategory.valueOf(category)
     )
 }
