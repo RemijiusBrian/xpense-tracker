@@ -13,8 +13,8 @@ android {
         applicationId "com.ridill.xpensetracker"
         minSdk 29
         targetSdk 31
-        versionCode 8
-        versionName "1.0.7"
+        versionCode 1
+        versionName "1.0.0"
 
         testInstrumentationRunner "com.ridill.xpensetracker.HiltTestRunner"
         vectorDrawables {
