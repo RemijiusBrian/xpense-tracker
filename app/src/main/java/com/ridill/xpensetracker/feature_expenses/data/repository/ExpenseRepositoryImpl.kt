@@ -14,25 +14,8 @@ class ExpenseRepositoryImpl(
     private val dao: ExpenseDao
 ) : ExpenseRepository {
 
-    override fun getExpenses(
-        category: ExpenseCategory,
-        showAll: Boolean
-    ): Flow<List<Expense>> = if (showAll) {
-        dao.getAllExpensesForCategory(category)
-    } else {
-        val dateWithStartDay = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DATE))
-        }.timeInMillis
-
-        val dateWithEndDay = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DATE))
-        }.timeInMillis
-        dao.getExpensesForMonth(
-            start = dateWithStartDay,
-            end = dateWithEndDay,
-            category = category
-        )
-    }.map { entities -> entities.map { it.toExpense() } }
+    override fun getExpenses(category: ExpenseCategory): Flow<List<Expense>> =
+        dao.getExpenses(category).map { entities -> entities.map { it.toExpense() } }
 
     override fun getCurrentExpenditureForMonth(): Flow<Long> {
         val dateWithStartDay = Calendar.getInstance().apply {

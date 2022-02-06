@@ -12,5 +12,4 @@ data class DashboardUseCases(
     val updateExpenditureLimit: UpdateExpenditureLimitUseCase,
     val deleteExpense: DeleteExpenseUseCase,
     val saveExpense: SaveExpenseUseCase,
-    val updateShowPreviousEntries: UpdateShowPreviousEntriesUseCase
 )

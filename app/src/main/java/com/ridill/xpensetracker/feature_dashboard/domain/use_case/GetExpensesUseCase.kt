@@ -11,13 +11,10 @@ import java.util.*
 class GetExpensesUseCase(
     private val repository: ExpenseRepository
 ) {
-    operator fun invoke(
-        category: ExpenseCategory,
-        showAll: Boolean,
-    ): Flow<Map<String, List<Expense>>> =
-        repository.getExpenses(category, showAll).map { expenses ->
+    operator fun invoke(category: ExpenseCategory): Flow<Map<String, List<Expense>>> =
+        repository.getExpenses(category).map { expenses ->
             expenses.groupBy {
-                SimpleDateFormat("MMM - yyyy", Locale.getDefault()).format(it.date)
+                SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(it.date)
             }
         }
 }

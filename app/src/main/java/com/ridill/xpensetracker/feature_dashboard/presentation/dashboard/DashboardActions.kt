@@ -2,7 +2,6 @@ package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard
 
 import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
-import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpenseMenuOption
 
 interface DashboardActions {
     fun onExpenseClick(expense: Expense)
@@ -12,6 +11,6 @@ interface DashboardActions {
     fun updateExpenditureLimit(limit: String)
     fun onExpenseSwipeDeleted(expense: Expense)
     fun onExpenseCategorySelect(category: ExpenseCategory)
-    fun onMenuOptionClick(option: ExpenseMenuOption)
-    fun onSettingsOptionClick()
+    fun onSettingsClick()
+    fun onMonthClick(month: String)
 }

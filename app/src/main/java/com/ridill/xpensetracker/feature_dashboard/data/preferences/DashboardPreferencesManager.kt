@@ -4,13 +4,11 @@ import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferen
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.Flow
 
-interface ExpensePreferenceManager {
+interface DashboardPreferencesManager {
 
     val preferences: Flow<DashboardPreferences>
 
     suspend fun updateExpenditureLimit(limit: Long)
 
     suspend fun updateExpenseCategory(category: ExpenseCategory)
-
-    suspend fun updateShowPreviousEntries(show: Boolean)
 }

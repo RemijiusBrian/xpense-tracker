@@ -7,9 +7,7 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
-import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
-import com.ridill.xpensetracker.feature_dashboard.domain.model.ExpenseMenuOption
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.zhuinden.flowcombinetuplekt.combineTuple
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -30,11 +29,8 @@ class DashboardViewModel @Inject constructor(
 
     private val expensePreferences = useCases.getExpensePreference()
 
-    val expenses = expensePreferences.flatMapLatest { preference ->
-        useCases.getExpenses(
-            category = preference.category,
-            showAll = preference.showAllEntries
-        )
+    private val expenses = expensePreferences.flatMapLatest { preference ->
+        useCases.getExpenses(category = preference.category)
     }
 
     // Expenditure Limit + Current Expenditure + Balance
@@ -48,6 +44,14 @@ class DashboardViewModel @Inject constructor(
     private val showExpenditureLimitUpdateDialog =
         savedStateHandle.getLiveData("showExpenditureUpdateDialog", false)
 
+    private val currentlyShownMonth =
+        savedStateHandle.getLiveData("currentlyShownMonth", getCurrentMonth())
+
+    private fun getCurrentMonth(): String =
+        SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(
+            Calendar.getInstance().time
+        )
+
     // Ui State
     val state = combineTuple(
         expenses,
@@ -56,6 +60,7 @@ class DashboardViewModel @Inject constructor(
         balanceAmount,
         balancePercentage,
         showExpenditureLimitUpdateDialog.asFlow(),
+        currentlyShownMonth.asFlow()
     ).map { (
                 expenses,
                 preferences,
@@ -63,6 +68,7 @@ class DashboardViewModel @Inject constructor(
                 balance,
                 balancePercentage,
                 showExpenditureLimitUpdateDialog,
+                currentlyShownMonth
             ) ->
         DashboardState(
             expenses = expenses,
@@ -72,8 +78,8 @@ class DashboardViewModel @Inject constructor(
             balance = formatAmount(balance),
             balancePercentage = balancePercentage,
             isBalanceEmpty = preferences.expenditureLimit > 0 && balance <= 0L,
-            showAllExpenses = preferences.showAllEntries,
             showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog,
+            currentlyShownMonth = currentlyShownMonth
         )
     }.asLiveData()
 
@@ -84,9 +90,9 @@ class DashboardViewModel @Inject constructor(
     override fun onExpenseClick(expense: Expense) {
         viewModelScope.launch {
             val route = when (expense.category) {
-                ExpenseCategory.YEARNING -> return@launch
-                ExpenseCategory.CASH_FLOW -> Destination.CashFlowDetails.buildRoute(expense.id)
                 ExpenseCategory.EXPENSE -> Destination.AddEditExpense.buildRoute(expense.id)
+                ExpenseCategory.CASH_FLOW -> Destination.CashFlowDetails.buildRoute(expense.id)
+                ExpenseCategory.YEARNING -> return@launch
             }
             eventsChannel.send(ExpenseEvents.Navigate(route))
         }
@@ -152,20 +158,15 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    override fun onMenuOptionClick(option: ExpenseMenuOption) {
-        viewModelScope.launch {
-            when (option) {
-                is ExpenseMenuOption.ShowAllEntries -> {
-                    useCases.updateShowPreviousEntries(option.show)
-                }
-            }.exhaustive
-        }
-    }
-
-    override fun onSettingsOptionClick() {
+    override fun onSettingsClick() {
         viewModelScope.launch {
             eventsChannel.send(ExpenseEvents.Navigate(Destination.Settings.route))
         }
+    }
+
+    override fun onMonthClick(month: String) {
+        if (currentlyShownMonth.value == month) return
+        currentlyShownMonth.value = month
     }
 
     private fun formatAmount(amount: Long): String =

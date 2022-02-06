@@ -8,21 +8,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    @Query("SELECT * FROM ExpenseEntity WHERE category = :category")
-    fun getAllExpensesForCategory(category: ExpenseCategory): Flow<List<ExpenseEntity>>
-
-    @Query(
-        """
-        SELECT *
-        FROM ExpenseEntity
-        WHERE (date BETWEEN :start AND :end OR isMonthly = 1) AND category = :category
-        """
-    )
-    fun getExpensesForMonth(
-        start: Long,
-        end: Long,
-        category: ExpenseCategory
-    ): Flow<List<ExpenseEntity>>
+    @Query("SELECT * FROM ExpenseEntity WHERE category = :category ORDER BY date DESC")
+    fun getExpenses(category: ExpenseCategory): Flow<List<ExpenseEntity>>
 
     @Query(
         """

@@ -2,8 +2,8 @@ package com.ridill.xpensetracker.di
 
 import android.app.Application
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
-import com.ridill.xpensetracker.feature_dashboard.data.preferences.ExpensePreferenceManager
-import com.ridill.xpensetracker.feature_dashboard.data.preferences.ExpensePreferenceManagerImpl
+import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManager
+import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManagerImpl
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.repository.ExpenseRepositoryImpl
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
@@ -29,8 +29,8 @@ object ExpenseModule {
     // Expense Preferences Manager
     @Singleton
     @Provides
-    fun provideExpensePreferenceManager(application: Application): ExpensePreferenceManager =
-        ExpensePreferenceManagerImpl(application)
+    fun provideExpensePreferenceManager(application: Application): DashboardPreferencesManager =
+        DashboardPreferencesManagerImpl(application)
 
     // Expense Repository
     @Singleton

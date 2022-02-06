@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,9 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
+import com.ridill.xpensetracker.core.ui.components.EmptyListIndicator
 import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.navigation.Destination
-import com.ridill.xpensetracker.core.ui.theme.*
+import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
+import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
+import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
+import com.ridill.xpensetracker.core.ui.theme.ZeroDp
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_CASH_FLOW_CLEARED
@@ -133,6 +136,20 @@ private fun ScreenContent(
     actions: DashboardActions,
 ) {
     val listState = rememberLazyListState()
+    /*val toolbarHeight = 48.dp
+    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
+    var overviewHeight by remember { mutableStateOf(0f) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val delta = available.y
+                val newHeight = overviewHeight + delta
+                overviewHeight = newHeight.coerceIn(-toolbarHeightPx, 0f)
+                return Offset.Zero
+            }
+        }
+    }*/
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -152,26 +169,24 @@ private fun ScreenContent(
                 backgroundColor = Color.Transparent,
                 elevation = ZeroDp,
                 actions = {
-                    IconButton(onClick = actions::onSettingsOptionClick) {
+                    IconButton(onClick = actions::onSettingsClick) {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = stringResource(R.string.settings)
                         )
                     }
-                }
+                },
             )
         },
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+                .padding(paddingValues)
+                .padding(horizontal = PaddingSmall)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = PaddingSmall)
             ) {
                 ExpenditureOverview(
                     modifier = Modifier
@@ -184,7 +199,7 @@ private fun ScreenContent(
                     balancePercent = state.balancePercentage,
                     isBalanceEmpty = state.isBalanceEmpty
                 )
-                Spacer(modifier = Modifier.height(SpacingMedium))
+                Spacer(modifier = Modifier.height(SpacingSmall))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -197,60 +212,63 @@ private fun ScreenContent(
                         onCategorySelect = actions::onExpenseCategorySelect,
                         selectedCategory = state.selectedExpenseCategory
                     )
-                    ExpenseOptionsMenu(
-                        onOptionClick = actions::onMenuOptionClick,
-                        showAll = state.showAllExpenses,
-                    )
                 }
-                Spacer(modifier = Modifier.height(SpacingSmall))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        bottom = PaddingListBottom
-                    ),
-                    state = listState,
-                ) {
-                    state.expenses.forEach { (month, expenses) ->
-                        item {
-                            Text(
-                                text = month,
-                                style = MaterialTheme.typography.body2,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(PaddingSmall),
-                                color = MaterialTheme.colors.primary
-                            )
-                        }
-                        items(expenses, key = { it.id }) { expense ->
-                            if (expense.category == ExpenseCategory.CASH_FLOW) {
-                                CashFlowCategoryItem(
+            }
+            Spacer(modifier = Modifier.height(SpacingSmall))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (state.expenses.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentPadding = PaddingValues(
+                            bottom = PaddingListBottom
+                        ),
+                        state = listState,
+                    ) {
+                        state.expenses.forEach { (month, expenses) ->
+                            item(key = month) {
+                                DateSeparator(
                                     modifier = Modifier
                                         .animateItemPlacement(),
-                                    name = expense.name,
-                                    amount = expense.amountFormatted,
-                                    date = expense.dateFormatted,
-                                    onClick = { actions.onExpenseClick(expense) },
+                                    month = month,
+                                    onClick = actions::onMonthClick
                                 )
-                            } else {
-                                ExpenseCategoryItem(
-                                    modifier = Modifier
-                                        .animateItemPlacement(),
-                                    name = expense.name,
-                                    amount = expense.amountFormatted,
-                                    date = expense.dateFormatted,
-                                    onClick = { actions.onExpenseClick(expense) },
-                                    isMonthly = expense.isMonthly,
-                                    onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
-                                )
+                            }
+
+                            if (state.currentlyShownMonth == month) {
+                                items(expenses, key = { it.id }) { expense ->
+                                    if (expense.category == ExpenseCategory.CASH_FLOW) {
+                                        CashFlowCategoryItem(
+                                            modifier = Modifier
+                                                .animateItemPlacement(),
+                                            name = expense.name,
+                                            amount = expense.amountFormatted,
+                                            date = expense.dateFormatted,
+                                            onClick = { actions.onExpenseClick(expense) },
+                                        )
+                                    } else {
+                                        ExpenseCategoryItem(
+                                            modifier = Modifier
+                                                .animateItemPlacement(),
+                                            name = expense.name,
+                                            amount = expense.amountFormatted,
+                                            date = expense.dateFormatted,
+                                            onClick = { actions.onExpenseClick(expense) },
+                                            isMonthly = expense.isMonthly,
+                                            onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
+                } else {
+                    EmptyListIndicator()
                 }
-            }
-
-            if (state.expenses.isEmpty()) {
-                Icon(imageVector = Icons.Default.HourglassEmpty, contentDescription = null)
             }
         }
 
@@ -262,5 +280,23 @@ private fun ScreenContent(
                 onConfirm = actions::updateExpenditureLimit
             )
         }
+    }
+}
+
+@Composable
+private fun DateSeparator(
+    modifier: Modifier = Modifier,
+    month: String,
+    onClick: (String) -> Unit
+) {
+    TextButton(
+        onClick = { onClick(month) },
+        modifier = modifier
+    ) {
+        Text(
+            text = month,
+            style = MaterialTheme.typography.body2,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }
