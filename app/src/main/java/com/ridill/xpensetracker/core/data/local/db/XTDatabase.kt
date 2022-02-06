@@ -4,12 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowEntity
-import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
-import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
+import com.ridill.xpensetracker.feature_expenditures.data.local.ExpenditureDao
+import com.ridill.xpensetracker.feature_expenditures.data.local.entity.ExpenditureEntity
 
 @Database(
     entities = [
-        ExpenseEntity::class,
+        ExpenditureEntity::class,
         CashFlowEntity::class
     ],
     version = 1,
@@ -22,6 +22,6 @@ abstract class XTDatabase : RoomDatabase() {
     }
 
     // Dao
-    abstract val expenseDao: ExpenseDao
+    abstract val expenditureDao: ExpenditureDao
     abstract val cashFlowDao: CashFlowDao
 }

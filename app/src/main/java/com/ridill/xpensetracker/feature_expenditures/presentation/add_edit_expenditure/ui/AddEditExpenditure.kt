@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ui
+package com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -27,18 +27,18 @@ import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.util.exhaustive
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
-import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
-import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditActions
-import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
+import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
+import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.ADD_EDIT_EXPENDITURE_RESULT
+import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.AddEditExpenditureActions
+import com.ridill.xpensetracker.feature_expenditures.presentation.add_edit_expenditure.AddEditExpenditureViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun AddEditExpense(
-    viewModel: AddEditExpenseViewModel = hiltViewModel(),
+fun AddEditExpenditure(
+    viewModel: AddEditExpenditureViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val expense by viewModel.expense.observeAsState(Expense.DEFAULT)
+    val expense by viewModel.expenditure.observeAsState(Expenditure.DEFAULT)
     val showDeleteExpenseConfirmation by viewModel.showDeleteExpenseDialog.observeAsState(false)
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
@@ -47,13 +47,13 @@ fun AddEditExpense(
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {
-                is AddEditExpenseViewModel.AddEditEvents.NavigateBackWithResult -> {
+                is AddEditExpenditureViewModel.AddEditExpenditureEvents.NavigateBackWithResult -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
-                        ADD_EDIT_EXPENSE_RESULT, event.result
+                        ADD_EDIT_EXPENDITURE_RESULT, event.result
                     )
                     navController.popBackStack()
                 }
-                is AddEditExpenseViewModel.AddEditEvents.ShowSnackbar -> {
+                is AddEditExpenditureViewModel.AddEditExpenditureEvents.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         context.getString(event.message)
                     )
@@ -63,7 +63,7 @@ fun AddEditExpense(
     }
 
     ScreenContent(
-        expense = expense,
+        expenditure = expense,
         isEditMode = viewModel.isEditMode,
         showDeleteConfirmation = showDeleteExpenseConfirmation,
         scaffoldState = scaffoldState,
@@ -74,11 +74,11 @@ fun AddEditExpense(
 
 @Composable
 private fun ScreenContent(
-    expense: Expense,
+    expenditure: Expenditure,
     isEditMode: Boolean,
     showDeleteConfirmation: Boolean,
     scaffoldState: ScaffoldState,
-    actions: AddEditActions,
+    actions: AddEditExpenditureActions,
     navigateBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -151,8 +151,8 @@ private fun ScreenContent(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = expense.name,
-                onValueChange = actions::onExpenseNameChange,
+                value = expenditure.name,
+                onValueChange = actions::onNameChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
@@ -173,7 +173,7 @@ private fun ScreenContent(
 
             Spacer(modifier = Modifier.height(12.dp))
             TextField(
-                value = expense.amount.takeIf { it > 0L }?.toString().orEmpty(),
+                value = expenditure.amount.takeIf { it > 0L }?.toString().orEmpty(),
                 onValueChange = actions::onAmountChange,
                 modifier = Modifier
                     .fillMaxWidth(0.50f)
@@ -196,7 +196,7 @@ private fun ScreenContent(
             ) {
                 Text(stringResource(R.string.repeat_every_month))
                 Checkbox(
-                    checked = expense.isMonthly,
+                    checked = expenditure.isMonthly,
                     onCheckedChange = actions::onRepeatEveryMonthToggle
                 )
             }
@@ -210,8 +210,8 @@ private fun ScreenContent(
                 stringResource(R.string.delete_this_expense)
             ),
             title = stringResource(R.string.confirm_delete_expense_action),
-            onDismiss = actions::onDeleteExpenseDialogDismissed,
-            onConfirm = actions::onDeleteExpenseDialogConfirmed
+            onDismiss = actions::onDeleteDialogDismissed,
+            onConfirm = actions::onDeleteDialogConfirmed
         )
     }
 }

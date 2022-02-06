@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.domain.model
+package com.ridill.xpensetracker.feature_expenditures.domain.model
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -8,13 +8,13 @@ import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ridill.xpensetracker.R
 
-enum class ExpenseCategory(
+enum class ExpenditureCategory(
     val icon: ImageVector,
     @StringRes val label: Int
 ) {
-    EXPENSE(
+    EXPENDITURE(
         icon = Icons.Default.AttachMoney,
-        label = R.string.expense
+        label = R.string.expenditure
     ),
     CASH_FLOW(
         icon = Icons.Default.AccountBalanceWallet,

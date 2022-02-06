@@ -11,7 +11,7 @@ import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOptions
 import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.CashFlowDetailsUseCases
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenditures.domain.model.Expenditure
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -35,16 +35,16 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     // Expense
     private val expense =
-        savedStateHandle.getLiveData(KEY_CASH_FLOW_EXPENSE, Expense.CASH_FLOW_DEFAULT)
+        savedStateHandle.getLiveData(KEY_CASH_FLOW_EXPENSE, Expenditure.CASH_FLOW_DEFAULT)
     val expenseName: LiveData<String> = expense.map { it.name }
 
     init {
         if (!savedStateHandle.contains(KEY_CASH_FLOW_EXPENSE)) {
             if (expenseArg != null && !isNew) viewModelScope.launch {
-                expense.value = useCases.getExpenseById(expenseArg)
+                expense.value = useCases.getExpenditureById(expenseArg)
                 showAddCashFlowButton.value = true
             } else {
-                expense.value = Expense.CASH_FLOW_DEFAULT
+                expense.value = Expenditure.CASH_FLOW_DEFAULT
             }
         }
     }
@@ -150,7 +150,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                         return@launch
                     }
                 }
-                when (val response = useCases.saveExpense(it)) {
+                when (val response = useCases.saveExpenditure(it)) {
                     is Response.Error -> {
                         eventsChannel.send(
                             CashFlowDetailsEvents.ShowSnackbar(
@@ -160,7 +160,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                     }
                     is Response.Success -> {
                         response.data?.let { insertedId ->
-                            expense.value = useCases.getExpenseById(insertedId)
+                            expense.value = useCases.getExpenditureById(insertedId)
                             eventsChannel.send(
                                 CashFlowDetailsEvents.ProvideHapticFeedback(
                                     HapticFeedbackType.LongPress
@@ -182,8 +182,8 @@ class CashFlowDetailsViewModel @Inject constructor(
     }
 
     // Update Expense
-    private suspend fun updateExpense(updatedExpense: Expense) {
-        when (val response = useCases.saveExpense(updatedExpense)) {
+    private suspend fun updateExpense(updatedExpenditure: Expenditure) {
+        when (val response = useCases.saveExpenditure(updatedExpenditure)) {
             is Response.Error -> {
                 eventsChannel.send(
                     CashFlowDetailsEvents.ShowSnackbar(
@@ -192,7 +192,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                 )
             }
             is Response.Success ->
-                response.data?.let { expense.value = useCases.getExpenseById(it) }
+                response.data?.let { expense.value = useCases.getExpenditureById(it) }
         }
     }
 

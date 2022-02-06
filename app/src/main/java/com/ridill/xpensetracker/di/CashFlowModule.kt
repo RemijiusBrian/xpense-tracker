@@ -5,9 +5,9 @@ import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
 import com.ridill.xpensetracker.feature_cash_flow.data.repository.CashFlowRepositoryImpl
 import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
 import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.*
-import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.GetExpenseByIdUseCase
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.SaveExpenseUseCase
+import com.ridill.xpensetracker.feature_expenditures.domain.repository.ExpenditureRepository
+import com.ridill.xpensetracker.feature_expenditures.domain.use_case.GetExpenditureByIdUseCase
+import com.ridill.xpensetracker.feature_expenditures.domain.use_case.SaveExpenditureUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,18 +33,18 @@ object CashFlowModule {
     @Provides
     fun provideCashFlowUseCases(
         cashFlowRepository: CashFlowRepository,
-        expenseRepository: ExpenseRepository
+        expenditureRepository: ExpenditureRepository
     ): CashFlowDetailsUseCases = CashFlowDetailsUseCases(
-        getExpenseById = GetExpenseByIdUseCase(expenseRepository),
-        doesExpenseAlreadyExist = DoesExpenseAlreadyExistUseCase(expenseRepository),
-        getExpenseByName = GetExpenseByNameUseCase(expenseRepository),
-        saveExpense = SaveExpenseUseCase(expenseRepository),
+        getExpenditureById = GetExpenditureByIdUseCase(expenditureRepository),
+        doesExpenseAlreadyExist = DoesExpenseAlreadyExistUseCase(expenditureRepository),
+        getExpenseByName = GetExpenseByNameUseCase(expenditureRepository),
+        saveExpenditure = SaveExpenditureUseCase(expenditureRepository),
         getCashFlow = GetCashFlowForExpenseUseCase(cashFlowRepository),
         saveCashFlow = SaveCashFlowUseCase(cashFlowRepository),
         deleteCashFlow = DeleteCashFlowUseCase(cashFlowRepository),
         getOverallAmount = GetOverallAmountUseCase(cashFlowRepository),
         mapToCashFlowStatus = MapToCashFlowStatusUseCase(),
         getCashFlowById = GetCashFlowByIdUseCase(cashFlowRepository),
-        strikeOffCashFlow = StrikeOffCashFlowUseCase(cashFlowRepository, expenseRepository)
+        strikeOffCashFlow = StrikeOffCashFlowUseCase(cashFlowRepository, expenditureRepository)
     )
 }

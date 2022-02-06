@@ -1,15 +1,15 @@
 package com.ridill.xpensetracker.feature_dashboard.domain.use_case
 
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.DeleteExpenseUseCase
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.SaveExpenseUseCase
+import com.ridill.xpensetracker.feature_expenditures.domain.use_case.DeleteExpenditureUseCase
+import com.ridill.xpensetracker.feature_expenditures.domain.use_case.SaveExpenditureUseCase
 
 data class DashboardUseCases(
-    val getExpenses: GetExpensesUseCase,
+    val getExpenditures: GetExpendituresUseCase,
     val getExpenditureForCurrentMonth: GetExpenditureForCurrentMonthUseCase,
     val getBalance: GetBalanceUseCase,
     val updatePreferenceCategory: UpdatePreferenceCategoryUseCase,
-    val getExpensePreference: GetExpensePreferenceUseCase,
+    val getDashboardPreference: GetDashboardPreferenceUseCase,
     val updateExpenditureLimit: UpdateExpenditureLimitUseCase,
-    val deleteExpense: DeleteExpenseUseCase,
-    val saveExpense: SaveExpenseUseCase,
+    val deleteExpenditure: DeleteExpenditureUseCase,
+    val saveExpenditure: SaveExpenditureUseCase,
 )

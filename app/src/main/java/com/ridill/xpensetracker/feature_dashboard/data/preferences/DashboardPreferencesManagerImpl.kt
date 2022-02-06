@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferences
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
+import com.ridill.xpensetracker.feature_expenditures.domain.model.ExpenditureCategory
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
@@ -28,8 +28,8 @@ class DashboardPreferencesManagerImpl(
             else throw exception
         }.map { preferences ->
             val expenditureLimit = preferences[Keys.EXPENDITURE_LIMIT] ?: 0L
-            val category = ExpenseCategory.valueOf(
-                preferences[Keys.SELECTED_CATEGORY] ?: ExpenseCategory.EXPENSE.name
+            val category = ExpenditureCategory.valueOf(
+                preferences[Keys.SELECTED_CATEGORY] ?: ExpenditureCategory.EXPENDITURE.name
             )
 
             DashboardPreferences(
@@ -44,7 +44,7 @@ class DashboardPreferencesManagerImpl(
         }
     }
 
-    override suspend fun updateExpenseCategory(category: ExpenseCategory) {
+    override suspend fun updateExpenseCategory(category: ExpenditureCategory) {
         context.dashboardDatastore.edit { preferences ->
             preferences[Keys.SELECTED_CATEGORY] = category.name
         }

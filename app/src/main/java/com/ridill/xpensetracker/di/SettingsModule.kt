@@ -2,7 +2,7 @@ package com.ridill.xpensetracker.di
 
 import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManager
 import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManager
-import com.ridill.xpensetracker.feature_dashboard.domain.use_case.GetExpensePreferenceUseCase
+import com.ridill.xpensetracker.feature_dashboard.domain.use_case.GetDashboardPreferenceUseCase
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.UpdateExpenditureLimitUseCase
 import com.ridill.xpensetracker.feature_settings.domain.use_case.GetAppPreferenceUseCase
 import com.ridill.xpensetracker.feature_settings.domain.use_case.SettingsUseCases
@@ -23,7 +23,7 @@ object SettingsModule {
         expensePreferenceManager: DashboardPreferencesManager,
         appPreferencesManager: AppPreferencesManager
     ): SettingsUseCases = SettingsUseCases(
-        getExpensePreferences = GetExpensePreferenceUseCase(expensePreferenceManager),
+        getDashboardPreferences = GetDashboardPreferenceUseCase(expensePreferenceManager),
         updateExpenditureLimitUseCase = UpdateExpenditureLimitUseCase(expensePreferenceManager),
         getAppPreference = GetAppPreferenceUseCase(appPreferencesManager),
         updateAppTheme = UpdateAppThemeUseCase(appPreferencesManager)

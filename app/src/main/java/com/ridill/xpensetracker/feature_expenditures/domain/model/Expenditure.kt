@@ -1,55 +1,53 @@
-package com.ridill.xpensetracker.feature_dashboard.domain.model
+package com.ridill.xpensetracker.feature_expenditures.domain.model
 
 import android.os.Parcelable
 import com.ridill.xpensetracker.core.ui.util.TextUtil
-import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
+import com.ridill.xpensetracker.feature_expenditures.data.local.entity.ExpenditureEntity
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
 @Parcelize
-data class Expense(
+data class Expenditure(
     val id: Long = 0L,
     val name: String,
     val amount: Long,
     val dateMillis: Long,
     val isMonthly: Boolean,
-    val category: ExpenseCategory
+    val category: ExpenditureCategory
 ) : Parcelable {
-    val date: Date get() = Date(dateMillis)
 
     val dateFormatted: String
-        get() = TextUtil.formatDate(date)
+        get() = TextUtil.formatDate(dateMillis)
 
     val amountFormatted: String
         get() = "${Currency.getInstance(Locale.getDefault()).symbol} ${TextUtil.formatNumber(amount)}"
 
-    fun toEntity(): ExpenseEntity = ExpenseEntity(
+    fun toEntity(): ExpenditureEntity = ExpenditureEntity(
         id = id,
         name = name,
         amount = amount,
-        dateMillis = date.time,
+        dateMillis = dateMillis,
         isMonthly = isMonthly,
         category = category.name
     )
 
     companion object {
-        val DEFAULT = Expense(
+        val DEFAULT = Expenditure(
             id = 0L,
             name = "",
             amount = 0L,
             dateMillis = System.currentTimeMillis(),
             isMonthly = false,
-            category = ExpenseCategory.EXPENSE
+            category = ExpenditureCategory.EXPENDITURE
         )
 
-        val CASH_FLOW_DEFAULT = Expense(
+        val CASH_FLOW_DEFAULT = Expenditure(
             id = 0L,
             name = "",
             amount = 0L,
             dateMillis = System.currentTimeMillis(),
             isMonthly = false,
-            category = ExpenseCategory.CASH_FLOW
+            category = ExpenditureCategory.CASH_FLOW
         )
     }
 }

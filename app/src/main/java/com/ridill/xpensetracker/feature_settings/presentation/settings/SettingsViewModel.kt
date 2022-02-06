@@ -26,7 +26,7 @@ class SettingsViewModel @Inject constructor(
     val state = combineTuple(
         useCases.getAppPreference(),
         showAppThemeDialog.asFlow(),
-        useCases.getExpensePreferences(),
+        useCases.getDashboardPreferences(),
         showExpenditureLimitDialog.asFlow()
     ).map { (
                 appPreferences,

@@ -4,7 +4,7 @@ import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPref
 import com.ridill.xpensetracker.feature_dashboard.domain.model.DashboardPreferences
 import kotlinx.coroutines.flow.Flow
 
-class GetExpensePreferenceUseCase(
+class GetDashboardPreferenceUseCase(
     private val preferenceManager: DashboardPreferencesManager
 ) {
     operator fun invoke(): Flow<DashboardPreferences> = preferenceManager.preferences
