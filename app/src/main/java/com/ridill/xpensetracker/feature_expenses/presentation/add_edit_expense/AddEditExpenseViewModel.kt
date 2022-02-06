@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.core.util.Response
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.use_case.AddEditUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class AddEditExpenseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val useCases: AddEditUseCases
-) : ViewModel(), AddEditActions {
+) : ViewModel(), AddEditExpenseActions {
 
     val expense = savedStateHandle.getLiveData(KEY_EXPENSE_LIVE_DATA, Expense.DEFAULT)
 
@@ -35,7 +35,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private val eventsChannel = Channel<AddEditEvents>()
     val events = eventsChannel.receiveAsFlow()
 
-    override fun onExpenseNameChange(value: String) {
+    override fun onNameChange(value: String) {
         expense.value = expense.value?.copy(name = value)
     }
 
@@ -82,11 +82,11 @@ class AddEditExpenseViewModel @Inject constructor(
         _showDeleteExpenseDialog.value = true
     }
 
-    override fun onDeleteExpenseDialogDismissed() {
+    override fun onDeleteDialogDismissed() {
         _showDeleteExpenseDialog.value = false
     }
 
-    override fun onDeleteExpenseDialogConfirmed() {
+    override fun onDeleteDialogConfirmed() {
         viewModelScope.launch {
             expense.value?.let { useCases.deleteExpense(it) }
             _showDeleteExpenseDialog.value = false

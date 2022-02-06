@@ -1,6 +1,6 @@
 package com.ridill.xpensetracker.feature_expenses.data.repository
 
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
@@ -16,7 +16,7 @@ class ExpenseRepositoryImpl(
     override fun getExpenses(category: ExpenseCategory): Flow<List<Expense>> =
         dao.getExpenses(category).map { entities -> entities.map { it.toExpense() } }
 
-    override fun getCurrentExpenditureForMonth(): Flow<Long> =
+    override fun getExpenditureForCurrentMonth(): Flow<Long> =
         dao.getExpenditureForCurrentMonth(ExpenseCategory.YEARNING).map { it ?: 0L }
 
     override suspend fun getExpenseById(expenseId: Long): Expense? =

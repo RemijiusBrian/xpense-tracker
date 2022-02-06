@@ -17,8 +17,8 @@ sealed class Destination(
     )
 
     object AddEditExpense : Destination(
-        route = "addEditExpenditure",
-        label = R.string.add_edit_expenditure,
+        route = "addEditExpense",
+        label = R.string.add_edit_expense,
         arguments = listOf(
             navArgument(NavArgs.EXPENSE_ID) {
                 type = NavType.LongType

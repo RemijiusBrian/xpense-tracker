@@ -11,7 +11,7 @@ class GetBalanceUseCase(
     private val expenseStore: DashboardPreferencesManager
 ) {
     operator fun invoke(): Flow<Long> = combineTuple(
-        repository.getCurrentExpenditureForMonth(),
+        repository.getExpenditureForCurrentMonth(),
         expenseStore.preferences
     ).map { (expenditure, preference) ->
         preference.expenditureLimit - expenditure

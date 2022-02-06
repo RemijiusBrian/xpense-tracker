@@ -27,9 +27,9 @@ import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.util.exhaustive
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
-import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditActions
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditExpenseActions
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditExpenseViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -78,7 +78,7 @@ private fun ScreenContent(
     isEditMode: Boolean,
     showDeleteConfirmation: Boolean,
     scaffoldState: ScaffoldState,
-    actions: AddEditActions,
+    actions: AddEditExpenseActions,
     navigateBack: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
@@ -152,7 +152,7 @@ private fun ScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
                 value = expense.name,
-                onValueChange = actions::onExpenseNameChange,
+                onValueChange = actions::onNameChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
@@ -210,8 +210,8 @@ private fun ScreenContent(
                 stringResource(R.string.delete_this_expense)
             ),
             title = stringResource(R.string.confirm_delete_expense_action),
-            onDismiss = actions::onDeleteExpenseDialogDismissed,
-            onConfirm = actions::onDeleteExpenseDialogConfirmed
+            onDismiss = actions::onDeleteDialogDismissed,
+            onConfirm = actions::onDeleteDialogConfirmed
         )
     }
 }

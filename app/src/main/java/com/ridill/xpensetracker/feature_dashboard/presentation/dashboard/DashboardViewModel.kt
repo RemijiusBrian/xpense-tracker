@@ -7,7 +7,7 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
-import com.ridill.xpensetracker.feature_dashboard.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.zhuinden.flowcombinetuplekt.combineTuple
@@ -27,7 +27,7 @@ class DashboardViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), DashboardActions {
 
-    private val expensePreferences = useCases.getExpensePreference()
+    private val expensePreferences = useCases.getDashboardPreference()
 
     private val expenses = expensePreferences.flatMapLatest { preference ->
         useCases.getExpenses(category = preference.category)
@@ -154,7 +154,7 @@ class DashboardViewModel @Inject constructor(
 
     override fun onExpenseCategorySelect(category: ExpenseCategory) {
         viewModelScope.launch {
-            useCases.updatePreferenceCategory(category)
+            useCases.updateExpenseCategoryPreference(category)
         }
     }
 

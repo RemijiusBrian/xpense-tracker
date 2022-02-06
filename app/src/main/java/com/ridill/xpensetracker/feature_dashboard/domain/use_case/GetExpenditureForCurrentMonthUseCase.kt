@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 class GetExpenditureForCurrentMonthUseCase(
     private val repository: ExpenseRepository
 ) {
-    operator fun invoke(): Flow<Long> = repository.getCurrentExpenditureForMonth()
+    operator fun invoke(): Flow<Long> = repository.getExpenditureForCurrentMonth()
 }

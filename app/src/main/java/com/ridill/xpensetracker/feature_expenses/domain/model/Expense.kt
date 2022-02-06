@@ -1,9 +1,8 @@
-package com.ridill.xpensetracker.feature_dashboard.domain.model
+package com.ridill.xpensetracker.feature_expenses.domain.model
 
 import android.os.Parcelable
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -16,10 +15,9 @@ data class Expense(
     val isMonthly: Boolean,
     val category: ExpenseCategory
 ) : Parcelable {
-    val date: Date get() = Date(dateMillis)
 
     val dateFormatted: String
-        get() = TextUtil.formatDate(date)
+        get() = TextUtil.formatDate(dateMillis)
 
     val amountFormatted: String
         get() = "${Currency.getInstance(Locale.getDefault()).symbol} ${TextUtil.formatNumber(amount)}"
@@ -28,7 +26,7 @@ data class Expense(
         id = id,
         name = name,
         amount = amount,
-        dateMillis = date.time,
+        dateMillis = dateMillis,
         isMonthly = isMonthly,
         category = category.name
     )
