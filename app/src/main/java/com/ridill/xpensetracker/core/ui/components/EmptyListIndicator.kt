@@ -8,16 +8,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.theme.SpacingExtraSmall
 import kotlinx.coroutines.delay
 
 @Composable
 fun EmptyListIndicator() {
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         val animationValues = (1..3).map { index ->
             var offset by remember { mutableStateOf(0f) }
 
@@ -25,7 +31,7 @@ fun EmptyListIndicator() {
                 delay(Delay * index)
                 animate(
                     initialValue = 0f,
-                    targetValue = 12f,
+                    targetValue = -12f,
                     animationSpec = infiniteRepeatable(
                         animation = tween(
                             durationMillis = Duration,
@@ -49,9 +55,14 @@ fun EmptyListIndicator() {
             )
             Spacer(modifier = Modifier.height(SpacingExtraSmall))
         }
+        Spacer(modifier = Modifier.height(SpacingExtraSmall))
+        Text(
+            text = stringResource(R.string.list_empty),
+            style = MaterialTheme.typography.caption
+        )
     }
 }
 
 private const val Duration = 500
 private const val Delay = 100L
-private const val IntervalDuration = 3_000
+private const val IntervalDuration = 5_000

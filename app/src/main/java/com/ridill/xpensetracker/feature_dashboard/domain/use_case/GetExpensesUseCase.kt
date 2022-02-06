@@ -14,7 +14,7 @@ class GetExpensesUseCase(
     operator fun invoke(category: ExpenseCategory): Flow<Map<String, List<Expense>>> =
         repository.getExpenses(category).map { expenses ->
             expenses.groupBy {
-                SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(it.date)
+                SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(it.dateMillis)
             }
         }
 }

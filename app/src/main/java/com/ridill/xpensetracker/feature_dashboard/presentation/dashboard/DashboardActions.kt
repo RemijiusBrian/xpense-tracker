@@ -5,12 +5,12 @@ import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 interface DashboardActions {
     fun onExpenseClick(expense: Expense)
-    fun addExpenseClick(category: ExpenseCategory)
-    fun onExpenditureLimitUpdate()
-    fun dismissExpenditureLimitUpdateDialog()
-    fun updateExpenditureLimit(limit: String)
+    fun addExpenseFabClick(category: ExpenseCategory)
     fun onExpenseSwipeDeleted(expense: Expense)
     fun onExpenseCategorySelect(category: ExpenseCategory)
     fun onSettingsClick()
     fun onMonthClick(month: String)
+    fun onEditExpenditureLimitClick()
+    fun onExpenditureLimitUpdateDialogDismissed()
+    fun onExpenditureLimitUpdateDialogConfirmed(limit: String)
 }

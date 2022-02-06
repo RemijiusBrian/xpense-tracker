@@ -1,16 +1,16 @@
 package com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -28,14 +28,14 @@ import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
 import com.ridill.xpensetracker.core.ui.util.numberSliderTransition
 
 @Composable
-fun ExpenditureOverview(
+fun OverviewCards(
     modifier: Modifier = Modifier,
     expenditureLimit: String,
-    onExpenditureLimitUpdate: () -> Unit,
     currentExpenditure: String,
     balance: String,
     balancePercent: Float,
-    isBalanceEmpty: Boolean
+    isBalanceEmpty: Boolean,
+    onEditLimitClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -47,18 +47,23 @@ fun ExpenditureOverview(
                 .fillMaxHeight()
                 .weight(1f),
             limit = expenditureLimit,
-            onClick = onExpenditureLimitUpdate
+            onEditClick = onEditLimitClick
         )
         Spacer(modifier = Modifier.width(SpacingSmall))
-        CurrentExpenditureAndBalance(
+        AnimatedVisibility(
+            visible = expenditureLimit.isNotEmpty(),
             modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            expenditure = currentExpenditure,
-            balance = balance,
-            balancePercent = balancePercent,
-            isBalanceEmpty = isBalanceEmpty
-        )
+                .weight(1f)
+        ) {
+            CurrentExpenditureAndBalance(
+                modifier = Modifier
+                    .fillMaxSize(),
+                expenditure = currentExpenditure,
+                balance = balance,
+                balancePercent = balancePercent,
+                isBalanceEmpty = isBalanceEmpty
+            )
+        }
     }
 }
 
@@ -67,14 +72,13 @@ fun ExpenditureOverview(
 private fun ExpenditureLimit(
     modifier: Modifier = Modifier,
     limit: String,
-    onClick: () -> Unit
+    onEditClick: () -> Unit
 ) {
     Card(
-        onClick = onClick,
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.primary
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .background(
                     brush = Brush.horizontalGradient(
@@ -84,31 +88,55 @@ private fun ExpenditureLimit(
                         ),
                     ),
                     shape = MaterialTheme.shapes.medium
-                )
-                .padding(PaddingMedium),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
+                ),
+            contentAlignment = Alignment.Center
         ) {
-            AnimatedContent(targetState = limit) { limit ->
-                Text(
-                    text = limit,
-                    style = MaterialTheme.typography.h4,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.onPrimary
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(PaddingMedium),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                AnimatedContent(targetState = limit) { limit ->
+                    Text(
+                        text = limit.ifEmpty { stringResource(R.string.track_your_expenses) },
+                        style = if (limit.isNotEmpty()) MaterialTheme.typography.h4
+                        else MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colors.onPrimary
+                    )
+                }
+                AnimatedVisibility(visible = limit.isNotEmpty()) {
+                    Text(
+                        text = stringResource(R.string.expenditure_limit),
+                        style = MaterialTheme.typography.caption,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colors.onPrimary
+                    )
+                }
+            }
+            IconButton(
+                onClick = onEditClick,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(EditIconSize)
+                    .padding(PaddingSmall)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.update_expenditure_limit),
                 )
             }
-            Text(
-                text = stringResource(R.string.expenditure_limit),
-                style = MaterialTheme.typography.caption,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onPrimary
-            )
         }
     }
 }
 
+private val EditIconSize = 36.dp
+
+// Current Expenditure And Balance
 @Composable
 private fun CurrentExpenditureAndBalance(
     modifier: Modifier = Modifier,
@@ -133,7 +161,7 @@ private fun CurrentExpenditureAndBalance(
                             colors = listOf(
                                 MaterialTheme.colors.primary,
                                 MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f),
-                                ),
+                            ),
                         ),
                         shape = MaterialTheme.shapes.medium
                     )
@@ -144,7 +172,7 @@ private fun CurrentExpenditureAndBalance(
                     transitionSpec = { numberSliderTransition { targetState > initialState } }
                 ) { expenditure ->
                     Text(
-                        text = expenditure,
+                        text = expenditure.ifEmpty { stringResource(id = R.string.current_expenditure) },
                         style = MaterialTheme.typography.subtitle1,
                         color = MaterialTheme.colors.onPrimary
                     )
@@ -193,7 +221,7 @@ private fun CurrentExpenditureAndBalance(
                         transitionSpec = { numberSliderTransition { targetState > initialState } }
                     ) { balance ->
                         Text(
-                            text = balance,
+                            text = balance.ifEmpty { stringResource(R.string.balance) },
                             style = MaterialTheme.typography.subtitle1,
                         )
                     }

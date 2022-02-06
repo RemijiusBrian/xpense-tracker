@@ -28,7 +28,7 @@
     <string name="delete_permanently">Delete Permanently</string>
     <string name="monthly">Monthly</string>
     <string name="error_name_empty">Name cannot be empty</string>
-    <string name="error_amount_invalid">Amount must be greater than 0</string>
+    <string name="error_amount_invalid">Invalid Amount</string>
     <string name="error_unknown">An unknown error occurred</string>
     <string name="update_expenditure_limit_message">Set a limit to keep you expenses under and keep an eye on the balance from you limit.</string>
     <string name="empty" />
@@ -80,4 +80,6 @@
     <string name="xpense">Xpense</string>
     <string name="person_name">Person Name</string>
     <string name="reason_for_cash_flow">Reason for %s</string>
+    <string name="track_your_expenses">Start tracking your Xpenses already!</string>
+    <string name="list_empty">List is empty…</string>
 </resources>

@@ -1,9 +1,6 @@
 package com.ridill.xpensetracker.di
 
 import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManager
-import com.ridill.xpensetracker.feature_dashboard.data.preferences.DashboardPreferencesManager
-import com.ridill.xpensetracker.feature_dashboard.domain.use_case.GetDashboardPreferenceUseCase
-import com.ridill.xpensetracker.feature_dashboard.domain.use_case.UpdateExpenditureLimitUseCase
 import com.ridill.xpensetracker.feature_settings.domain.use_case.GetAppPreferenceUseCase
 import com.ridill.xpensetracker.feature_settings.domain.use_case.SettingsUseCases
 import com.ridill.xpensetracker.feature_settings.domain.use_case.UpdateAppThemeUseCase
@@ -20,11 +17,8 @@ object SettingsModule {
     @Singleton
     @Provides
     fun provideSettingsUseCases(
-        expensePreferenceManager: DashboardPreferencesManager,
         appPreferencesManager: AppPreferencesManager
     ): SettingsUseCases = SettingsUseCases(
-        getDashboardPreferences = GetDashboardPreferenceUseCase(expensePreferenceManager),
-        updateExpenditureLimitUseCase = UpdateExpenditureLimitUseCase(expensePreferenceManager),
         getAppPreference = GetAppPreferenceUseCase(appPreferencesManager),
         updateAppTheme = UpdateAppThemeUseCase(appPreferencesManager)
     )

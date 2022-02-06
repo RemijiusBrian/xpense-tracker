@@ -7,8 +7,8 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Response
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_dashboard.domain.use_case.DashboardUseCases
+import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,11 +41,11 @@ class DashboardViewModel @Inject constructor(
         expensePreferences
     ).map { (balance, preferences) -> balance.toFloat() / preferences.expenditureLimit }
 
-    private val showExpenditureLimitUpdateDialog =
-        savedStateHandle.getLiveData("showExpenditureUpdateDialog", false)
-
     private val currentlyShownMonth =
         savedStateHandle.getLiveData("currentlyShownMonth", getCurrentMonth())
+
+    private val showExpenditureLimitUpdateDialog =
+        savedStateHandle.getLiveData("showExpenditureLimitUpdateDialog", false)
 
     private fun getCurrentMonth(): String =
         SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(
@@ -59,27 +59,30 @@ class DashboardViewModel @Inject constructor(
         currentExpenditure,
         balanceAmount,
         balancePercentage,
-        showExpenditureLimitUpdateDialog.asFlow(),
-        currentlyShownMonth.asFlow()
+        currentlyShownMonth.asFlow(),
+        showExpenditureLimitUpdateDialog.asFlow()
     ).map { (
                 expenses,
                 preferences,
                 currentExpenditure,
                 balance,
                 balancePercentage,
-                showExpenditureLimitUpdateDialog,
-                currentlyShownMonth
+                currentlyShownMonth,
+                showExpenditureLimitUpdateDialog
             ) ->
         DashboardState(
             expenses = expenses,
             selectedExpenseCategory = preferences.category,
-            expenditureLimit = formatAmount(preferences.expenditureLimit),
-            currentExpenditure = formatAmount(currentExpenditure),
-            balance = formatAmount(balance),
+            expenditureLimit = preferences.expenditureLimit.takeIf { it > 0L }
+                ?.let { formatAmount(it) }.orEmpty(),
+            currentExpenditure = currentExpenditure.takeIf { it > 0L || preferences.expenditureLimit > 0L }
+                ?.let { formatAmount(it) }.orEmpty(),
+            balance = balance.takeIf { it > 0L }
+                ?.let { formatAmount(it) }.orEmpty(),
             balancePercentage = balancePercentage,
             isBalanceEmpty = preferences.expenditureLimit > 0 && balance <= 0L,
-            showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog,
-            currentlyShownMonth = currentlyShownMonth
+            currentlyShownMonth = currentlyShownMonth,
+            showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog
         )
     }.asLiveData()
 
@@ -98,7 +101,7 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    override fun addExpenseClick(category: ExpenseCategory) {
+    override fun addExpenseFabClick(category: ExpenseCategory) {
         viewModelScope.launch {
             val route = when (category) {
                 ExpenseCategory.EXPENSE -> Destination.AddEditExpense.route
@@ -106,35 +109,6 @@ class DashboardViewModel @Inject constructor(
                 ExpenseCategory.YEARNING -> return@launch
             }
             eventsChannel.send(ExpenseEvents.Navigate(route))
-        }
-    }
-
-    override fun onExpenditureLimitUpdate() {
-        viewModelScope.launch {
-            eventsChannel.send(ExpenseEvents.PerformHapticFeedback(HapticFeedbackType.LongPress))
-            showExpenditureLimitUpdateDialog.value = true
-        }
-    }
-
-    override fun dismissExpenditureLimitUpdateDialog() {
-        showExpenditureLimitUpdateDialog.value = false
-    }
-
-    override fun updateExpenditureLimit(limit: String) {
-        viewModelScope.launch {
-            when (val response = useCases.updateExpenditureLimit(limit)) {
-                is Response.Error -> {
-                    eventsChannel.send(
-                        ExpenseEvents.ShowSnackbar(
-                            response.message ?: R.string.error_unknown
-                        )
-                    )
-                }
-                is Response.Success -> {
-                    eventsChannel.send(ExpenseEvents.ShowSnackbar(R.string.expenditure_limit_updated))
-                }
-            }
-            showExpenditureLimitUpdateDialog.value = false
         }
     }
 
@@ -167,6 +141,30 @@ class DashboardViewModel @Inject constructor(
     override fun onMonthClick(month: String) {
         if (currentlyShownMonth.value == month) return
         currentlyShownMonth.value = month
+    }
+
+    override fun onEditExpenditureLimitClick() {
+        showExpenditureLimitUpdateDialog.value = true
+    }
+
+    override fun onExpenditureLimitUpdateDialogDismissed() {
+        showExpenditureLimitUpdateDialog.value = false
+    }
+
+    override fun onExpenditureLimitUpdateDialogConfirmed(limit: String) {
+        viewModelScope.launch {
+            when (val result = useCases.updateExpenditureLimit(limit)) {
+                is Response.Error -> {
+                    eventsChannel.send(
+                        ExpenseEvents.ShowSnackbar(result.message ?: R.string.error_unknown)
+                    )
+                }
+                is Response.Success -> {
+                    showExpenditureLimitUpdateDialog.value = false
+                    eventsChannel.send(ExpenseEvents.ShowSnackbar(R.string.expenditure_limit_updated))
+                }
+            }
+        }
     }
 
     private fun formatAmount(amount: Long): String =

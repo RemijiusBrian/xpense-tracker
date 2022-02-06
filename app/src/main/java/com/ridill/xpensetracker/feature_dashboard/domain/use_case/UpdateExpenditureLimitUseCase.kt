@@ -11,7 +11,7 @@ class UpdateExpenditureLimitUseCase(
 ) {
     suspend operator fun invoke(limit: String): SimpleResponse {
         val amount = limit.toLongOrNull() ?: preferenceManager.preferences.first().expenditureLimit
-        if (amount <= 0) {
+        if (amount < 0) {
             return Response.Error(R.string.error_amount_invalid)
         }
         preferenceManager.updateExpenditureLimit(amount)

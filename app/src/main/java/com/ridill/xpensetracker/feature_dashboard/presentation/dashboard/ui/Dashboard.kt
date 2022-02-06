@@ -136,20 +136,6 @@ private fun ScreenContent(
     actions: DashboardActions,
 ) {
     val listState = rememberLazyListState()
-    /*val toolbarHeight = 48.dp
-    val toolbarHeightPx = with(LocalDensity.current) { toolbarHeight.roundToPx().toFloat() }
-    var overviewHeight by remember { mutableStateOf(0f) }
-
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                val delta = available.y
-                val newHeight = overviewHeight + delta
-                overviewHeight = newHeight.coerceIn(-toolbarHeightPx, 0f)
-                return Offset.Zero
-            }
-        }
-    }*/
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -159,7 +145,7 @@ private fun ScreenContent(
             state.selectedExpenseCategory?.let {
                 AddExpenseFab(
                     currentCategory = it,
-                    onClick = { actions.addExpenseClick(it) }
+                    onClick = { actions.addExpenseFabClick(it) }
                 )
             }
         },
@@ -188,16 +174,16 @@ private fun ScreenContent(
             Column(
                 modifier = Modifier
             ) {
-                ExpenditureOverview(
+                OverviewCards(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.16f),
                     expenditureLimit = state.expenditureLimit,
-                    onExpenditureLimitUpdate = actions::onExpenditureLimitUpdate,
                     currentExpenditure = state.currentExpenditure,
                     balance = state.balance,
                     balancePercent = state.balancePercentage,
-                    isBalanceEmpty = state.isBalanceEmpty
+                    isBalanceEmpty = state.isBalanceEmpty,
+                    onEditLimitClick = actions::onEditExpenditureLimitClick
                 )
                 Spacer(modifier = Modifier.height(SpacingSmall))
                 Row(
@@ -272,12 +258,14 @@ private fun ScreenContent(
             }
         }
 
+        // Expenditure Limit Update
         if (state.showExpenditureLimitUpdateDialog) {
             InputDialog(
+                title = R.string.update_expenditure_limit,
                 message = R.string.update_expenditure_limit_message,
-                placeholder = state.expenditureLimit,
-                onDismiss = actions::dismissExpenditureLimitUpdateDialog,
-                onConfirm = actions::updateExpenditureLimit
+                placeholder = state.expenditureLimit.ifEmpty { stringResource(R.string.expenditure_limit) },
+                onDismiss = actions::onExpenditureLimitUpdateDialogDismissed,
+                onConfirm = actions::onExpenditureLimitUpdateDialogConfirmed
             )
         }
     }

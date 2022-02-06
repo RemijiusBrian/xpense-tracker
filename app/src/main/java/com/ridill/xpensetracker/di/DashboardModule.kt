@@ -28,15 +28,15 @@ object DashboardModule {
     @Provides
     fun provideDashboardUseCases(
         repository: ExpenseRepository,
-        dashboardStore: DashboardPreferencesManager
+        dashboardPreferencesManager: DashboardPreferencesManager
     ): DashboardUseCases = DashboardUseCases(
         getExpenses = GetExpensesUseCase(repository),
         getExpenditureForCurrentMonth = GetExpenditureForCurrentMonthUseCase(repository),
-        getDashboardPreference = GetDashboardPreferenceUseCase(dashboardStore),
-        updateExpenditureLimit = UpdateExpenditureLimitUseCase(dashboardStore),
+        getDashboardPreference = GetDashboardPreferenceUseCase(dashboardPreferencesManager),
         deleteExpense = DeleteExpenseUseCase(repository),
         saveExpense = SaveExpenseUseCase(repository),
-        updateExpenseCategoryPreference = UpdateExpenseCategoryPreferenceUseCase(dashboardStore),
-        getBalance = GetBalanceUseCase(repository, dashboardStore),
+        updateExpenseCategoryPreference = UpdateExpenseCategoryPreferenceUseCase(dashboardPreferencesManager),
+        getBalance = GetBalanceUseCase(repository, dashboardPreferencesManager),
+        updateExpenditureLimit = UpdateExpenditureLimitUseCase(dashboardPreferencesManager)
     )
 }

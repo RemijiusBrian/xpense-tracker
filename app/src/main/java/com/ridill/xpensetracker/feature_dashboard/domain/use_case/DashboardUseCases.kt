@@ -9,7 +9,7 @@ data class DashboardUseCases(
     val getBalance: GetBalanceUseCase,
     val updateExpenseCategoryPreference: UpdateExpenseCategoryPreferenceUseCase,
     val getDashboardPreference: GetDashboardPreferenceUseCase,
-    val updateExpenditureLimit: UpdateExpenditureLimitUseCase,
     val deleteExpense: DeleteExpenseUseCase,
     val saveExpense: SaveExpenseUseCase,
+    val updateExpenditureLimit: UpdateExpenditureLimitUseCase
 )

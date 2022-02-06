@@ -11,8 +11,8 @@ data class DashboardState(
     val balance: String = "",
     val balancePercentage: Float = 0f,
     val isBalanceEmpty: Boolean = false,
+    val currentlyShownMonth: String = "",
     val showExpenditureLimitUpdateDialog: Boolean = false,
-    val currentlyShownMonth: String = ""
 ) {
     companion object {
         val INITIAL: DashboardState = DashboardState()
