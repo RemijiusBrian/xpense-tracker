@@ -86,7 +86,7 @@ private fun ScreenContent(
 
         // App Theme Selection Dialog
         if (state.showAppThemeDialog) {
-            AppThemeSelectionDialog(
+            ThemeSelectionDialog(
                 selectedTheme = state.currentAppTheme,
                 onSelect = actions::onAppThemeDialogConfirm,
                 onDismiss = actions::onAppThemeDialogDismiss
@@ -155,14 +155,14 @@ private fun PreferencesItem(
 }
 
 @Composable
-private fun AppThemeSelectionDialog(
+private fun ThemeSelectionDialog(
     selectedTheme: AppTheme?,
     onSelect: (AppTheme) -> Unit,
     onDismiss: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.select_app_theme)) },
+        title = { Text(stringResource(R.string.theme)) },
         text = {
             Column(
                 modifier = Modifier
