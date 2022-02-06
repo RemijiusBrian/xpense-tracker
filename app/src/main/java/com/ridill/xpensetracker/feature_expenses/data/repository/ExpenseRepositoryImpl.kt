@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class ExpenseRepositoryImpl(
     private val dao: ExpenseDao
@@ -17,21 +16,8 @@ class ExpenseRepositoryImpl(
     override fun getExpenses(category: ExpenseCategory): Flow<List<Expense>> =
         dao.getExpenses(category).map { entities -> entities.map { it.toExpense() } }
 
-    override fun getCurrentExpenditureForMonth(): Flow<Long> {
-        val dateWithStartDay = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, getActualMinimum(Calendar.DATE))
-        }.timeInMillis
-
-        val dateWithEndDay = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DATE))
-        }.timeInMillis
-
-        return dao.getExpenditureForMonth(
-            dateWithStartDay,
-            dateWithEndDay,
-            ExpenseCategory.YEARNING
-        ).map { it ?: 0L }
-    }
+    override fun getCurrentExpenditureForMonth(): Flow<Long> =
+        dao.getExpenditureForCurrentMonth(ExpenseCategory.YEARNING).map { it ?: 0L }
 
     override suspend fun getExpenseById(expenseId: Long): Expense? =
         dao.getExpenseById(expenseId)?.toExpense()

@@ -8,21 +8,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    @Query("SELECT * FROM ExpenseEntity WHERE category = :category ORDER BY date DESC")
+    @Query("SELECT * FROM ExpenseEntity WHERE category = :category ORDER BY dateMillis DESC")
     fun getExpenses(category: ExpenseCategory): Flow<List<ExpenseEntity>>
 
     @Query(
         """
         SELECT SUM(amount)
         FROM ExpenseEntity
-        WHERE (date BETWEEN :start AND :end OR isMonthly = 1) AND category != :category
+        WHERE (strftime('%m', dateMillis / 1000, 'unixepoch') = strftime('%m', date('now')) OR isMonthly = 1)
+        AND category != :category
         """
     )
-    fun getExpenditureForMonth(
-        start: Long,
-        end: Long,
-        category: ExpenseCategory
-    ): Flow<Long?>
+    fun getExpenditureForCurrentMonth(category: ExpenseCategory): Flow<Long?>
 
     @Query("SELECT * FROM ExpenseEntity WHERE id = :expenseId")
     suspend fun getExpenseById(expenseId: Long): ExpenseEntity?

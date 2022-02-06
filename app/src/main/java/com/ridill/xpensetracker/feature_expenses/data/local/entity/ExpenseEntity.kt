@@ -11,7 +11,7 @@ data class ExpenseEntity(
     val id: Long = 0L,
     val name: String,
     val amount: Long,
-    val date: Long = System.currentTimeMillis(),
+    val dateMillis: Long = System.currentTimeMillis(),
     val isMonthly: Boolean = false,
     val category: String,
 ) {
@@ -19,7 +19,7 @@ data class ExpenseEntity(
         id = id,
         name = name,
         amount = amount,
-        dateMillis = date,
+        dateMillis = dateMillis,
         isMonthly = isMonthly,
         category = ExpenseCategory.valueOf(category)
     )

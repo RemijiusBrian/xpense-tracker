@@ -28,7 +28,7 @@ data class Expense(
         id = id,
         name = name,
         amount = amount,
-        date = date.time,
+        dateMillis = date.time,
         isMonthly = isMonthly,
         category = category.name
     )
