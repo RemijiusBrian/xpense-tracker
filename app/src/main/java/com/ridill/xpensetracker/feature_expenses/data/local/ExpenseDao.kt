@@ -21,8 +21,8 @@ interface ExpenseDao {
     )
     fun getExpenditureForCurrentMonth(category: ExpenseCategory): Flow<Long?>
 
-    @Query("SELECT * FROM ExpenseEntity WHERE id = :expenseId")
-    suspend fun getExpenseById(expenseId: Long): ExpenseEntity?
+    @Query("SELECT * FROM ExpenseEntity WHERE id = :id")
+    suspend fun getExpenseById(id: Long): ExpenseEntity?
 
     @Query("SELECT * FROM ExpenseEntity WHERE name = :name LIMIT 1")
     suspend fun getExpenseByName(name: String): ExpenseEntity?

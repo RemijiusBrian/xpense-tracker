@@ -10,7 +10,7 @@ interface ExpenseRepository {
 
     fun getExpenditureForCurrentMonth(): Flow<Long>
 
-    suspend fun getExpenseById(expenseId: Long): Expense?
+    suspend fun getExpenseById(id: Long): Expense?
 
     suspend fun getExpenseByName(name: String): Expense?
 
