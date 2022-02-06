@@ -8,7 +8,7 @@
     <string name="expenditure_limit">Expenditure Limit</string>
     <string name="current_expenditure">Current Expenditure</string>
     <string name="balance">Balance</string>
-    <string name="add_edit_expense">Add Edit Expense</string>
+    <string name="add_edit_expenditure">Add Edit Expenditure</string>
     <string name="update_expenditure_limit">Update Your Expenditure Limit</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
