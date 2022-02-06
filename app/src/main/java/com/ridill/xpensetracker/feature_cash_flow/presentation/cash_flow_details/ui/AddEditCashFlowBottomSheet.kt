@@ -109,7 +109,14 @@ fun AddEditCashFlowBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-                label = { Text(stringResource(R.string.name)) },
+                label = {
+                    Text(
+                        stringResource(
+                            R.string.reason_for_cash_flow,
+                            stringResource(if (lending) R.string.lending else R.string.borrowing)
+                        )
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next

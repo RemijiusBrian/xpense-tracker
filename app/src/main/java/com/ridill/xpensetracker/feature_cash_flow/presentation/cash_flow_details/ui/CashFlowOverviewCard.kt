@@ -95,7 +95,7 @@ fun CashFlowOverviewCard(
                         modifier = Modifier
                             .weight(1f)
                             .focusRequester(focusRequester),
-                        label = { Text(stringResource(R.string.name)) },
+                        label = { Text(stringResource(R.string.person_name)) },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Done
