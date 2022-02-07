@@ -49,15 +49,12 @@ fun OverviewCards(
             limit = expenditureLimit,
             onEditClick = onEditLimitClick
         )
-        Spacer(modifier = Modifier.width(SpacingSmall))
-        AnimatedVisibility(
-            visible = expenditureLimit.isNotEmpty(),
-            modifier = Modifier
-                .weight(1f)
-        ) {
+        if (expenditureLimit.isNotEmpty()) {
+            Spacer(modifier = Modifier.width(SpacingSmall))
             CurrentExpenditureAndBalance(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .fillMaxHeight()
+                    .weight(1f),
                 expenditure = currentExpenditure,
                 balance = balance,
                 balancePercent = balancePercent,
