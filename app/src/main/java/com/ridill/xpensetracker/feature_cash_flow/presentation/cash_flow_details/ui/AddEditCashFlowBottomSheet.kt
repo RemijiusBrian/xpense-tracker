@@ -125,7 +125,8 @@ fun AddEditCashFlowBottomSheet(
                     onNext = {
                         focusManager.moveFocus(FocusDirection.Down)
                     }
-                )
+                ),
+                singleLine = true
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
             TextField(
@@ -141,7 +142,8 @@ fun AddEditCashFlowBottomSheet(
                 keyboardActions = KeyboardActions(
                     onDone = { onConfirm(repaymentAmount) }
                 ),
-                readOnly = repaymentMode
+                readOnly = repaymentMode,
+                singleLine = true
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
             Row(
@@ -156,9 +158,7 @@ fun AddEditCashFlowBottomSheet(
                         .weight(1f)
                 ) {
                     AnimatedVisibility(visible = !repaymentMode) {
-                        Text(
-                            text = stringResource(R.string.repayment),
-                        )
+                        Text(stringResource(R.string.repayment))
                     }
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowRight,
@@ -183,13 +183,14 @@ fun AddEditCashFlowBottomSheet(
                     if (repaymentMode) {
                         OutlinedTextField(
                             value = repaymentAmount,
-                            onValueChange = { repaymentAmount = it },
+                            onValueChange = { repaymentAmount = it.trim() },
                             modifier = Modifier
                                 .width(TotalSliderWidth),
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number
                             ),
-                            placeholder = { Text(stringResource(R.string.repaid_amount)) }
+                            placeholder = { Text(stringResource(R.string.repaid_amount)) },
+                            singleLine = true
                         )
                     } else {
                         LendingSlider(

@@ -124,8 +124,8 @@ class CashFlowDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onExpenseNameChange(value: String) {
-        expense.value = expense.value?.copy(name = value)
+    override fun onPersonNameChange(value: String) {
+        expense.value = expense.value?.copy(name = value.trim())
     }
 
     override fun onDismissEditMode() {
@@ -138,7 +138,7 @@ class CashFlowDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onConfirmExpenseNameChange() {
+    override fun onPersonNameConfirm() {
         viewModelScope.launch {
             expense.value?.let {
                 if (isNew) {
@@ -211,11 +211,12 @@ class CashFlowDetailsViewModel @Inject constructor(
     }
 
     override fun onCashFlowNameChange(value: String) {
-        _activeCashFlow.value = activeCashFlow.value?.copy(name = value)
+        _activeCashFlow.value = activeCashFlow.value?.copy(name = value.trim())
     }
 
     override fun onCashFlowAmountChange(value: String) {
-        _activeCashFlow.value = activeCashFlow.value?.copy(amount = value.toLongOrNull() ?: 0L)
+        _activeCashFlow.value =
+            activeCashFlow.value?.copy(amount = value.trim().toLongOrNull() ?: 0L)
     }
 
     override fun onCashFlowLendingChange(value: Boolean) {

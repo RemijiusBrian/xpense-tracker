@@ -5,9 +5,9 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOp
 
 interface CashFlowDetailsActions {
     fun onMenuOptionSelect(option: CashFlowDetailsOptions)
-    fun onExpenseNameChange(value: String)
+    fun onPersonNameChange(value: String)
     fun onDismissEditMode()
-    fun onConfirmExpenseNameChange()
+    fun onPersonNameConfirm()
     fun onAddCashFlowClick()
     fun onDismissAddEditCashFlow()
     fun onCashFlowNameChange(value: String)

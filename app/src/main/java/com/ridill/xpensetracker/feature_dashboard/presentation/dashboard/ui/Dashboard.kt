@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,10 +35,9 @@ import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardActions
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardState
 import com.ridill.xpensetracker.feature_dashboard.presentation.dashboard.DashboardViewModel
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
-import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETE
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETED
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_UPDATED
 import kotlinx.coroutines.flow.collectLatest
 
@@ -63,7 +63,7 @@ fun Dashboard(
             val message = when (result) {
                 RESULT_EXPENSE_ADDED -> R.string.expense_added
                 RESULT_EXPENSE_UPDATED -> R.string.expense_updated
-                RESULT_EXPENSE_DELETE -> R.string.expense_deleted
+                RESULT_EXPENSE_DELETED -> R.string.expense_deleted
                 else -> R.string.empty
             }
             context.getString(message).takeIf { it.isNotEmpty() }?.let { msg ->
@@ -143,10 +143,15 @@ private fun ScreenContent(
             .fillMaxSize(),
         floatingActionButton = {
             state.selectedExpenseCategory?.let {
-                AddExpenseFab(
-                    currentCategory = it,
-                    onClick = { actions.addExpenseFabClick(it) }
-                )
+                FloatingActionButton(onClick = { actions.addExpenseFabClick(it) }) {
+                    Icon(
+                        painter = painterResource(it.icon),
+                        contentDescription = stringResource(
+                            R.string.add_category_placeholder,
+                            stringResource(it.label)
+                        )
+                    )
+                }
             }
         },
         topBar = {
@@ -206,7 +211,9 @@ private fun ScreenContent(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                if (state.expenses.isNotEmpty()) {
+                if (state.expenses.isEmpty()) {
+                    EmptyListIndicator()
+                } else {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize(),
@@ -227,33 +234,18 @@ private fun ScreenContent(
 
                             if (state.currentlyShownMonth == month) {
                                 items(expenses, key = { it.id }) { expense ->
-                                    if (expense.category == ExpenseCategory.CASH_FLOW) {
-                                        CashFlowCategoryItem(
-                                            modifier = Modifier
-                                                .animateItemPlacement(),
-                                            name = expense.name,
-                                            amount = expense.amountFormatted,
-                                            date = expense.dateFormatted,
-                                            onClick = { actions.onExpenseClick(expense) },
-                                        )
-                                    } else {
-                                        ExpenseCategoryItem(
-                                            modifier = Modifier
-                                                .animateItemPlacement(),
-                                            name = expense.name,
-                                            amount = expense.amountFormatted,
-                                            date = expense.dateFormatted,
-                                            onClick = { actions.onExpenseClick(expense) },
-                                            isMonthly = expense.isMonthly,
-                                            onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
-                                        )
-                                    }
+                                    ExpenseItem(
+                                        name = expense.name,
+                                        amount = expense.amountFormatted,
+                                        date = expense.dateFormatted,
+                                        category = expense.category,
+                                        onClick = { actions.onExpenseClick(expense) },
+                                        onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
+                                    )
                                 }
                             }
                         }
                     }
-                } else {
-                    EmptyListIndicator()
                 }
             }
         }
@@ -263,7 +255,7 @@ private fun ScreenContent(
             InputDialog(
                 title = R.string.update_expenditure_limit,
                 message = R.string.update_expenditure_limit_message,
-                placeholder = state.expenditureLimit.ifEmpty { stringResource(R.string.expenditure_limit) },
+                placeholder = state.expenditureLimit.ifEmpty { stringResource(R.string.limit) },
                 onDismiss = actions::onExpenditureLimitUpdateDialogDismissed,
                 onConfirm = actions::onExpenditureLimitUpdateDialogConfirmed
             )

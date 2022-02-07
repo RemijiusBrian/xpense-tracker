@@ -23,7 +23,8 @@ fun InputDialog(
     @StringRes message: Int,
     placeholder: String? = null,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Number
 ) {
     var input by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
@@ -48,8 +49,9 @@ fun InputDialog(
                     value = input,
                     onValueChange = { input = it },
                     placeholder = { placeholder?.let { Text(it) } },
+                    singleLine = true,
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
+                        keyboardType = keyboardType,
                         imeAction = ImeAction.Done
                     ),
                     keyboardActions = KeyboardActions(

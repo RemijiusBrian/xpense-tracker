@@ -12,9 +12,9 @@ class SaveExpenseUseCase(
         if (expense.name.isEmpty()) {
             return Response.Error(message = R.string.error_name_empty)
         }
-        /*if (expense.amount <= 0) {
+        if (expense.amount < 0) {
             return Response.Error(message = R.string.error_amount_invalid)
-        }*/
+        }
         return Response.Success(repository.cacheExpense(expense))
     }
 }

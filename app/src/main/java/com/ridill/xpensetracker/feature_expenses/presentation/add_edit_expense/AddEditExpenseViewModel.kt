@@ -36,18 +36,17 @@ class AddEditExpenseViewModel @Inject constructor(
     val events = eventsChannel.receiveAsFlow()
 
     override fun onNameChange(value: String) {
-        expense.value = expense.value?.copy(name = value)
+        expense.value = expense.value?.copy(name = value.trim())
     }
 
     override fun onAmountChange(value: String) {
-        expense.value = expense.value?.copy(amount = value.toLongOrNull() ?: 0)
+        expense.value = expense.value?.copy(amount = value.trim().toLongOrNull() ?: 0)
     }
 
     init {
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && isEditMode) viewModelScope.launch {
                 expense.value = useCases.getExpenseById(expenseId)
-                println("AppDebug: Expense - ${expense.value}")
             } else expense.value = Expense.DEFAULT
         }
     }
@@ -90,7 +89,7 @@ class AddEditExpenseViewModel @Inject constructor(
         viewModelScope.launch {
             expense.value?.let { useCases.deleteExpense(it) }
             _showDeleteExpenseDialog.value = false
-            eventsChannel.send(AddEditEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETE))
+            eventsChannel.send(AddEditEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
         }
     }
 
@@ -105,4 +104,4 @@ private const val KEY_EXPENSE_LIVE_DATA = "KEY_EXPENSE_LIVE_DATA"
 const val ADD_EDIT_EXPENSE_RESULT = "ADD_EDIT_EXPENSE_RESULT"
 const val RESULT_EXPENSE_ADDED = "RESULT_EXPENSE_ADDED"
 const val RESULT_EXPENSE_UPDATED = "RESULT_EXPENSE_UPDATED"
-const val RESULT_EXPENSE_DELETE = "RESULT_EXPENSE_DELETED"
+const val RESULT_EXPENSE_DELETED = "RESULT_EXPENSE_DELETED"

@@ -5,83 +5,59 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 import com.ridill.xpensetracker.core.ui.theme.SpacingExtraSmall
-import com.ridill.xpensetracker.core.ui.theme.ZeroDp
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 
 @Composable
-fun ExpenseCategoryItem(
+fun ExpenseItem(
     modifier: Modifier = Modifier,
     name: String,
     amount: String,
     date: String,
-    isMonthly: Boolean,
+    category: ExpenseCategory,
     onClick: () -> Unit,
     onSwipeDeleted: () -> Unit
 ) {
-    val dismissState = rememberDismissState(
-        confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
-                onSwipeDeleted()
-            }
-            true
-        }
-    )
-    SwipeToDismiss(
-        state = dismissState,
-        background = {},
-        modifier = modifier
-    ) {
-        Card(
-            onClick = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = PaddingSmall),
-            elevation = ZeroDp
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .weight(1f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = amount,
-                        style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.Bold
-                    )
+    if (category == ExpenseCategory.CASH_FLOW) {
+        ExpenseDetailsCard(
+            modifier = modifier,
+            name = name,
+            amount = amount,
+            date = date,
+            onClick = onClick
+        )
+    } else {
+        val dismissState = rememberDismissState(
+            confirmStateChange = {
+                if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+                    onSwipeDeleted()
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = if (isMonthly) stringResource(R.string.monthly) else date,
-                    style = MaterialTheme.typography.caption,
-                )
+                true
             }
+        )
+
+        SwipeToDismiss(
+            state = dismissState,
+            background = {},
+            modifier = modifier
+        ) {
+            ExpenseDetailsCard(
+                name = name,
+                amount = amount,
+                date = date,
+                onClick = onClick
+            )
         }
     }
 }
 
 @Composable
-fun CashFlowCategoryItem(
+private fun ExpenseDetailsCard(
     modifier: Modifier = Modifier,
     name: String,
     amount: String,

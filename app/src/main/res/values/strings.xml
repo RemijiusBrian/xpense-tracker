@@ -30,7 +30,7 @@
     <string name="error_name_empty">Name cannot be empty</string>
     <string name="error_amount_invalid">Invalid Amount</string>
     <string name="error_unknown">An unknown error occurred</string>
-    <string name="update_expenditure_limit_message">Set a limit to keep you expenses under and keep an eye on the balance from you limit.</string>
+    <string name="update_expenditure_limit_message">Set a limit to keep you expenses under</string>
     <string name="empty" />
     <string name="cash_flow_details">Cash Flow</string>
     <string name="error_name_already_exists">Name already exits</string>
@@ -82,4 +82,5 @@
     <string name="reason_for_cash_flow">Reason for %s</string>
     <string name="track_your_expenses">Start tracking your Xpenses already!</string>
     <string name="list_empty">List is empty…</string>
+    <string name="error_invalid_input">Invalid Input</string>
 </resources>

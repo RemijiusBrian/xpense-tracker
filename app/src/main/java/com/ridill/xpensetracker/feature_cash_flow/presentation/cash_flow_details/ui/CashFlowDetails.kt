@@ -195,9 +195,9 @@ private fun ScreenContent(
                 CashFlowOverviewCard(
                     isEditMode = state.editMode,
                     name = expenseName,
-                    onNameChange = actions::onExpenseNameChange,
+                    onNameChange = actions::onPersonNameChange,
                     aggregateAmount = state.aggregateAmount,
-                    onConfirmEdit = actions::onConfirmExpenseNameChange,
+                    onConfirmEdit = actions::onPersonNameConfirm,
                     cashFlowStatus = it1
                 )
             }
