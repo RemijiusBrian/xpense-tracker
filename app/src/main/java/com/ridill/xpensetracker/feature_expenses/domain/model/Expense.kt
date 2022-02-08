@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Parcelize
@@ -17,7 +18,7 @@ data class Expense(
 ) : Parcelable {
 
     val dateFormatted: String
-        get() = TextUtil.formatDate(dateMillis)
+        get() = SimpleDateFormat("dd, EEEE", Locale.getDefault()).format(Date(dateMillis))
 
     val amountFormatted: String
         get() = "${Currency.getInstance(Locale.getDefault()).symbol} ${TextUtil.formatNumber(amount)}"

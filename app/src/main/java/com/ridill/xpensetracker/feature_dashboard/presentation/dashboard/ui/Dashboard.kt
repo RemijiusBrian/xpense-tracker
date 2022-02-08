@@ -222,7 +222,7 @@ private fun ScreenContent(
                         ),
                         state = listState,
                     ) {
-                        state.expenses.forEach { (month, expenses) ->
+                        state.monthsList.forEach { month ->
                             item(key = month) {
                                 DateSeparator(
                                     modifier = Modifier
@@ -232,9 +232,11 @@ private fun ScreenContent(
                                 )
                             }
 
-                            if (state.currentlyShownMonth == month) {
-                                items(expenses, key = { it.id }) { expense ->
+                            if (state.currentlyShownDate == month) {
+                                items(state.expenses, key = { it.id }) { expense ->
                                     ExpenseItem(
+                                        modifier = Modifier
+                                            .animateItemPlacement(),
                                         name = expense.name,
                                         amount = expense.amountFormatted,
                                         date = expense.dateFormatted,

@@ -29,8 +29,16 @@ class DashboardViewModel @Inject constructor(
 
     private val expensePreferences = useCases.getDashboardPreference()
 
-    private val expenses = expensePreferences.flatMapLatest { preference ->
-        useCases.getExpenses(category = preference.category)
+    private val currentlyShownDate =
+        savedStateHandle.getLiveData("currentlyShownDate", getCurrentMonth())
+
+    private val monthsList = useCases.getMonthsList()
+
+    private val expenses = combineTuple(
+        expensePreferences,
+        currentlyShownDate.asFlow()
+    ).flatMapLatest { (preference, date) ->
+        useCases.getExpensesForMonth(category = preference.category, date = date)
     }
 
     // Expenditure Limit + Current Expenditure + Balance
@@ -40,9 +48,6 @@ class DashboardViewModel @Inject constructor(
         balanceAmount,
         expensePreferences
     ).map { (balance, preferences) -> balance.toFloat() / preferences.expenditureLimit }
-
-    private val currentlyShownMonth =
-        savedStateHandle.getLiveData("currentlyShownMonth", getCurrentMonth())
 
     private val showExpenditureLimitUpdateDialog =
         savedStateHandle.getLiveData("showExpenditureLimitUpdateDialog", false)
@@ -54,14 +59,16 @@ class DashboardViewModel @Inject constructor(
 
     // Ui State
     val state = combineTuple(
+        monthsList,
         expenses,
         expensePreferences,
         currentExpenditure,
         balanceAmount,
         balancePercentage,
-        currentlyShownMonth.asFlow(),
+        currentlyShownDate.asFlow(),
         showExpenditureLimitUpdateDialog.asFlow()
     ).map { (
+                monthsList,
                 expenses,
                 preferences,
                 currentExpenditure,
@@ -71,6 +78,7 @@ class DashboardViewModel @Inject constructor(
                 showExpenditureLimitUpdateDialog
             ) ->
         DashboardState(
+            monthsList = monthsList,
             expenses = expenses,
             selectedExpenseCategory = preferences.category,
             expenditureLimit = preferences.expenditureLimit.takeIf { it > 0L }
@@ -81,7 +89,7 @@ class DashboardViewModel @Inject constructor(
                 ?.let { formatAmount(it) }.orEmpty(),
             balancePercentage = balancePercentage,
             isBalanceEmpty = preferences.expenditureLimit > 0 && balance <= 0L,
-            currentlyShownMonth = currentlyShownMonth,
+            currentlyShownDate = currentlyShownMonth,
             showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog
         )
     }.asLiveData()
@@ -139,8 +147,8 @@ class DashboardViewModel @Inject constructor(
     }
 
     override fun onMonthClick(month: String) {
-        if (currentlyShownMonth.value == month) return
-        currentlyShownMonth.value = month
+        if (currentlyShownDate.value == month) return
+        currentlyShownDate.value = month
     }
 
     override fun onEditExpenditureLimitClick() {

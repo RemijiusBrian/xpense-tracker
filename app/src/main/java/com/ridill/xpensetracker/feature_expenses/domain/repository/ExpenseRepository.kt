@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
 
-    fun getExpenses(category: ExpenseCategory): Flow<List<Expense>>
+    fun getMothsOfExpenses(): Flow<List<String>>
+
+    fun getExpensesForMonth(category: ExpenseCategory, month: String): Flow<List<Expense>>
 
     fun getExpenditureForCurrentMonth(): Flow<Long>
 

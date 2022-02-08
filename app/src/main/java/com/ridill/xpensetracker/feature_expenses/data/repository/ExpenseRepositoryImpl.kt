@@ -13,8 +13,15 @@ class ExpenseRepositoryImpl(
     private val dao: ExpenseDao
 ) : ExpenseRepository {
 
-    override fun getExpenses(category: ExpenseCategory): Flow<List<Expense>> =
-        dao.getExpenses(category).map { entities -> entities.map { it.toExpense() } }
+    override fun getMothsOfExpenses(): Flow<List<String>> =
+        dao.getMonthsOfExpenses()
+
+    override fun getExpensesForMonth(
+        category: ExpenseCategory,
+        month: String
+    ): Flow<List<Expense>> = dao.getExpenses(category, month).map { entities ->
+        entities.map { it.toExpense() }
+    }
 
     override fun getExpenditureForCurrentMonth(): Flow<Long> =
         dao.getExpenditureForCurrentMonth(ExpenseCategory.YEARNING).map { it ?: 0L }

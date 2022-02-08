@@ -30,7 +30,8 @@ object DashboardModule {
         repository: ExpenseRepository,
         dashboardPreferencesManager: DashboardPreferencesManager
     ): DashboardUseCases = DashboardUseCases(
-        getExpenses = GetExpensesUseCase(repository),
+        getMonthsList = GetMonthListUseCase(repository),
+        getExpensesForMonth = GetExpensesForMonthUseCase(repository),
         getExpenditureForCurrentMonth = GetExpenditureForCurrentMonthUseCase(repository),
         getDashboardPreference = GetDashboardPreferenceUseCase(dashboardPreferencesManager),
         deleteExpense = DeleteExpenseUseCase(repository),
