@@ -6,6 +6,7 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
@@ -45,9 +46,8 @@ fun XpenseTrackerTheme(
 ) {
     val systemUiController = rememberSystemUiController()
 
-    val systemBarsColor = if (darkTheme) DarkSecondaryContainer else MoneyGreen
     SideEffect {
-        systemUiController.setSystemBarsColor(color = systemBarsColor)
+        systemUiController.setSystemBarsColor(color = Color.Transparent)
     }
 
     val colors = if (darkTheme) {
