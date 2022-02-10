@@ -50,15 +50,6 @@ fun CashFlowDetails(
     val keyboardController = LocalSoftwareKeyboardController.current
     val hapticFeedback = LocalHapticFeedback.current
 
-    // BackPress when bottom sheet open
-    /*BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) scope.launch {
-            bottomSheetScaffoldState.bottomSheetState.collapse()
-        }
-        println("AppDebug: Bottom Sheet State - ${bottomSheetScaffoldState.bottomSheetState.currentValue}")
-        println("AppDebug: Bottom Sheet Expanded - ${bottomSheetScaffoldState.bottomSheetState.isExpanded}")
-    }*/
-
     LaunchedEffect(Unit) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         viewModel.events.collectLatest { event ->
