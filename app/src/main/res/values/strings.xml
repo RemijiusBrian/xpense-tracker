@@ -36,7 +36,7 @@
     <string name="error_name_already_exists">Name already exits</string>
     <string name="delete_empty_cash_flow">Delete Empty Cash Flows</string>
     <string name="add_cash_flow">Add Cash Flow</string>
-    <string name="all_cleared">All Cleared</string>
+    <string name="cleared">Cleared</string>
     <string name="balance_animation">Balance Animation</string>
     <string name="balance_transition_width">Balance Card Width</string>
     <string name="balance_transition_color">Balance Card Color</string>
@@ -50,9 +50,9 @@
     <string name="cash_flow_added">Cash Flow Added</string>
     <string name="cash_flow_deleted">Cash Flow Deleted!</string>
     <string name="edit">Edit</string>
-    <string name="strike_off">Strike Off</string>
-    <string name="confirm_cash_flow_strike_off">Strike This Cash Flow Off?</string>
-    <string name="strike_this_cash_flow_off">strike this cash flow off</string>
+    <string name="clear">Clear</string>
+    <string name="confirm_clear_cash_flow">Clear This Cash Flow?</string>
+    <string name="clear_this_cash_flow">clear this cash flow</string>
     <string name="confirm_action_message">Are you sure you want to %s? This action is irreversible and cannot be undone.</string>
     <string name="cash_flow_cleared">Cash Flow Cleared!</string>
     <string name="search">Search</string>
@@ -81,6 +81,14 @@
     <string name="person_name">Person Name</string>
     <string name="reason_for_cash_flow">Reason for %s</string>
     <string name="track_your_expenses">Start tracking your Xpenses already!</string>
-    <string name="list_empty">List is empty…</string>
     <string name="error_invalid_input">Invalid Input</string>
+    <string name="expense_plans">Plans</string>
+    <string name="expenses">Expenses</string>
+    <string name="list_empty">List is empty…</string>
+    <string name="grid_empty">Grid is empty…</string>
+    <string name="error_invalid_repayment">Invalid amount</string>
+    <string name="include_cash_flow_in_expenditure">Include cash flow in expenditure</string>
+    <string name="pending">Pending</string>
+    <string name="payment_pending">Payment Pending</string>
+    <string name="coming_soon">Coming Soon</string>
 </resources>

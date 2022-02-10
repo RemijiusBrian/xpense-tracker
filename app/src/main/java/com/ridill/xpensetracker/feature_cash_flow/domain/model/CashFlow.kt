@@ -9,7 +9,7 @@ import java.util.*
 @Parcelize
 data class CashFlow(
     val id: Long,
-    val expense: Long,
+    val agent: Long,
     val name: String,
     val amount: Long,
     private val date: Long,
@@ -23,7 +23,7 @@ data class CashFlow(
 
     fun toEntity(): CashFlowEntity = CashFlowEntity(
         id = id,
-        expenseId = expense,
+        agent = agent,
         name = name,
         amount = amount,
         date = date,
@@ -31,9 +31,9 @@ data class CashFlow(
     )
 
     companion object {
-        fun default(expenseId: Long): CashFlow = CashFlow(
+        fun default(agentId: Long): CashFlow = CashFlow(
             id = 0L,
-            expense = expenseId,
+            agent = agentId,
             name = "",
             amount = 0L,
             date = System.currentTimeMillis(),

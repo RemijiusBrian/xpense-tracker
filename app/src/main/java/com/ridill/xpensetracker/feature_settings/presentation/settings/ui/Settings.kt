@@ -70,7 +70,11 @@ private fun ScreenContent(
                 onClick = actions::onAppThemePreferenceClick,
                 icon = Icons.Default.BrightnessMedium
             )
-            Divider()
+            ToggleablePreference(
+                title = R.string.include_cash_flow_in_expenditure,
+                isChecked = state.cashFlowIncludedInExpenditure,
+                onCheckedChange = actions::onIncludeCashFlowInExpenditureCheckedChange
+            )
         }
 
         // App Theme Selection Dialog
@@ -129,6 +133,45 @@ private fun PreferencesItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ToggleablePreference(
+    modifier: Modifier = Modifier,
+    @StringRes title: Int,
+    @StringRes description: Int? = null,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = { onCheckedChange(!isChecked) })
+            .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(title),
+                maxLines = 1,
+            )
+            if (description != null) {
+                Text(
+                    text = stringResource(description),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.body2
+                )
+            }
+        }
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
 

@@ -1,14 +1,13 @@
 package com.ridill.xpensetracker.feature_expenses.domain.repository
 
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
 
     fun getMothsOfExpenses(): Flow<List<String>>
 
-    fun getExpensesForMonth(category: ExpenseCategory, month: String): Flow<List<Expense>>
+    fun getExpensesForMonth(month: String): Flow<List<Expense>>
 
     fun getExpenditureForCurrentMonth(): Flow<Long>
 

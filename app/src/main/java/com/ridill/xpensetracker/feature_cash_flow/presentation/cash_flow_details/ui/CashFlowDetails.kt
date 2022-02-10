@@ -41,7 +41,7 @@ fun CashFlowDetails(
     navController: NavController,
     viewModel: CashFlowDetailsViewModel = hiltViewModel()
 ) {
-    val expenseName by viewModel.expenseName.observeAsState("")
+    val agentName by viewModel.agentName.observeAsState("")
     val state by viewModel.state.observeAsState(CashFlowDetailsState.initial)
     val activeCashFlow by viewModel.activeCashFlow.observeAsState()
 
@@ -108,7 +108,7 @@ fun CashFlowDetails(
     ScreenContent(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         state = state,
-        expenseName = expenseName,
+        agentName = agentName,
         actions = viewModel,
         activeCashFlow = activeCashFlow,
         navigateBack = navController::popBackStack
@@ -119,7 +119,7 @@ fun CashFlowDetails(
 private fun ScreenContent(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: CashFlowDetailsState,
-    expenseName: String,
+    agentName: String,
     actions: CashFlowDetailsActions,
     activeCashFlow: CashFlow?,
     navigateBack: () -> Unit
@@ -135,7 +135,7 @@ private fun ScreenContent(
                     onAmountChange = actions::onCashFlowAmountChange,
                     lending = cashFlow.lending,
                     onLendingChange = actions::onCashFlowLendingChange,
-                    onDismiss = actions::onDismissAddEditCashFlow,
+                    onDismiss = actions::onAddEditCashFlowDismiss,
                     onConfirm = actions::onAddEditCashFlowConfirm
                 )
             }
@@ -191,14 +191,14 @@ private fun ScreenContent(
                 .padding(horizontal = PaddingMedium)
                 .padding(top = PaddingLarge)
         ) {
-            state.cashFlowStatus?.let { it1 ->
-                CashFlowOverviewCard(
+            state.aggregateAmountState?.let { aggregateAmountState ->
+                AgentDetails(
                     isEditMode = state.editMode,
-                    name = expenseName,
-                    onNameChange = actions::onPersonNameChange,
+                    name = agentName,
+                    onNameChange = actions::onAgentNameChange,
                     aggregateAmount = state.aggregateAmount,
-                    onConfirmEdit = actions::onPersonNameConfirm,
-                    cashFlowStatus = it1
+                    onEditConfirm = actions::onEditConfirm,
+                    aggregateAmountState = aggregateAmountState
                 )
             }
             Row(
@@ -268,13 +268,13 @@ private fun ScreenContent(
         }
         if (state.showClearCashFlowConfirmation) {
             ConfirmationDialog(
-                title = stringResource(R.string.confirm_cash_flow_strike_off),
+                title = stringResource(R.string.confirm_clear_cash_flow),
                 text = stringResource(
                     R.string.confirm_action_message,
-                    stringResource(R.string.strike_this_cash_flow_off)
+                    stringResource(R.string.clear_this_cash_flow)
                 ),
-                onDismiss = actions::onStrikeOffDismiss,
-                onConfirm = actions::onStrikeOffConfirm
+                onDismiss = actions::onClearCashFlowDismiss,
+                onConfirm = actions::onClearCashFlowConfirm
             )
         }
     }

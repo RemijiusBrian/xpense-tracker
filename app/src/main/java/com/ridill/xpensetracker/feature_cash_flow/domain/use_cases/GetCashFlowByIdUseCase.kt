@@ -6,6 +6,6 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepo
 class GetCashFlowByIdUseCase(
     private val repository: CashFlowRepository
 ) {
-    suspend operator fun invoke(expenseId: Long, name: String): CashFlow? =
-        repository.getCashFlowById(expenseId, name)
+    suspend operator fun invoke(expenseId: Long): CashFlow? =
+        repository.getCashFlowById(expenseId)
 }

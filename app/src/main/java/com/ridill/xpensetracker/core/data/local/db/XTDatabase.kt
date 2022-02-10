@@ -3,6 +3,7 @@ package com.ridill.xpensetracker.core.data.local.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
+import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowAgentEntity
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowEntity
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
@@ -10,6 +11,7 @@ import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 @Database(
     entities = [
         ExpenseEntity::class,
+        CashFlowAgentEntity::class,
         CashFlowEntity::class
     ],
     version = 1,

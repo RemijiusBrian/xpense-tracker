@@ -2,7 +2,6 @@ package com.ridill.xpensetracker.feature_expenses.data.local
 
 import androidx.room.*
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,24 +15,21 @@ interface ExpenseDao {
         SELECT *
         FROM ExpenseEntity
         WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month OR isMonthly = 1)
-        AND category = :category
         ORDER BY dateMillis DESC
     """
     )
     fun getExpenses(
-        category: ExpenseCategory,
         month: String
     ): Flow<List<ExpenseEntity>>
 
     @Query(
         """
-        SELECT SUM(amount)
+        SELECT IFNULL(SUM(amount), 0)
         FROM ExpenseEntity
         WHERE (strftime('%m', dateMillis / 1000, 'unixepoch') = strftime('%m', date('now')) OR isMonthly = 1)
-        AND category != :category
         """
     )
-    fun getExpenditureForCurrentMonth(category: ExpenseCategory): Flow<Long?>
+    fun getExpenditureForCurrentMonth(): Flow<Long>
 
     @Query("SELECT * FROM ExpenseEntity WHERE id = :id")
     suspend fun getExpenseById(id: Long): ExpenseEntity?

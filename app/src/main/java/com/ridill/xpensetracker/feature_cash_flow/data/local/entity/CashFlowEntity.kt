@@ -5,14 +5,13 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
-import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = ExpenseEntity::class,
+            entity = CashFlowAgentEntity::class,
             parentColumns = ["id"],
-            childColumns = ["expenseId"]
+            childColumns = ["agent"]
         )
     ]
 )
@@ -20,7 +19,7 @@ data class CashFlowEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     @ColumnInfo(index = true)
-    val expenseId: Long,
+    val agent: Long,
     val name: String,
     val amount: Long,
     val date: Long,
@@ -28,7 +27,7 @@ data class CashFlowEntity(
 ) {
     fun toCashFlow(): CashFlow = CashFlow(
         id = id,
-        expense = expenseId,
+        agent = agent,
         name = name,
         amount = amount,
         date = date,

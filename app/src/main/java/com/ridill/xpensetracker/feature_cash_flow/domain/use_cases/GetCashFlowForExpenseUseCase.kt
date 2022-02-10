@@ -8,5 +8,5 @@ class GetCashFlowForExpenseUseCase(
     private val repository: CashFlowRepository
 ) {
     operator fun invoke(expenseId: Long): Flow<List<CashFlow>> =
-        repository.getCashFlowForExpense(expenseId)
+        repository.getCashFlowForAgent(expenseId)
 }

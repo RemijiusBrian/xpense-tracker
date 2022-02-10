@@ -5,11 +5,11 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOp
 
 interface CashFlowDetailsActions {
     fun onMenuOptionSelect(option: CashFlowDetailsOptions)
-    fun onPersonNameChange(value: String)
+    fun onAgentNameChange(value: String)
     fun onDismissEditMode()
-    fun onPersonNameConfirm()
+    fun onEditConfirm()
     fun onAddCashFlowClick()
-    fun onDismissAddEditCashFlow()
+    fun onAddEditCashFlowDismiss()
     fun onCashFlowNameChange(value: String)
     fun onCashFlowAmountChange(value: String)
     fun onCashFlowLendingChange(value: Boolean)
@@ -17,6 +17,6 @@ interface CashFlowDetailsActions {
     fun onCashFlowSwipeDelete(cashFlow: CashFlow)
     fun onUndoCashFlowDelete(cashFlow: CashFlow)
     fun onCashFlowClick(cashFlow: CashFlow)
-    fun onStrikeOffDismiss()
-    fun onStrikeOffConfirm()
+    fun onClearCashFlowDismiss()
+    fun onClearCashFlowConfirm()
 }

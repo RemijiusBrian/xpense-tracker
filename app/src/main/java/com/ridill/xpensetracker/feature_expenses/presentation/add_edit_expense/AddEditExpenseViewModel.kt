@@ -9,7 +9,7 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.core.util.Response
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.AddEditUseCases
+import com.ridill.xpensetracker.feature_expenses.domain.use_case.AddEditExpenseUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val useCases: AddEditUseCases
+    private val useCases: AddEditExpenseUseCases
 ) : ViewModel(), AddEditExpenseActions {
 
     val expense = savedStateHandle.getLiveData(KEY_EXPENSE_LIVE_DATA, Expense.DEFAULT)
@@ -32,7 +32,7 @@ class AddEditExpenseViewModel @Inject constructor(
     )
     val showDeleteExpenseDialog: LiveData<Boolean> = _showDeleteExpenseDialog
 
-    private val eventsChannel = Channel<AddEditEvents>()
+    private val eventsChannel = Channel<AddEditExpenseEvents>()
     val events = eventsChannel.receiveAsFlow()
 
     override fun onNameChange(value: String) {
@@ -57,7 +57,7 @@ class AddEditExpenseViewModel @Inject constructor(
                 when (val response = useCases.saveExpense(it)) {
                     is Response.Error -> {
                         eventsChannel.send(
-                            AddEditEvents.ShowSnackbar(
+                            AddEditExpenseEvents.ShowSnackbar(
                                 response.message
                                     ?: R.string.error_unknown
                             )
@@ -66,7 +66,7 @@ class AddEditExpenseViewModel @Inject constructor(
                     is Response.Success -> {
                         val result = if (isEditMode) RESULT_EXPENSE_UPDATED
                         else RESULT_EXPENSE_ADDED
-                        eventsChannel.send(AddEditEvents.NavigateBackWithResult(result))
+                        eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(result))
                     }
                 }
             }
@@ -89,13 +89,14 @@ class AddEditExpenseViewModel @Inject constructor(
         viewModelScope.launch {
             expense.value?.let { useCases.deleteExpense(it) }
             _showDeleteExpenseDialog.value = false
-            eventsChannel.send(AddEditEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
+            eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
         }
     }
 
-    sealed class AddEditEvents {
-        data class NavigateBackWithResult(val result: String) : AddEditEvents()
-        data class ShowSnackbar(@StringRes val message: Int) : AddEditEvents()
+    // Events
+    sealed class AddEditExpenseEvents {
+        data class NavigateBackWithResult(val result: String) : AddEditExpenseEvents()
+        data class ShowSnackbar(@StringRes val message: Int) : AddEditExpenseEvents()
     }
 }
 

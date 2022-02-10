@@ -47,13 +47,13 @@ fun AddEditExpense(
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {
-                is AddEditExpenseViewModel.AddEditEvents.NavigateBackWithResult -> {
+                is AddEditExpenseViewModel.AddEditExpenseEvents.NavigateBackWithResult -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         ADD_EDIT_EXPENSE_RESULT, event.result
                     )
                     navController.popBackStack()
                 }
-                is AddEditExpenseViewModel.AddEditEvents.ShowSnackbar -> {
+                is AddEditExpenseViewModel.AddEditExpenseEvents.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         context.getString(event.message)
                     )

@@ -29,6 +29,7 @@ class SettingsViewModel @Inject constructor(
         SettingsState(
             currentAppTheme = appPreferences.theme,
             showAppThemeDialog = showAppThemeDialog,
+            cashFlowIncludedInExpenditure = appPreferences.cashFlowIncludedInExpenditure
         )
     }.asLiveData()
 
@@ -44,6 +45,12 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             useCases.updateAppTheme(theme)
             showAppThemeDialog.value = false
+        }
+    }
+
+    override fun onIncludeCashFlowInExpenditureCheckedChange(isChecked: Boolean) {
+        viewModelScope.launch {
+            useCases.updateCashFlowIncludedInExpenditure(isChecked)
         }
     }
 }

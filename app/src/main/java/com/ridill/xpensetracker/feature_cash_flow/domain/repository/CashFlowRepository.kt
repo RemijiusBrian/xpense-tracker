@@ -1,17 +1,28 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.repository
 
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
+import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import kotlinx.coroutines.flow.Flow
 
 interface CashFlowRepository {
 
-    fun getCashFlowForExpense(expenseId: Long): Flow<List<CashFlow>>
+    fun getAgents(): Flow<List<CashFlowAgent>>
 
-    suspend fun getCashFlowById(expenseId: Long, name: String): CashFlow?
+    fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>>
+
+    fun getTotalCashFlow(): Flow<Long>
+
+    suspend fun getAgentById(id: Long): CashFlowAgent?
+
+    suspend fun getAgentByName(name: String): CashFlowAgent?
+
+    suspend fun getCashFlowById(id: Long): CashFlow?
+
+    suspend fun cacheAgent(agent: CashFlowAgent): Long
 
     suspend fun cacheCashFlow(cashFlow: CashFlow): Long
 
-    suspend fun deleteCashFlow(cashFlow: CashFlow): Int
+    suspend fun clearCashFlowWithAgent(agent: CashFlowAgent)
 
-    suspend fun clearCache()
+    suspend fun deleteCashFlow(cashFlow: CashFlow)
 }
