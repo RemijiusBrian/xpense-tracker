@@ -64,7 +64,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
     implementation 'androidx.activity:activity-compose:1.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
@@ -79,7 +79,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:$compose_version")
 
     // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.5.0-alpha01")
+    implementation("androidx.navigation:navigation-compose:2.5.0-alpha02")
 
     // Accompanist
     implementation("com.google.accompanist:accompanist-navigation-animation:$accompanist_version")
@@ -94,7 +94,7 @@ dependencies {
     implementation("com.github.Zhuinden:flow-combinetuple-kt:1.1.1")
 
     // Lifecycle Components
-    def lifecycle_version = "2.4.0"
+    def lifecycle_version = "2.5.0-alpha02"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
