@@ -71,9 +71,10 @@ private fun ScreenContent(
                 icon = Icons.Default.BrightnessMedium
             )
             ToggleablePreference(
-                title = R.string.include_cash_flow_in_expenditure,
+                title = R.string.sum_cash_flow_and_expenditure,
                 isChecked = state.cashFlowIncludedInExpenditure,
-                onCheckedChange = actions::onIncludeCashFlowInExpenditureCheckedChange
+                onCheckedChange = actions::onIncludeCashFlowInExpenditureCheckedChange,
+                description = R.string.sum_cash_flow_and_expenditure_desc
             )
         }
 
@@ -170,7 +171,11 @@ private fun ToggleablePreference(
         }
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colors.primary,
+                uncheckedThumbColor = MaterialTheme.colors.onSurface
+            )
         )
     }
 }

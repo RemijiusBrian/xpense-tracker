@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -33,6 +32,7 @@ import com.ridill.xpensetracker.core.ui.navigation.BottomNavDestinations
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.navigation.Navigation
 import com.ridill.xpensetracker.core.ui.theme.XpenseTrackerTheme
+import com.ridill.xpensetracker.core.ui.theme.onPrimarySurface
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -108,7 +108,7 @@ private fun ScreenContent() {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = stringResource(R.string.settings),
-                            tint = Color.Gray
+                            tint = MaterialTheme.colors.onPrimarySurface.copy(alpha = 0.54f)
                         )
                     }
                 }

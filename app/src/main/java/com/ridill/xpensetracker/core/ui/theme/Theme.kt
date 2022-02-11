@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.core.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -63,3 +64,5 @@ fun XpenseTrackerTheme(
         content = content
     )
 }
+
+val Colors.onPrimarySurface: Color get() = if (isLight) onPrimary else onSurface
