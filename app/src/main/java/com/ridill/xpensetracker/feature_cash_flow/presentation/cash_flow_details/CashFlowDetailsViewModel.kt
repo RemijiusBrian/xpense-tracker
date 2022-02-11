@@ -30,7 +30,7 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     // Agent Live Data
     private val agentLiveData =
-        savedStateHandle.getLiveData(KEY_CASH_FLOW_AGENT, CashFlowAgent.DEFAULT)
+        savedStateHandle.getLiveData<CashFlowAgent>(KEY_CASH_FLOW_AGENT)
     val agentName: LiveData<String> = agentLiveData.map { it.name }
 
     // Agent Argument
@@ -38,15 +38,12 @@ class CashFlowDetailsViewModel @Inject constructor(
     private var isNew = agentIdArg == -1L
 
     init {
-        println("AppDebug: SavedStateHandle ${!savedStateHandle.contains(KEY_CASH_FLOW_AGENT)}")
         if (!savedStateHandle.contains(KEY_CASH_FLOW_AGENT)) {
             if (agentIdArg != null && !isNew) viewModelScope.launch {
                 agentLiveData.value = useCases.getAgentById(agentIdArg)
-                println("AppDebug: Agent Retrieved - ${agentLiveData.value}")
                 showAddCashFlowButton.value = true
             } else {
                 agentLiveData.value = CashFlowAgent.DEFAULT
-                println("AppDebug: Agent Default - ${agentLiveData.value}")
             }
         }
     }
@@ -167,7 +164,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                             eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
                         }
                     }
-                }
+                }.exhaustive
             }
         }
     }
@@ -221,7 +218,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                         )
                         eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
                     }
-                }
+                }.exhaustive
             }
         }
     }
@@ -238,7 +235,6 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onUndoCashFlowDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
-
             when (
                 val response = useCases.saveCashFlow(cashFlow = cashFlow, repayment = "0")
             ) {
@@ -250,7 +246,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                     )
                 }
                 is Response.Success -> Unit
-            }
+            }.exhaustive
         }
     }
 

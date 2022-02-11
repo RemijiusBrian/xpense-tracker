@@ -22,7 +22,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private val useCases: AddEditExpenseUseCases
 ) : ViewModel(), AddEditExpenseActions {
 
-    val expense = savedStateHandle.getLiveData(KEY_EXPENSE_LIVE_DATA, Expense.DEFAULT)
+    val expense = savedStateHandle.getLiveData<Expense>(KEY_EXPENSE_LIVE_DATA)
 
     private val expenseId = savedStateHandle.get<Long>(NavArgs.EXPENSE_ID)
     val isEditMode = expenseId != -1L
@@ -33,7 +33,6 @@ class AddEditExpenseViewModel @Inject constructor(
     val showDeleteExpenseDialog: LiveData<Boolean> = _showDeleteExpenseDialog
 
     init {
-        println("AppDebug: SavedStateHandle ${!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)}")
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && isEditMode) viewModelScope.launch {
                 expense.value = useCases.getExpenseById(expenseId)
