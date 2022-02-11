@@ -33,7 +33,6 @@ object CashFlowModule {
         repository: CashFlowRepository
     ): CashFlowUseCases = CashFlowUseCases(
         getAgents = GetAgentsUseCase(repository),
-        getTotalCashFlowAmount = GetTotalCashFlowAmountUseCase(repository)
     )
 
     // CashFlow Details Use Cases

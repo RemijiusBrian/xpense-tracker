@@ -28,22 +28,25 @@ class CashFlowDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), CashFlowDetailsActions {
 
-    // Agent Argument
-    private val agentIdArg = savedStateHandle.get<Long>(NavArgs.AGENT_ID)
-    private var isNew = agentIdArg == -1L
-
     // Agent Live Data
     private val agentLiveData =
         savedStateHandle.getLiveData(KEY_CASH_FLOW_AGENT, CashFlowAgent.DEFAULT)
     val agentName: LiveData<String> = agentLiveData.map { it.name }
 
+    // Agent Argument
+    private val agentIdArg = savedStateHandle.get<Long>(NavArgs.AGENT_ID)
+    private var isNew = agentIdArg == -1L
+
     init {
+        println("AppDebug: SavedStateHandle ${!savedStateHandle.contains(KEY_CASH_FLOW_AGENT)}")
         if (!savedStateHandle.contains(KEY_CASH_FLOW_AGENT)) {
             if (agentIdArg != null && !isNew) viewModelScope.launch {
                 agentLiveData.value = useCases.getAgentById(agentIdArg)
+                println("AppDebug: Agent Retrieved - ${agentLiveData.value}")
                 showAddCashFlowButton.value = true
             } else {
                 agentLiveData.value = CashFlowAgent.DEFAULT
+                println("AppDebug: Agent Default - ${agentLiveData.value}")
             }
         }
     }
@@ -102,7 +105,7 @@ class CashFlowDetailsViewModel @Inject constructor(
             aggregateAmount = "${TextUtil.currencySymbol} ${
                 TextUtil.formatNumber(abs(cashFlowAggregate))
             }",
-            aggregateAmountState = cashFlowStatus,
+            cashFlowStatus = cashFlowStatus,
             showClearCashFlowConfirmation = showClearConfirmationDialog
         )
     }.asLiveData()
@@ -287,7 +290,6 @@ class CashFlowDetailsViewModel @Inject constructor(
             CashFlowDetailsEvents()
     }
 }
-
 
 private const val KEY_CASH_FLOW_AGENT = "KEY_CASH_FLOW_AGENT"
 

@@ -8,7 +8,7 @@ data class CashFlowDetailsState(
     val editMode: Boolean = false,
     val showAddCashFlowButton: Boolean = false,
     val aggregateAmount: String = "",
-    val aggregateAmountState: AggregateAmountState? = null,
+    val cashFlowStatus: AggregateAmountState? = null,
     val showClearCashFlowConfirmation: Boolean = false
 ) {
     companion object {

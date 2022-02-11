@@ -182,7 +182,7 @@ private fun ScreenContent(
                 .padding(horizontal = PaddingMedium)
                 .padding(top = PaddingLarge)
         ) {
-            state.aggregateAmountState?.let { aggregateAmountState ->
+            state.cashFlowStatus?.let { aggregateAmountState ->
                 AgentDetails(
                     isEditMode = state.editMode,
                     name = agentName,

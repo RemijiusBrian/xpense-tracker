@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow.ui
+package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,8 +29,8 @@ import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
-import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow.CashFlowActions
-import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow.CashFlowViewModel
+import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowActions
+import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowViewModel
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_CASH_FLOW_CLEARED
 import kotlinx.coroutines.flow.collectLatest

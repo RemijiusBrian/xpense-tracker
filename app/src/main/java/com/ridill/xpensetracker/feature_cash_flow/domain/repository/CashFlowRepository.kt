@@ -10,7 +10,7 @@ interface CashFlowRepository {
 
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>>
 
-    fun getTotalCashFlow(): Flow<Long>
+    fun getTotalCashFlowAmount(): Flow<Long>
 
     suspend fun getAgentById(id: Long): CashFlowAgent?
 

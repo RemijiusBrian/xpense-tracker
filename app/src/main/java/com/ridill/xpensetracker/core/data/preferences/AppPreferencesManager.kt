@@ -9,6 +9,4 @@ interface AppPreferencesManager {
     val preferences: Flow<AppPreferences>
 
     suspend fun updateAppTheme(theme: AppTheme)
-
-    suspend fun updateCashFlowInlcudedInExpenditure(add: Boolean)
 }

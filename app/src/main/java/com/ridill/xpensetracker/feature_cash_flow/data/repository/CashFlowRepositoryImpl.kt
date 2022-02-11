@@ -19,7 +19,7 @@ class CashFlowRepositoryImpl(
             entities.map { it.toCashFlow() }
         }
 
-    override fun getTotalCashFlow(): Flow<Long> =
+    override fun getTotalCashFlowAmount(): Flow<Long> =
         dao.getTotalCashFlowAmount()
 
     override suspend fun getAgentById(id: Long): CashFlowAgent? =

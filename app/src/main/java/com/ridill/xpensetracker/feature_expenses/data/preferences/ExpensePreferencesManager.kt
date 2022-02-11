@@ -8,4 +8,6 @@ interface ExpensePreferencesManager {
     val preferences: Flow<ExpensePreferences>
 
     suspend fun updateExpenditureLimit(limit: Long)
+
+    suspend fun updateCashFlowIncludedInExpenditure(include: Boolean)
 }

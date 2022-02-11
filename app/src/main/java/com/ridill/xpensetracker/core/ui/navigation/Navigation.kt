@@ -7,7 +7,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
-import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow.ui.CashFlow
+import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui.CashFlowDetails
 import com.ridill.xpensetracker.feature_expense_plan.presentation.expense_plans.ui.ExpensePlans
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ui.AddEditExpense

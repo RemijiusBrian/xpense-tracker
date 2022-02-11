@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow.ui
+package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

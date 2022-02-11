@@ -1,10 +1,8 @@
 package com.ridill.xpensetracker.di
 
 import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManager
-import com.ridill.xpensetracker.feature_settings.domain.use_case.UpdateCashFlowIncludedInExpenditureUseCase
-import com.ridill.xpensetracker.feature_settings.domain.use_case.GetAppPreferenceUseCase
-import com.ridill.xpensetracker.feature_settings.domain.use_case.SettingsUseCases
-import com.ridill.xpensetracker.feature_settings.domain.use_case.UpdateAppThemeUseCase
+import com.ridill.xpensetracker.feature_expenses.data.preferences.ExpensePreferencesManager
+import com.ridill.xpensetracker.feature_settings.domain.use_case.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,10 +16,13 @@ object SettingsModule {
     @Singleton
     @Provides
     fun provideSettingsUseCases(
-        appPreferencesManager: AppPreferencesManager
+        appPreferencesManager: AppPreferencesManager,
+        expensePreferencesManager: ExpensePreferencesManager
     ): SettingsUseCases = SettingsUseCases(
         getAppPreference = GetAppPreferenceUseCase(appPreferencesManager),
+        getExpensePreferences = GetExpensePreferencesUseCase(expensePreferencesManager),
         updateAppTheme = UpdateAppThemeUseCase(appPreferencesManager),
-        updateCashFlowIncludedInExpenditure = UpdateCashFlowIncludedInExpenditureUseCase(appPreferencesManager)
+        updateCashFlowIncludedInExpenditure =
+        UpdateCashFlowIncludedInExpenditureUseCase(expensePreferencesManager)
     )
 }

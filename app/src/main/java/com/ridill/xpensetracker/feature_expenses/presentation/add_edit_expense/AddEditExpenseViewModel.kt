@@ -32,6 +32,15 @@ class AddEditExpenseViewModel @Inject constructor(
     )
     val showDeleteExpenseDialog: LiveData<Boolean> = _showDeleteExpenseDialog
 
+    init {
+        println("AppDebug: SavedStateHandle ${!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)}")
+        if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
+            if (expenseId != null && isEditMode) viewModelScope.launch {
+                expense.value = useCases.getExpenseById(expenseId)
+            } else expense.value = Expense.DEFAULT
+        }
+    }
+
     private val eventsChannel = Channel<AddEditExpenseEvents>()
     val events = eventsChannel.receiveAsFlow()
 
@@ -41,14 +50,6 @@ class AddEditExpenseViewModel @Inject constructor(
 
     override fun onAmountChange(value: String) {
         expense.value = expense.value?.copy(amount = value.trim().toLongOrNull() ?: 0)
-    }
-
-    init {
-        if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
-            if (expenseId != null && isEditMode) viewModelScope.launch {
-                expense.value = useCases.getExpenseById(expenseId)
-            } else expense.value = Expense.DEFAULT
-        }
     }
 
     override fun onSaveClick() {

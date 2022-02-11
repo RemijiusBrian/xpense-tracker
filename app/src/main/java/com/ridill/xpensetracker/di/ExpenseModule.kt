@@ -2,6 +2,7 @@ package com.ridill.xpensetracker.di
 
 import android.app.Application
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
+import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.preferences.ExpensePreferencesManager
 import com.ridill.xpensetracker.feature_expenses.data.preferences.ExpensePreferencesManagerImpl
@@ -39,16 +40,19 @@ object ExpenseModule {
     @Provides
     fun provideExpensesUseCases(
         repository: ExpenseRepository,
-        expensePreferencesManager: ExpensePreferencesManager
+        expensePreferencesManager: ExpensePreferencesManager,
+        cashFlowRepository: CashFlowRepository
     ): ExpensesUseCases = ExpensesUseCases(
         getMonthsList = GetMonthListUseCase(repository),
         getExpensesForMonth = GetExpensesForMonthUseCase(repository),
-        getExpenditureForCurrentMonth = GetExpenditureForCurrentMonthUseCase(repository),
         getExpensePreferences = GetExpensePreferencesUseCase(expensePreferencesManager),
         deleteExpense = DeleteExpenseUseCase(repository),
         saveExpense = SaveExpenseUseCase(repository),
-        getSpendingBalance = GetSpendingBalanceUseCase(repository, expensePreferencesManager),
-        updateExpenditureLimit = UpdateExpenditureLimitUseCase(expensePreferencesManager)
+        getSpendingBalance =
+        GetSpendingBalanceUseCase(repository, expensePreferencesManager, cashFlowRepository),
+        updateExpenditureLimit = UpdateExpenditureLimitUseCase(expensePreferencesManager),
+        getExpenditureForCurrentMonth =
+        GetExpenditureForCurrentMonthUseCase(repository, expensePreferencesManager, cashFlowRepository)
     )
 
     // Add/Edit Expense Use Cases

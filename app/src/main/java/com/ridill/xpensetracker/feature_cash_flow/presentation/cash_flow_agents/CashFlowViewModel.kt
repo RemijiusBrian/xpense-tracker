@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow
+package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
