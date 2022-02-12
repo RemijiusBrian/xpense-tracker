@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CashFlowDao {
 
-    @Query("SELECT * FROM CashFlowAgentEntity ORDER BY name")
-    fun getAgents(): Flow<List<CashFlowAgentEntity>>
+    @Query("SELECT * FROM CashFlowAgentEntity WHERE name LIKE '%' || :query || '%' ORDER BY name")
+    fun getAgents(query: String): Flow<List<CashFlowAgentEntity>>
 
     @Query("SELECT * FROM CashFlowEntity WHERE agent = :agent")
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlowEntity>>

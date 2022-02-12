@@ -11,8 +11,8 @@ class CashFlowRepositoryImpl(
     private val dao: CashFlowDao,
 ) : CashFlowRepository {
 
-    override fun getAgents(): Flow<List<CashFlowAgent>> =
-        dao.getAgents().map { entities -> entities.map { it.toAgent() } }
+    override fun getAgents(searchQuery: String): Flow<List<CashFlowAgent>> =
+        dao.getAgents(searchQuery).map { entities -> entities.map { it.toAgent() } }
 
     override fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>> =
         dao.getCashFlowForAgent(agent).map { entities ->

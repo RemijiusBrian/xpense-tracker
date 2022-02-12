@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CashFlowRepository {
 
-    fun getAgents(): Flow<List<CashFlowAgent>>
+    fun getAgents(searchQuery: String): Flow<List<CashFlowAgent>>
 
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>>
 

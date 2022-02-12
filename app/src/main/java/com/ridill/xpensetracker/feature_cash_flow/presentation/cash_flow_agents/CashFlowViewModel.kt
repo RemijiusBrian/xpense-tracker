@@ -1,28 +1,38 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.CashFlowUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CashFlowViewModel @Inject constructor(
-    useCases: CashFlowUseCases
+    useCases: CashFlowUseCases,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), CashFlowActions {
-
-    // Agents List
-    val agents = useCases.getAgents().asLiveData()
 
     // Events Channel
     private val eventsChannel = Channel<CashFlowEvents>()
     val events = eventsChannel.receiveAsFlow()
+
+    // Search Mode
+    private val _searchModeActive = savedStateHandle.getLiveData("searchModeActive", false)
+    val searchModeActive: LiveData<Boolean> = _searchModeActive
+
+    // Search Query
+    private val _searchQuery = savedStateHandle.getLiveData("searchQuery", "")
+    val searchQuery: LiveData<String> = _searchQuery
+
+    // Agents List
+    val agents = searchQuery.asFlow().flatMapLatest { query ->
+        useCases.getAgents(query)
+    }.asLiveData()
 
     override fun onAgentClick(agent: CashFlowAgent) {
         viewModelScope.launch {
@@ -34,6 +44,23 @@ class CashFlowViewModel @Inject constructor(
         viewModelScope.launch {
             eventsChannel.send(CashFlowEvents.Navigate(Destination.CashFlowDetails.route))
         }
+    }
+
+    override fun onSearchClick() {
+        _searchModeActive.value = true
+    }
+
+    override fun onSearchDismiss() {
+        _searchQuery.value = ""
+        _searchModeActive.value = false
+    }
+
+    override fun onSearchQueryClear() {
+        _searchQuery.value = ""
+    }
+
+    override fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
     }
 
     // Events

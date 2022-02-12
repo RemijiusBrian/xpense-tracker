@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 class GetAgentsUseCase(
     private val repository: CashFlowRepository
 ) {
-    operator fun invoke(): Flow<List<CashFlowAgent>> = repository.getAgents()
+    operator fun invoke(query: String): Flow<List<CashFlowAgent>> = repository.getAgents(query)
 }
