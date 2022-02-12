@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ridill.xpensetracker">
 
     <application
-        android:name="com.ridill.xpensetracker.XTApplication"
-        android:allowBackup="false"
+        android:name=".XTApplication"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App.Splash">
+        android:theme="@style/Theme.App.Splash"
+        tools:targetApi="s">
         <activity
             android:name=".core.ui.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.App.Splash"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
