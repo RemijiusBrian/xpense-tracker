@@ -26,7 +26,7 @@ class ExpensesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), ExpensesActions {
 
-    private val expensePreferences = useCases.getExpensePreferences()
+    private val expensePreferences = useCases.getPreferences()
 
     private val currentlyShownDate =
         savedStateHandle.getLiveData("currentlyShownDate", getCurrentMonth())

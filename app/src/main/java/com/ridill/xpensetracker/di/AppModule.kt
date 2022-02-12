@@ -10,8 +10,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
-import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManager
-import com.ridill.xpensetracker.core.data.preferences.AppPreferencesManagerImpl
+import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
+import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManagerImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,11 +34,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAppPreferencesManager(application: Application): AppPreferencesManager =
-        AppPreferencesManagerImpl(application)
-
-    @Singleton
-    @Provides
     fun provideXTDatastore(@ApplicationContext context: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             corruptionHandler = ReplaceFileCorruptionHandler(
@@ -46,6 +41,11 @@ object AppModule {
             ),
             produceFile = { context.preferencesDataStoreFile(XT_PREFERENCES) }
         )
+
+    @Singleton
+    @Provides
+    fun provideAppPreferencesManager(dataStore: DataStore<Preferences>): XTPreferencesManager =
+        XTPreferencesManagerImpl(dataStore)
 }
 
 private const val XT_PREFERENCES = "XT_PREFERENCES"

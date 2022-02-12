@@ -20,18 +20,16 @@ class SettingsViewModel @Inject constructor(
 
     // Ui State
     val state = combineTuple(
-        useCases.getAppPreference(),
-        useCases.getExpensePreferences(),
+        useCases.getPreferences(),
         showAppThemeDialog.asFlow(),
     ).map { (
-                appPreferences,
-                expensePreferences,
+                preferences,
                 showAppThemeDialog,
             ) ->
         SettingsState(
-            currentAppTheme = appPreferences.theme,
+            currentAppTheme = preferences.theme,
             showAppThemeDialog = showAppThemeDialog,
-            cashFlowIncludedInExpenditure = expensePreferences.cashFlowIncludedInExpenditure
+            cashFlowIncludedInExpenditure = preferences.cashFlowIncludedInExpenditure
         )
     }.asLiveData()
 
