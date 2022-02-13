@@ -8,8 +8,22 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CashFlowDao {
 
-    @Query("SELECT * FROM CashFlowAgentEntity WHERE name LIKE '%' || :query || '%' ORDER BY name")
+    @Query("SELECT * FROM CashFlowAgentEntity WHERE name LIKE '%' || :query || '%' ORDER BY createdDateMillis DESC")
     fun getAgents(query: String): Flow<List<CashFlowAgentEntity>>
+
+    /*@Query(
+        """
+        SELECT ca.id as id, ca.name as name, (
+            IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE lent = 1 AND agent = ca.id), 0) - 
+            IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE lent = 0 AND agent = ca.id), 0)
+        ) as aggregate
+        FROM CashFlowEntity cf
+        LEFT JOIN CashFlowAgentEntity ca ON cf.agent = ca.id
+        GROUP BY ca.id
+        HAVING ca.name LIKE '%' || :query || '%' ORDER BY ca.name
+    """
+    )
+    fun getAgentsWithAggregate(query: String): Flow<List<AgentWithAggregate>>*/
 
     @Query("SELECT * FROM CashFlowEntity WHERE agent = :agent")
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlowEntity>>

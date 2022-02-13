@@ -32,6 +32,7 @@ class CashFlowDetailsViewModel @Inject constructor(
     private val agentLiveData =
         savedStateHandle.getLiveData<CashFlowAgent>(KEY_CASH_FLOW_AGENT)
     val agentName: LiveData<String> = agentLiveData.map { it.name }
+    val agentCreatedDate: LiveData<String> = agentLiveData.map { it.createdDateFormatted }
 
     // Agent Argument
     private val agentIdArg = savedStateHandle.get<Long>(NavArgs.AGENT_ID)

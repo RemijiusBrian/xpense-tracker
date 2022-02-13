@@ -2,7 +2,6 @@ package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
 import androidx.lifecycle.*
 import com.ridill.xpensetracker.core.ui.navigation.Destination
-import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.CashFlowUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -34,9 +33,13 @@ class CashFlowViewModel @Inject constructor(
         useCases.getAgents(query)
     }.asLiveData()
 
-    override fun onAgentClick(agent: CashFlowAgent) {
+    override fun onAgentClick(agentId: Long) {
         viewModelScope.launch {
-            eventsChannel.send(CashFlowEvents.Navigate(Destination.CashFlowDetails.buildRoute(agent.id)))
+            eventsChannel.send(
+                CashFlowEvents.Navigate(
+                    Destination.CashFlowDetails.buildRoute(agentId)
+                )
+            )
         }
     }
 

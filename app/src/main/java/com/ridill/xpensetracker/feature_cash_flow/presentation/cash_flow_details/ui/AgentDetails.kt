@@ -38,6 +38,7 @@ fun AgentDetails(
     modifier: Modifier = Modifier,
     isEditMode: Boolean,
     name: String,
+    date: String,
     onNameChange: (String) -> Unit,
     aggregateAmount: String,
     aggregateAmountState: AggregateAmountState,
@@ -116,12 +117,18 @@ fun AgentDetails(
                         singleLine = true
                     )
                 } else {
-                    Text(
-                        text = name,
-                        style = MaterialTheme.typography.h6,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Column {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.h6,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = date,
+                            style = MaterialTheme.typography.caption
+                        )
+                    }
                 }
             }
             Spacer(modifier = Modifier.width(SpacingMedium))

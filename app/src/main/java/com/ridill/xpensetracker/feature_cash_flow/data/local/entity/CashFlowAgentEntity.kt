@@ -9,6 +9,7 @@ data class CashFlowAgentEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
+    val createdDateMillis: Long
 ) {
     fun toAgent(): CashFlowAgent = CashFlowAgent(
         id = id,

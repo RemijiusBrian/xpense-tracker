@@ -172,8 +172,8 @@ private fun ScreenContent(
                         items(agents) { agent ->
                             AgentItem(
                                 name = agent.name,
-                                pending = agent.isPending,
-                                onClick = { actions.onAgentClick(agent) }
+                                date = agent.createdDateFormatted,
+                                onClick = { actions.onAgentClick(agent.id) }
                             )
                         }
                     }

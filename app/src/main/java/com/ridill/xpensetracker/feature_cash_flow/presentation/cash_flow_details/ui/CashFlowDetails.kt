@@ -38,10 +38,11 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CashFlowDetails(
-    navController: NavController,
-    viewModel: CashFlowDetailsViewModel = hiltViewModel()
+    navController: NavController
 ) {
+    val viewModel: CashFlowDetailsViewModel = hiltViewModel()
     val agentName by viewModel.agentName.observeAsState("")
+    val agentCreatedDate by viewModel.agentCreatedDate.observeAsState("")
     val state by viewModel.state.observeAsState(CashFlowDetailsState.initial)
     val activeCashFlow by viewModel.activeCashFlow.observeAsState()
 
@@ -102,7 +103,8 @@ fun CashFlowDetails(
         agentName = agentName,
         actions = viewModel,
         activeCashFlow = activeCashFlow,
-        navigateBack = navController::popBackStack
+        navigateBack = navController::popBackStack,
+        agentCreatedDate = agentCreatedDate
     )
 }
 
@@ -111,6 +113,7 @@ private fun ScreenContent(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: CashFlowDetailsState,
     agentName: String,
+    agentCreatedDate: String,
     actions: CashFlowDetailsActions,
     activeCashFlow: CashFlow?,
     navigateBack: () -> Unit
@@ -127,7 +130,7 @@ private fun ScreenContent(
                     lending = cashFlow.lending,
                     onLendingChange = actions::onCashFlowLendingChange,
                     onDismiss = actions::onAddEditCashFlowDismiss,
-                    onConfirm = actions::onAddEditCashFlowConfirm
+                    onConfirm = actions::onAddEditCashFlowConfirm,
                 )
             }
         },
@@ -186,6 +189,7 @@ private fun ScreenContent(
                 AgentDetails(
                     isEditMode = state.editMode,
                     name = agentName,
+                    date = agentCreatedDate,
                     onNameChange = actions::onAgentNameChange,
                     aggregateAmount = state.aggregateAmount,
                     onEditConfirm = actions::onSaveAgent,

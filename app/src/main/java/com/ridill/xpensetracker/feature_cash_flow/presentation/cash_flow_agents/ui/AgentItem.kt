@@ -1,30 +1,21 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
-import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 
 @Composable
 fun AgentItem(
     modifier: Modifier = Modifier,
     name: String,
-    pending: Boolean,
+    date: String,
     onClick: () -> Unit
 ) {
     Card(
@@ -33,12 +24,14 @@ fun AgentItem(
             .padding(horizontal = PaddingSmall)
             .padding(top = PaddingSmall)
             .fillMaxWidth()
-            .height(CardHeight)
+            .height(CardHeight),
+        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.88f)
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .background(MaterialTheme.colors.primary.copy(alpha = 0.88f)),
-            contentAlignment = Alignment.CenterStart
+                .fillMaxWidth()
+                .padding(PaddingSmall),
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = name,
@@ -47,23 +40,16 @@ fun AgentItem(
                 color = MaterialTheme.colors.onPrimary,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .padding(PaddingMedium)
             )
-            if (pending) {
-                Icon(
-                    imageVector = Icons.Outlined.Timer,
-                    contentDescription = stringResource(R.string.payment_pending),
-                    tint = MaterialTheme.colors.onPrimary,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(PaddingExtraSmall)
-                        .size(ClearedStatusIconSize)
-                )
-            }
+            Text(
+                text = date,
+                style = MaterialTheme.typography.overline,
+                color = MaterialTheme.colors.onPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
 
-private val ClearedStatusIconSize = 16.dp
 private val CardHeight = 80.dp
