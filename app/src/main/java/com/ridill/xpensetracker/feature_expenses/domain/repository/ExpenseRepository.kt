@@ -18,4 +18,6 @@ interface ExpenseRepository {
     suspend fun cacheExpense(expense: Expense): Long
 
     suspend fun deleteExpense(expense: Expense)
+
+    suspend fun getMonthlyExpenses(): List<Expense>
 }

@@ -28,6 +28,10 @@ object ExpenseModule {
     @Provides
     fun provideExpenseRepository(dao: ExpenseDao): ExpenseRepository = ExpenseRepositoryImpl(dao)
 
+    @Provides
+    fun provideUpdateMonthlyExpenseUseCase(repository: ExpenseRepository): UpdateMonthlyExpensesUseCase =
+        UpdateMonthlyExpensesUseCase(repository)
+
     // Expenses Use Cases
     @Singleton
     @Provides

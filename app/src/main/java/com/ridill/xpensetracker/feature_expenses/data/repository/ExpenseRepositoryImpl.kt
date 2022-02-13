@@ -35,4 +35,7 @@ class ExpenseRepositoryImpl(
     override suspend fun deleteExpense(expense: Expense) = withContext(Dispatchers.IO) {
         dao.delete(expense.toEntity())
     }
+
+    override suspend fun getMonthlyExpenses(): List<Expense> =
+        dao.getMonthlyExpenses().map { it.toExpense() }
 }

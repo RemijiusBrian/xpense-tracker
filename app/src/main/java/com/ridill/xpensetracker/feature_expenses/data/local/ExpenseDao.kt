@@ -42,4 +42,7 @@ interface ExpenseDao {
 
     @Delete
     fun delete(expenseEntity: ExpenseEntity)
+
+    @Query("SELECT * FROM ExpenseEntity WHERE isMonthly = 1")
+    suspend fun getMonthlyExpenses(): List<ExpenseEntity>
 }

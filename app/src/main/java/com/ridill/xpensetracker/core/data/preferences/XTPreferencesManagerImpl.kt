@@ -22,11 +22,13 @@ class XTPreferencesManagerImpl(
             val expenditureLimit = preferences[Keys.EXPENDITURE_LIMIT] ?: 0L
             val cashFlowIncludedInExpenditure =
                 preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] ?: false
+            val isFirstAppLaunch = preferences[Keys.IS_FIRST_APP_LAUNCH] ?: true
 
             AppPreferences(
                 theme = theme,
                 expenditureLimit = expenditureLimit,
-                cashFlowIncludedInExpenditure = cashFlowIncludedInExpenditure
+                cashFlowIncludedInExpenditure = cashFlowIncludedInExpenditure,
+                isFirstAppLaunch = isFirstAppLaunch
             )
         }
 
@@ -48,10 +50,17 @@ class XTPreferencesManagerImpl(
         }
     }
 
+    override suspend fun toggleIsFirstLaunchFalse() {
+        dataStore.edit { preferences ->
+            preferences[Keys.IS_FIRST_APP_LAUNCH] = false
+        }
+    }
+
     private object Keys {
         val APP_THEME = stringPreferencesKey("APP_THEME")
         val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
         val CASH_FLOW_INCLUDED_IN_EXPENDITURE =
             booleanPreferencesKey("CASH_FLOW_INCLUDED_IN_EXPENDITURE")
+        val IS_FIRST_APP_LAUNCH = booleanPreferencesKey("IS_FIRST_APP_LAUNCH")
     }
 }
