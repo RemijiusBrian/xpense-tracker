@@ -138,12 +138,11 @@ class CashFlowDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onEditConfirm() {
+    override fun onSaveAgent() {
         viewModelScope.launch {
             agentLiveData.value?.let {
                 when (val response = useCases.saveOrGetExistingAgent(isNew, it)) {
                     is Response.Error -> {
-                        agentLiveData.value = response.data
                         eventsChannel.send(
                             CashFlowDetailsEvents.ShowSnackbar(
                                 response.message ?: R.string.error_unknown

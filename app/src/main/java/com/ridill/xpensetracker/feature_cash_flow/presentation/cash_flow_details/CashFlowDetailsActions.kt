@@ -7,7 +7,7 @@ interface CashFlowDetailsActions {
     fun onMenuOptionSelect(option: CashFlowDetailsOptions)
     fun onAgentNameChange(value: String)
     fun onDismissEditMode()
-    fun onEditConfirm()
+    fun onSaveAgent()
     fun onAddCashFlowClick()
     fun onAddEditCashFlowDismiss()
     fun onCashFlowNameChange(value: String)

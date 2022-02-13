@@ -188,7 +188,7 @@ private fun ScreenContent(
                     name = agentName,
                     onNameChange = actions::onAgentNameChange,
                     aggregateAmount = state.aggregateAmount,
-                    onEditConfirm = actions::onEditConfirm,
+                    onEditConfirm = actions::onSaveAgent,
                     aggregateAmountState = aggregateAmountState
                 )
             }
