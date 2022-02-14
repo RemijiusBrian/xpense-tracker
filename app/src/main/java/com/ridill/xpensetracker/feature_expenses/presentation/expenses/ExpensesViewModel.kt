@@ -78,10 +78,8 @@ class ExpensesViewModel @Inject constructor(
             expenses = expenses,
             expenditureLimit = preferences.expenditureLimit.takeIf { it > 0L }
                 ?.let { formatAmount(it) }.orEmpty(),
-            currentExpenditure = currentExpenditure.takeIf { it > 0L || preferences.expenditureLimit > 0L }
-                ?.let { formatAmount(it) }.orEmpty(),
-            spendingBalance = balance.takeIf { it > 0L }
-                ?.let { formatAmount(it) }.orEmpty(),
+            currentExpenditure = formatAmount(currentExpenditure),
+            spendingBalance = formatAmount(balance),
             balancePercentage = balancePercentage,
             currentlyShownDate = currentlyShownMonth,
             showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog
