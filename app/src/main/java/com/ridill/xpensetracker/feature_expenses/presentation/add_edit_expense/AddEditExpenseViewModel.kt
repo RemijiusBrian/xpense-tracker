@@ -22,7 +22,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private val useCases: AddEditExpenseUseCases
 ) : ViewModel(), AddEditExpenseActions {
 
-    val expense = savedStateHandle.getLiveData<Expense>(KEY_EXPENSE_LIVE_DATA)
+    val expenseLiveData = savedStateHandle.getLiveData<Expense>(KEY_EXPENSE_LIVE_DATA)
 
     private val expenseId = savedStateHandle.get<Long>(NavArgs.EXPENSE_ID)
     val isEditMode = expenseId != -1L
@@ -35,8 +35,8 @@ class AddEditExpenseViewModel @Inject constructor(
     init {
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && isEditMode) viewModelScope.launch {
-                expense.value = useCases.getExpenseById(expenseId)
-            } else expense.value = Expense.DEFAULT
+                expenseLiveData.value = useCases.getExpenseById(expenseId)
+            } else expenseLiveData.value = Expense.DEFAULT
         }
     }
 
@@ -44,16 +44,20 @@ class AddEditExpenseViewModel @Inject constructor(
     val events = eventsChannel.receiveAsFlow()
 
     override fun onNameChange(value: String) {
-        expense.value = expense.value?.copy(name = value.trim())
+        expenseLiveData.value = expenseLiveData.value?.copy(name = value)
     }
 
     override fun onAmountChange(value: String) {
-        expense.value = expense.value?.copy(amount = value.trim().toLongOrNull() ?: 0)
+        expenseLiveData.value = expenseLiveData.value?.copy(amount = value.toLongOrNull() ?: 0)
+    }
+
+    override fun onRepeatEveryMonthToggle(repeat: Boolean) {
+        expenseLiveData.value = expenseLiveData.value?.copy(isMonthly = repeat)
     }
 
     override fun onSaveClick() {
         viewModelScope.launch {
-            expense.value?.let {
+            expenseLiveData.value?.let {
                 when (val response = useCases.saveExpense(it)) {
                     is Response.Error -> {
                         eventsChannel.send(
@@ -73,10 +77,6 @@ class AddEditExpenseViewModel @Inject constructor(
         }
     }
 
-    override fun onRepeatEveryMonthToggle(repeat: Boolean) {
-        expense.value = expense.value?.copy(isMonthly = repeat)
-    }
-
     override fun onDeleteOptionClick() {
         _showDeleteExpenseDialog.value = true
     }
@@ -87,7 +87,7 @@ class AddEditExpenseViewModel @Inject constructor(
 
     override fun onDeleteDialogConfirmed() {
         viewModelScope.launch {
-            expense.value?.let { useCases.deleteExpense(it) }
+            expenseLiveData.value?.let { useCases.deleteExpense(it) }
             _showDeleteExpenseDialog.value = false
             eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
         }

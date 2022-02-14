@@ -38,7 +38,7 @@ fun AddEditExpense(
     viewModel: AddEditExpenseViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val expense by viewModel.expense.observeAsState(Expense.DEFAULT)
+    val expense by viewModel.expenseLiveData.observeAsState(Expense.DEFAULT)
     val showDeleteExpenseConfirmation by viewModel.showDeleteExpenseDialog.observeAsState(false)
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current

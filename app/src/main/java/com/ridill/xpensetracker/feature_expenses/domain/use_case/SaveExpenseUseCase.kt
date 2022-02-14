@@ -9,12 +9,13 @@ class SaveExpenseUseCase(
     private val repository: ExpenseRepository
 ) {
     suspend operator fun invoke(expense: Expense): Response<Long> {
-        if (expense.name.isEmpty()) {
+        val trimmedExpense = expense.copy(name = expense.name.trim())
+        if (trimmedExpense.name.isEmpty()) {
             return Response.Error(message = R.string.error_name_empty)
         }
         if (expense.amount < 0) {
             return Response.Error(message = R.string.error_amount_invalid)
         }
-        return Response.Success(repository.cacheExpense(expense))
+        return Response.Success(repository.cacheExpense(trimmedExpense))
     }
 }
