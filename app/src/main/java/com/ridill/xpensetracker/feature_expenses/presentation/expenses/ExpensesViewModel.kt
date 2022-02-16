@@ -53,6 +53,10 @@ class ExpensesViewModel @Inject constructor(
             Calendar.getInstance().time
         )
 
+    init {
+        
+    }
+
     // Ui State
     val state = combineTuple(
         monthsList,

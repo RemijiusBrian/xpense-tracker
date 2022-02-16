@@ -29,8 +29,9 @@ object ExpenseModule {
     fun provideExpenseRepository(dao: ExpenseDao): ExpenseRepository = ExpenseRepositoryImpl(dao)
 
     @Provides
-    fun provideUpdateMonthlyExpenseUseCase(repository: ExpenseRepository): UpdateMonthlyExpensesUseCase =
-        UpdateMonthlyExpensesUseCase(repository)
+    fun provideCheckCurrentMonthAndUpdateMonthlyExpenseUseCase(
+        repository: ExpenseRepository
+    ): CheckCurrentMonthAndUpdateMonthlyExpenseUseCase = CheckCurrentMonthAndUpdateMonthlyExpenseUseCase(repository)
 
     // Expenses Use Cases
     @Singleton

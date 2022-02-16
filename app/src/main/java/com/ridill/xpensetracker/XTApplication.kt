@@ -3,6 +3,7 @@ package com.ridill.xpensetracker
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
@@ -36,13 +37,19 @@ class XTApplication : Application(), Configuration.Provider {
     private fun submitMonthlyExpenseWorkRequest() = CoroutineScope(SupervisorJob()).launch {
         if (preferencesManager.preferences.first().isFirstAppLaunch) {
             val updateMonthlyExpenseWorkRequest =
-                PeriodicWorkRequestBuilder<MonthlyExpenseUpdateWorker>(31, TimeUnit.DAYS)
+                PeriodicWorkRequestBuilder<MonthlyExpenseUpdateWorker>(1, TimeUnit.DAYS)
                     .build()
 
             WorkManager.getInstance(this@XTApplication)
-                .enqueue(updateMonthlyExpenseWorkRequest)
+                .enqueueUniquePeriodicWork(
+                    MONTHLY_EXPENSE_UPDATE,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    updateMonthlyExpenseWorkRequest
+                )
 
             preferencesManager.toggleIsFirstLaunchFalse()
         }
     }
 }
+
+private const val MONTHLY_EXPENSE_UPDATE = "MONTHLY_EXPENSE_UPDATE"

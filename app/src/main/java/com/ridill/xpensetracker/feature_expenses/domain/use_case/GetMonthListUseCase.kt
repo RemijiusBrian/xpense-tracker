@@ -12,7 +12,7 @@ class GetMonthListUseCase(
     operator fun invoke(): Flow<List<String>> {
         val dateParser = SimpleDateFormat("MM-yyyy", Locale.getDefault())
         val dateFormatter = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
-        return repository.getMothsOfExpenses().map { dates ->
+        return repository.getMonthNames().map { dates ->
             dates.map { dateParser.parse(it)?.let { date -> dateFormatter.format(date) }.orEmpty() }
         }
     }

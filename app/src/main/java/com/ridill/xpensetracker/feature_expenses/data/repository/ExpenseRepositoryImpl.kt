@@ -12,7 +12,7 @@ class ExpenseRepositoryImpl(
     private val dao: ExpenseDao
 ) : ExpenseRepository {
 
-    override fun getMothsOfExpenses(): Flow<List<String>> =
+    override fun getMonthNames(): Flow<List<String>> =
         dao.getMonthsOfExpenses()
 
     override fun getExpensesForMonth(month: String): Flow<List<Expense>> =
