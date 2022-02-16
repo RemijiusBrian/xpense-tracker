@@ -7,7 +7,13 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    @Query("SELECT DISTINCT(strftime('%m-%Y', dateMillis / 1000, 'unixepoch')) FROM ExpenseEntity ORDER BY dateMillis DESC")
+    @Query(
+        """
+        SELECT DISTINCT(strftime('%m-%Y', dateMillis / 1000, 'unixepoch'))
+        FROM ExpenseEntity 
+        ORDER BY dateMillis DESC
+        """
+    )
     fun getMonthsOfExpenses(): Flow<List<String>>
 
     @Query(
@@ -15,7 +21,7 @@ interface ExpenseDao {
         SELECT *
         FROM ExpenseEntity
         WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month OR isMonthly = 1)
-        ORDER BY dateMillis DESC
+        ORDER BY isMonthly DESC, dateMillis DESC
     """
     )
     fun getExpenses(
