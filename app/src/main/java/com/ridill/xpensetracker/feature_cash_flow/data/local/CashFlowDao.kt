@@ -14,7 +14,7 @@ interface CashFlowDao {
         SELECT ca.id as id, ca.name as name, ca.createdDateMillis as createdDateMillis, (
             IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE lent = 1 AND agent = ca.id), 0) - 
             IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE lent = 0 AND agent = ca.id), 0)
-        ) as aggregate
+        ) != 0 as isPending
         FROM  CashFlowAgentEntity ca
         LEFT JOIN CashFlowEntity cf ON ca.id = cf.agent
         GROUP BY ca.id

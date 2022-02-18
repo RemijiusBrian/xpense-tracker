@@ -6,10 +6,8 @@ data class AgentWithAggregate(
     val id: Long,
     val name: String,
     val createdDateMillis: Long,
-    val aggregate: Long
+    val isPending: Boolean
 ) {
     val createdDateFormatted: String
         get() = TextUtil.formatDate(createdDateMillis)
-
-    val isPending: Boolean get() = aggregate != 0L
 }
