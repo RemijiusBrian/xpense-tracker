@@ -21,7 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.domain.model.AppTheme
-import com.ridill.xpensetracker.core.ui.components.BackArrowButton
+import com.ridill.xpensetracker.core.ui.components.TransparentTopAppBar
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.feature_settings.presentation.settings.SettingsActions
@@ -38,7 +38,6 @@ fun Settings(
     ScreenContent(
         state = state,
         actions = viewModel,
-        navigateBack = navController::popBackStack
     )
 }
 
@@ -46,15 +45,13 @@ fun Settings(
 private fun ScreenContent(
     state: SettingsState,
     actions: SettingsActions,
-    navigateBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(Destination.Settings.label)) },
-                navigationIcon = { BackArrowButton(onClick = navigateBack) }
+            TransparentTopAppBar(
+                title = stringResource(Destination.Settings.label)
             )
         }
     ) {
