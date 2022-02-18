@@ -1,12 +1,13 @@
 package com.ridill.xpensetracker.feature_cash_flow.domain.repository
 
+import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregate
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import kotlinx.coroutines.flow.Flow
 
 interface CashFlowRepository {
 
-    fun getAgents(searchQuery: String): Flow<List<CashFlowAgent>>
+    fun getAgents(searchQuery: String): Flow<List<AgentWithAggregate>>
 
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>>
 

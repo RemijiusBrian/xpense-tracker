@@ -26,7 +26,7 @@ class ExpensesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), ExpensesActions {
 
-    private val expensePreferences = useCases.getPreferences()
+    private val preferences = useCases.getPreferences()
 
     private val currentlyShownDate =
         savedStateHandle.getLiveData("currentlyShownDate", getCurrentMonth())
@@ -42,7 +42,7 @@ class ExpensesViewModel @Inject constructor(
     private val balanceAmount = useCases.getSpendingBalance()
     private val balancePercentage = combineTuple(
         balanceAmount,
-        expensePreferences
+        preferences
     ).map { (balance, preferences) -> balance.toFloat() / preferences.expenditureLimit }
 
     private val showExpenditureLimitUpdateDialog =
@@ -53,15 +53,11 @@ class ExpensesViewModel @Inject constructor(
             Calendar.getInstance().time
         )
 
-    init {
-        
-    }
-
     // Ui State
     val state = combineTuple(
         monthsList,
         expenses,
-        expensePreferences,
+        preferences,
         currentExpenditure,
         balanceAmount,
         balancePercentage,

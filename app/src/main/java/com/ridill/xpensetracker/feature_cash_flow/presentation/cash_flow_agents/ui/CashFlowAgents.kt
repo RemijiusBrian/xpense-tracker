@@ -29,7 +29,7 @@ import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.util.exhaustive
-import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
+import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregate
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowActions
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowViewModel
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
@@ -89,7 +89,7 @@ fun CashFlow(
 @Composable
 private fun ScreenContent(
     scaffoldState: ScaffoldState,
-    agents: List<CashFlowAgent>,
+    agents: List<AgentWithAggregate>,
     actions: CashFlowActions,
     searchModeActive: Boolean,
     searchQuery: String
@@ -172,6 +172,7 @@ private fun ScreenContent(
                         items(agents) { agent ->
                             AgentItem(
                                 name = agent.name,
+                                isPending = agent.isPending,
                                 date = agent.createdDateFormatted,
                                 onClick = { actions.onAgentClick(agent.id) }
                             )

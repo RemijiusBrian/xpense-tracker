@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.feature_cash_flow.data.repository
 
 import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
+import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregate
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
@@ -11,8 +12,8 @@ class CashFlowRepositoryImpl(
     private val dao: CashFlowDao,
 ) : CashFlowRepository {
 
-    override fun getAgents(searchQuery: String): Flow<List<CashFlowAgent>> =
-        dao.getAgents(searchQuery).map { entities -> entities.map { it.toAgent() } }
+    override fun getAgents(searchQuery: String): Flow<List<AgentWithAggregate>> =
+        dao.getAgentsWithAggregate(searchQuery)
 
     override fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>> =
         dao.getCashFlowForAgent(agent).map { entities ->
