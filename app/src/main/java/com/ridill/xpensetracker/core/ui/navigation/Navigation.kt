@@ -54,7 +54,7 @@ fun Navigation(
             popEnterTransition = { fadeIn(animationSpec = tween(500)) },
             popExitTransition = { fadeOut(animationSpec = tween(500)) },
         ) {
-            Settings(navController = navController)
+            Settings()
         }
 
         composable(

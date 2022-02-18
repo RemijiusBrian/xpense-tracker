@@ -18,10 +18,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.domain.model.AppTheme
-import com.ridill.xpensetracker.core.ui.components.TransparentTopAppBar
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.feature_settings.presentation.settings.SettingsActions
@@ -29,9 +27,7 @@ import com.ridill.xpensetracker.feature_settings.presentation.settings.SettingsS
 import com.ridill.xpensetracker.feature_settings.presentation.settings.SettingsViewModel
 
 @Composable
-fun Settings(
-    navController: NavController
-) {
+fun Settings() {
     val viewModel: SettingsViewModel = hiltViewModel()
     val state by viewModel.state.observeAsState(SettingsState.INITIAL)
 
@@ -50,8 +46,8 @@ private fun ScreenContent(
 
     Scaffold(
         topBar = {
-            TransparentTopAppBar(
-                title = stringResource(Destination.Settings.label)
+            TopAppBar(
+                title = { Text(stringResource(Destination.Settings.label)) }
             )
         }
     ) {
