@@ -31,7 +31,8 @@ object ExpenseModule {
     @Provides
     fun provideCheckCurrentMonthAndUpdateMonthlyExpenseUseCase(
         repository: ExpenseRepository
-    ): CheckCurrentMonthAndUpdateMonthlyExpenseUseCase = CheckCurrentMonthAndUpdateMonthlyExpenseUseCase(repository)
+    ): CheckCurrentMonthAndUpdateMonthlyExpenseUseCase =
+        CheckCurrentMonthAndUpdateMonthlyExpenseUseCase(repository)
 
     // Expenses Use Cases
     @Singleton
@@ -50,7 +51,7 @@ object ExpenseModule {
         GetSpendingBalanceUseCase(repository, preferencesManager, cashFlowRepository),
         updateExpenditureLimit = UpdateExpenditureLimitUseCase(preferencesManager),
         getExpenditureForCurrentMonth =
-        GetExpenditureForCurrentMonthUseCase(repository, preferencesManager, cashFlowRepository)
+        GetExpenditureForCurrentMonthUseCase(repository, preferencesManager, cashFlowRepository),
     )
 
     // Add/Edit Expense Use Cases
