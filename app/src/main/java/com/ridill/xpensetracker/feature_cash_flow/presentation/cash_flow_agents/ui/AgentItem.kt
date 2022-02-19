@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -31,11 +32,11 @@ fun AgentItem(
             .padding(top = PaddingSmall)
             .fillMaxWidth()
             .height(CardHeight),
-        backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.88f)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colors.primary.copy(alpha = 0.88f)),
         ) {
             Column(
                 modifier = Modifier

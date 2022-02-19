@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.AddFab
-import com.ridill.xpensetracker.core.ui.components.BackArrowButton
 import com.ridill.xpensetracker.core.ui.components.EmptyGridIndicator
 import com.ridill.xpensetracker.core.ui.components.SearchView
 import com.ridill.xpensetracker.core.ui.navigation.Destination
@@ -104,22 +102,18 @@ private fun ScreenContent(
         },
         floatingActionButtonPosition = FabPosition.End,
         topBar = {
-            Surface(color = Color.Transparent) {
+            TopAppBar {
                 AnimatedContent(targetState = searchModeActive) { searchMode ->
                     if (searchMode) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            BackArrowButton(onClick = actions::onSearchDismiss)
-                            SearchView(
-                                query = searchQuery,
-                                onQueryChange = actions::onSearchQueryChange,
-                                onClearQueryClick = actions::onSearchQueryClear,
-                                placeholder = R.string.search,
-                                modifier = Modifier
-                                    .weight(1f)
-                            )
-                        }
+                        SearchView(
+                            query = searchQuery,
+                            onQueryChange = actions::onSearchQueryChange,
+                            onClearQueryClick = actions::onSearchQueryClear,
+                            placeholder = R.string.search,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            onCancelClick = actions::onSearchDismiss
+                        )
                     } else {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
