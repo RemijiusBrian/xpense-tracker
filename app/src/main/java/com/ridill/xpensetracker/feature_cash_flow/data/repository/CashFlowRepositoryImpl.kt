@@ -23,6 +23,9 @@ class CashFlowRepositoryImpl(
     override fun getTotalCashFlowAmount(): Flow<Long> =
         dao.getTotalCashFlowAmount()
 
+    override fun getAggregateAmountOfAgent(agent: Long): Flow<Long> =
+        dao.getAggregateAmountOfAgent(agent)
+
     override suspend fun getAgentById(id: Long): CashFlowAgent? =
         dao.getAgentById(id)?.toAgent()
 
@@ -38,7 +41,7 @@ class CashFlowRepositoryImpl(
     override suspend fun cacheCashFlow(cashFlow: CashFlow): Long =
         dao.insertCashFlow(cashFlow.toEntity())
 
-    override suspend fun clearCashFlowWithAgent(agent: CashFlowAgent) {
+    override suspend fun clearAgentWithCashFlow(agent: CashFlowAgent) {
         dao.clearAgent(agent.toEntity())
     }
 

@@ -39,7 +39,8 @@ object AppModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.preferencesDataStoreFile(XT_PREFERENCES) }
+            produceFile = { context.preferencesDataStoreFile(XT_PREFERENCES) },
+            migrations = listOf()
         )
 
     @Singleton

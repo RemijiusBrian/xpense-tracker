@@ -11,6 +11,8 @@ interface CashFlowRepository {
 
     fun getCashFlowForAgent(agent: Long): Flow<List<CashFlow>>
 
+    fun getAggregateAmountOfAgent(agent: Long): Flow<Long>
+
     fun getTotalCashFlowAmount(): Flow<Long>
 
     suspend fun getAgentById(id: Long): CashFlowAgent?
@@ -23,7 +25,7 @@ interface CashFlowRepository {
 
     suspend fun cacheCashFlow(cashFlow: CashFlow): Long
 
-    suspend fun clearCashFlowWithAgent(agent: CashFlowAgent)
+    suspend fun clearAgentWithCashFlow(agent: CashFlowAgent)
 
     suspend fun deleteCashFlow(cashFlow: CashFlow)
 }

@@ -35,6 +35,15 @@ interface CashFlowDao {
     )
     fun getTotalCashFlowAmount(): Flow<Long>
 
+    @Query(
+        """
+        SELECT
+            IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE agent = :agent AND lent = 1), 0) - 
+            IFNULL((SELECT SUM(amount) FROM CashFlowEntity WHERE agent = :agent AND lent = 0), 0)
+    """
+    )
+    fun getAggregateAmountOfAgent(agent: Long): Flow<Long>
+
     @Query("SELECT * FROM CashFlowAgentEntity WHERE id = :id")
     suspend fun getAgentById(id: Long): CashFlowAgentEntity?
 

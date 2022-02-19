@@ -6,12 +6,12 @@ import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.core.ui.util.TextUtil
-import com.ridill.xpensetracker.core.util.Response
 import com.ridill.xpensetracker.core.util.exhaustive
+import com.ridill.xpensetracker.feature_cash_flow.domain.model.AggregateAmountState
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowAgent
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOptions
-import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.CashFlowDetailsUseCases
+import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -24,8 +24,8 @@ import kotlin.math.abs
 
 @HiltViewModel
 class CashFlowDetailsViewModel @Inject constructor(
-    private val useCases: CashFlowDetailsUseCases,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val repo: CashFlowRepository
 ) : ViewModel(), CashFlowDetailsActions {
 
     // Agent Live Data
@@ -41,7 +41,7 @@ class CashFlowDetailsViewModel @Inject constructor(
     init {
         if (!savedStateHandle.contains(KEY_CASH_FLOW_AGENT)) {
             if (agentIdArg != null && !isNew) viewModelScope.launch {
-                agentLiveData.value = useCases.getAgentById(agentIdArg)
+                agentLiveData.value = repo.getAgentById(agentIdArg)
                 showAddCashFlowButton.value = true
             } else {
                 agentLiveData.value = CashFlowAgent.DEFAULT
@@ -56,20 +56,26 @@ class CashFlowDetailsViewModel @Inject constructor(
     private val showAddCashFlowButton = savedStateHandle.getLiveData("showAddCashFlowButton", false)
 
     // CashFlow
-    private val cashFlow = agentLiveData.asFlow().flatMapLatest {
-        useCases.getCashFlow(it.id)
+    private val cashFlow = agentLiveData.asFlow().flatMapLatest { agent ->
+        repo.getCashFlowForAgent(agent.id)
     }
 
     // Cash Flow Aggregate
-    private val cashFlowAggregate = agentLiveData.asFlow().flatMapLatest {
-        useCases.getCashFlowAggregate(it.id)
+    private val cashFlowAggregate = agentLiveData.asFlow().flatMapLatest { agent ->
+        repo.getAggregateAmountOfAgent(agent.id)
     }
 
     private val cashFLowStatus = combineTuple(
         cashFlow,
         cashFlowAggregate,
     ).map { (cashFlow, aggregate) ->
-        useCases.mapToCashFlowStatus(cashFlow, aggregate)
+        when {
+            cashFlow.isEmpty() -> AggregateAmountState.CLEARED
+            cashFlow.isNotEmpty() && aggregate == 0L -> AggregateAmountState.BALANCED
+            aggregate > 0 -> AggregateAmountState.IN_CREDIT
+            aggregate < 0 -> AggregateAmountState.IN_DEBT
+            else -> null
+        }
     }
 
     // Active Cash Flow
@@ -141,32 +147,41 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onSaveAgent() {
         viewModelScope.launch {
-            agentLiveData.value?.let {
-                when (val response = useCases.saveOrGetExistingAgent(isNew, it)) {
-                    is Response.Error -> {
-                        eventsChannel.send(
-                            CashFlowDetailsEvents.ShowSnackbar(
-                                response.message ?: R.string.error_unknown
-                            )
-                        )
-                    }
-                    is Response.Success -> {
-                        agentLiveData.value = response.data
-                        eventsChannel.send(
-                            CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
-                        )
-                        editModeActive.value = false
-                        showAddCashFlowButton.value = true
-                        if (isNew) {
-                            onAddCashFlowClick()
-                            isNew = false
-                        } else {
-                            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
-                        }
-                    }
-                }.exhaustive
+            agentLiveData.value?.let { agent ->
+                if (agent.name.isEmpty()) {
+                    eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_empty))
+                    return@launch
+                }
+                if (isNew) {
+                    checkExistingAgentAndReplace(agent)
+                    isNew = false
+                    onAddCashFlowClick()
+                    return@launch
+                }
+                cacheAgent(agent)
             }
         }
+    }
+
+    // Check if agent with same name exists and replace active agent
+    private suspend fun checkExistingAgentAndReplace(agent: CashFlowAgent) {
+        val cashFlowAgent = repo.getAgentByName(agent.name)
+        if (cashFlowAgent != null) {
+            agentLiveData.value = cashFlowAgent
+            eventsChannel.send(
+                CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
+            )
+            editModeActive.value = false
+            showAddCashFlowButton.value = true
+            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
+        }
+    }
+
+    // Cache Agent
+    private suspend fun cacheAgent(agent: CashFlowAgent) {
+        val insertedId = repo.cacheAgent(agent.copy(name = agent.name.trim()))
+        agentLiveData.value = repo.getAgentById(insertedId)
+        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_added))
     }
 
     override fun onAddCashFlowClick() {
@@ -199,33 +214,38 @@ class CashFlowDetailsViewModel @Inject constructor(
     override fun onAddEditCashFlowConfirm(repaymentAmount: String) {
         viewModelScope.launch {
             activeCashFlow.value?.let { cashFlow ->
-                when (
-                    val response =
-                        useCases.saveCashFlow(cashFlow = cashFlow, repayment = repaymentAmount)
-                ) {
-                    is Response.Error -> {
-                        eventsChannel.send(
-                            CashFlowDetailsEvents.ShowSnackbar(
-                                response.message
-                                    ?: R.string.error_unknown
-                            )
+                val repayment = repaymentAmount.toLongOrNull() ?: 0L
+                if (validateCashFlow(cashFlow, repayment)) {
+                    repo.cacheCashFlow(
+                        cashFlow.copy(
+                            name = cashFlow.name.trim(),
+                            amount = cashFlow.amount - repayment
                         )
-                    }
-                    is Response.Success -> {
-                        _activeCashFlow.value = null
-                        eventsChannel.send(
-                            CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
-                        )
-                        eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
-                    }
-                }.exhaustive
+                    )
+                }
             }
         }
     }
 
+    private suspend fun validateCashFlow(cashFlow: CashFlow, repayment: Long): Boolean {
+        if (cashFlow.name.isEmpty()) {
+            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_empty))
+            return false
+        }
+        if (cashFlow.amount <= 0L) {
+            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_amount_invalid))
+            return false
+        }
+        if (repayment > cashFlow.amount) {
+            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_invalid_repayment))
+            return false
+        }
+        return true
+    }
+
     override fun onCashFlowSwipeDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
-            useCases.deleteCashFlow(cashFlow)
+            repo.deleteCashFlow(cashFlow)
             eventsChannel.send(
                 CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
             )
@@ -235,24 +255,13 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onUndoCashFlowDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
-            when (
-                val response = useCases.saveCashFlow(cashFlow = cashFlow, repayment = "0")
-            ) {
-                is Response.Error -> {
-                    eventsChannel.send(
-                        CashFlowDetailsEvents.ShowSnackbar(
-                            response.message ?: R.string.error_unknown
-                        )
-                    )
-                }
-                is Response.Success -> Unit
-            }.exhaustive
+            repo.cacheCashFlow(cashFlow)
         }
     }
 
     override fun onCashFlowClick(cashFlow: CashFlow) {
         viewModelScope.launch {
-            _activeCashFlow.value = useCases.getCashFlowById(cashFlow.id)
+            _activeCashFlow.value = repo.getCashFlowById(cashFlow.id)
             eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(true))
         }
     }
@@ -265,7 +274,7 @@ class CashFlowDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             agentLiveData.value?.let {
                 showClearCashFlowDialog.value = false
-                useCases.clearCashFlowWithAgent(it)
+                repo.clearAgentWithCashFlow(it)
                 eventsChannel.send(
                     CashFlowDetailsEvents.NavigateBackWithResult(
                         RESULT_CASH_FLOW_CLEARED

@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.core.data.preferences
 
+import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.ridill.xpensetracker.core.domain.model.AppPreferences
@@ -63,4 +64,16 @@ class XTPreferencesManagerImpl(
             booleanPreferencesKey("CASH_FLOW_INCLUDED_IN_EXPENDITURE")
         val IS_FIRST_APP_LAUNCH = booleanPreferencesKey("IS_FIRST_APP_LAUNCH")
     }
+}
+
+class XTPreferencesMigration : DataMigration<Preferences> {
+    override suspend fun cleanUp() {
+
+    }
+
+    override suspend fun migrate(currentData: Preferences): Preferences {
+        return currentData
+    }
+
+    override suspend fun shouldMigrate(currentData: Preferences): Boolean = true
 }

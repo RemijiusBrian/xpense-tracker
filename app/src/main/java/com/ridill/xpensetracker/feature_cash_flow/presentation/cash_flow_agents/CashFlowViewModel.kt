@@ -2,7 +2,7 @@ package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
 import androidx.lifecycle.*
 import com.ridill.xpensetracker.core.ui.navigation.Destination
-import com.ridill.xpensetracker.feature_cash_flow.domain.use_cases.CashFlowUseCases
+import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.flatMapLatest
@@ -12,8 +12,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CashFlowViewModel @Inject constructor(
-    useCases: CashFlowUseCases,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    private val repo: CashFlowRepository
 ) : ViewModel(), CashFlowActions {
 
     // Events Channel
@@ -30,7 +30,7 @@ class CashFlowViewModel @Inject constructor(
 
     // Agents List
     val agents = searchQuery.asFlow().flatMapLatest { query ->
-        useCases.getAgents(query)
+        repo.getAgents(query)
     }.asLiveData()
 
     override fun onAgentClick(agentId: Long) {
