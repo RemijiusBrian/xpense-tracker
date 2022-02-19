@@ -42,6 +42,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun AddEditCashFlowBottomSheet(
+    showRepaymentOption: Boolean,
     name: String,
     onNameChange: (String) -> Unit,
     amount: String,
@@ -147,25 +148,29 @@ fun AddEditCashFlowBottomSheet(
             )
             Spacer(modifier = Modifier.height(SpacingMedium))
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .align(Alignment.End)
             ) {
-                OutlinedButton(
-                    onClick = {
-                        repaymentAmount = ""
-                        repaymentMode = !repaymentMode
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    AnimatedVisibility(visible = !repaymentMode) {
-                        Text(stringResource(R.string.repayment))
-                    }
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
-                        contentDescription = stringResource(R.string.toggle_repayment),
+                if (showRepaymentOption) {
+                    OutlinedButton(
+                        onClick = {
+                            repaymentAmount = ""
+                            repaymentMode = !repaymentMode
+                        },
                         modifier = Modifier
-                            .rotate(repaymentToggleRotation)
-                    )
+                            .weight(1f)
+                    ) {
+                        AnimatedVisibility(visible = !repaymentMode) {
+                            Text(stringResource(R.string.repayment))
+                        }
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = stringResource(R.string.toggle_repayment),
+                            modifier = Modifier
+                                .rotate(repaymentToggleRotation)
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.width(SpacingSmall))
                 AnimatedContent(

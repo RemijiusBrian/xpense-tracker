@@ -123,6 +123,7 @@ private fun ScreenContent(
         sheetContent = {
             activeCashFlow?.let { cashFlow ->
                 AddEditCashFlowBottomSheet(
+                    showRepaymentOption = cashFlow.id > 0L,
                     name = cashFlow.name,
                     onNameChange = actions::onCashFlowNameChange,
                     amount = cashFlow.amount.takeIf { it > 0 }?.toString().orEmpty(),
