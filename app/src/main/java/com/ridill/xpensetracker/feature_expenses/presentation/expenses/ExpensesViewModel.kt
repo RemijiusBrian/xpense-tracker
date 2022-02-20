@@ -16,7 +16,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.Month
 import java.util.*
 import javax.inject.Inject
 
@@ -35,26 +34,36 @@ class ExpensesViewModel @Inject constructor(
     private val selectedDate =
         savedStateHandle.getLiveData("selectedDate", getCurrentMonth())
 
+    private fun getCurrentMonth(): String =
+        SimpleDateFormat("MM-yyyy", Locale.getDefault()).format(System.currentTimeMillis())
+
     // Months
     private val dateParser = SimpleDateFormat("MM-yyyy", Locale.getDefault())
     private val dateFormatter = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
     private val monthsList = repo.getMonthNames().map { dates ->
-        dates.map { dateParser.parse(it)?.let { date -> dateFormatter.format(date) }.orEmpty() }
+        dates.map { mapMonthNumberToName(it) }
     }
+
+    private val dateParserForMonthName = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
+    private val dateFormatterToMonthNumber = SimpleDateFormat("MM-yyyy", Locale.getDefault())
+
+    private fun mapMonthNumberToName(monthNumberString: String): String =
+        dateParser.parse(monthNumberString)?.let { dateFormatter.format(it) }.orEmpty()
+
+    private fun mapMonthNameToNumber(monthNameString: String): String =
+        dateParserForMonthName.parse(monthNameString)?.let { dateFormatterToMonthNumber.format(it) }
+            .orEmpty()
 
     // Expenses
     private val expenses = selectedDate.asFlow().flatMapLatest { date ->
-        val monthNumber = Month.valueOf(date.substringBefore("-").uppercase()).value
-            .toString().padStart(2, '0')
-        val monthFormatted = date.replaceBefore("-", monthNumber)
-        repo.getExpensesForMonth(monthFormatted)
+        repo.getExpensesForMonth(date)
     }
 
     // Current Expenditure + Balance
     private val currentExpenditure = repo.getExpenditureForCurrentMonth()
     private val balanceAmount = combineTuple(
         preferences,
-        repo.getExpenditureForCurrentMonth(),
+        currentExpenditure,
         cashFlowRepository.getTotalCashFlowAmount()
     ).map { (preferences, expenditure, cashFlow) ->
         preferences.expenditureLimit -
@@ -67,11 +76,6 @@ class ExpensesViewModel @Inject constructor(
 
     private val showExpenditureLimitUpdateDialog =
         savedStateHandle.getLiveData("showExpenditureLimitUpdateDialog", false)
-
-    private fun getCurrentMonth(): String =
-        SimpleDateFormat("MMMM-yyyy", Locale.getDefault()).format(
-            Calendar.getInstance().time
-        )
 
     // Ui State
     val state = combineTuple(
@@ -90,7 +94,7 @@ class ExpensesViewModel @Inject constructor(
                 currentExpenditure,
                 balance,
                 balancePercentage,
-                currentlyShownMonth,
+                selectedDate,
                 showExpenditureLimitUpdateDialog
             ) ->
         ExpensesState(
@@ -101,7 +105,7 @@ class ExpensesViewModel @Inject constructor(
             currentExpenditure = formatAmount(currentExpenditure),
             spendingBalance = formatAmount(balance),
             balancePercentage = balancePercentage,
-            currentlyShownDate = currentlyShownMonth,
+            selectedDate = mapMonthNumberToName(selectedDate),
             showExpenditureLimitUpdateDialog = showExpenditureLimitUpdateDialog
         )
     }.asLiveData()
@@ -137,8 +141,9 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onMonthSelect(month: String) {
-        if (selectedDate.value == month) return
-        selectedDate.value = month
+        val monthFormatted = mapMonthNameToNumber(month)
+        if (selectedDate.value == monthFormatted) return
+        selectedDate.value = monthFormatted
     }
 
     override fun onEditExpenditureLimitClick() {

@@ -9,7 +9,7 @@ data class ExpensesState(
     val currentExpenditure: String = "",
     val spendingBalance: String = "",
     val balancePercentage: Float = 0f,
-    val currentlyShownDate: String = "",
+    val selectedDate: String = "",
     val showExpenditureLimitUpdateDialog: Boolean = false,
 ) {
     companion object {

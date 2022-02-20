@@ -170,7 +170,7 @@ private fun ScreenContent(
                                 )
                             }
 
-                            if (state.currentlyShownDate == month) {
+                            if (state.selectedDate == month) {
                                 items(state.expenses, key = { it.id }) { expense ->
                                     ExpenseItem(
                                         modifier = Modifier
