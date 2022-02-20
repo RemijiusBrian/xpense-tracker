@@ -1,13 +1,12 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -113,13 +112,21 @@ private fun ScreenContent(
     actions: ExpensesActions,
 ) {
     val listState = rememberLazyListState()
+    val showAddFab by remember {
+        derivedStateOf { listState.firstVisibleItemIndex < 2 }
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize(),
         floatingActionButton = {
-            AddFab(onClick = actions::onAddExpenseClick, contentDescription = R.string.add_expense)
+            AnimatedVisibility(visible = showAddFab) {
+                AddFab(
+                    onClick = actions::onAddExpenseClick,
+                    contentDescription = R.string.add_expense
+                )
+            }
         },
         topBar = {
             TransparentTopAppBar(

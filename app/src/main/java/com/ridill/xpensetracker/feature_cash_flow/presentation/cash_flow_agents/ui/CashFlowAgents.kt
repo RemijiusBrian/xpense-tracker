@@ -1,16 +1,16 @@
 package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyGridState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +26,7 @@ import com.ridill.xpensetracker.core.ui.components.SearchView
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import com.ridill.xpensetracker.core.ui.theme.onPrimarySurface
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregate
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowActions
@@ -92,13 +93,20 @@ private fun ScreenContent(
     searchModeActive: Boolean,
     searchQuery: String
 ) {
+    val gridState = rememberLazyGridState()
+    val showAddFab by remember {
+        derivedStateOf { gridState.firstVisibleItemIndex < 2 }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         floatingActionButton = {
-            AddFab(
-                onClick = actions::onAddCashFlowClick,
-                contentDescription = R.string.add_cash_flow
-            )
+            AnimatedVisibility(visible = showAddFab) {
+                AddFab(
+                    onClick = actions::onAddCashFlowClick,
+                    contentDescription = R.string.add_cash_flow
+                )
+            }
         },
         floatingActionButtonPosition = FabPosition.End,
         topBar = {
@@ -124,7 +132,8 @@ private fun ScreenContent(
                                     .weight(1f)
                                     .padding(horizontal = PaddingMedium),
                                 style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colors.onPrimarySurface
                             )
                             IconButton(
                                 onClick = {
@@ -161,7 +170,8 @@ private fun ScreenContent(
                             bottom = PaddingListBottom,
                             start = PaddingMedium,
                             end = PaddingMedium
-                        )
+                        ),
+                        state = gridState
                     ) {
                         items(agents) { agent ->
                             AgentItem(
