@@ -155,6 +155,8 @@ class CashFlowDetailsViewModel @Inject constructor(
                 if (isNew) {
                     checkExistingAgentAndReplace(agent)
                     isNew = false
+                    cacheAgent(agent)
+                    editModeActive.value = false
                     onAddCashFlowClick()
                     return@launch
                 }
