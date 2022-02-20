@@ -143,11 +143,12 @@ private fun ToggleablePreference(
             .fillMaxWidth()
             .clickable(onClick = { onCheckedChange(!isChecked) })
             .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
             modifier = Modifier
-                .weight(1f),
+                .fillMaxWidth(0.80f),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
