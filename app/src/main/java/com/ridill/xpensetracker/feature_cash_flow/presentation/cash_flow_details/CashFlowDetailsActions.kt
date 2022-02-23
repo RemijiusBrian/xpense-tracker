@@ -17,6 +17,6 @@ interface CashFlowDetailsActions {
     fun onCashFlowSwipeDelete(cashFlow: CashFlow)
     fun onUndoCashFlowDelete(cashFlow: CashFlow)
     fun onCashFlowClick(cashFlow: CashFlow)
-    fun onClearCashFlowDismiss()
-    fun onClearCashFlowConfirm()
+    fun onDeleteAgentDismiss()
+    fun onDeleteAgentConfirm()
 }

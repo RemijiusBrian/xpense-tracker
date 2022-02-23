@@ -50,9 +50,8 @@
     <string name="cash_flow_added">Cash Flow Added</string>
     <string name="cash_flow_deleted">Cash Flow Deleted!</string>
     <string name="edit">Edit</string>
-    <string name="clear">Clear</string>
-    <string name="confirm_clear_cash_flow">Clear This Cash Flow?</string>
-    <string name="clear_this_cash_flow">clear this cash flow</string>
+    <string name="confirm_delete_agent">Delete This Agent?</string>
+    <string name="delete_this_agent">delete this agent</string>
     <string name="confirm_action_message">Are you sure you want to %s? This action is irreversible and cannot be undone.</string>
     <string name="cash_flow_cleared">Cash Flow Cleared!</string>
     <string name="search">Search</string>
@@ -67,7 +66,7 @@
     <string name="borrowed">Borrowed</string>
     <string name="expenditure_limit_updated">Expenditure Limit Updated</string>
     <string name="show_all_entries">Show All</string>
-    <string name="name_updated">Name Updated</string>
+    <string name="agent_updated">Agent Updated</string>
     <string name="repayment">Repayment</string>
     <string name="toggle_repayment">Toggle Repayment</string>
     <string name="repaid_amount">Repaid Amount</string>
@@ -78,7 +77,9 @@
     <string name="light">Light</string>
     <string name="dark">Dark</string>
     <string name="xpense">Xpense</string>
-    <string name="person_name">Person Name</string>
+    <string name="benefactor_or_beneficiary">Benefactor\/Beneficiary</string>
+    <string name="benefactor">Benefactor</string>
+    <string name="beneficiary">Beneficiary</string>
     <string name="reason_for_cash_flow">Reason for %s</string>
     <string name="track_your_expenses">Start tracking your Xpenses already!</string>
     <string name="error_invalid_input">Invalid Input</string>
@@ -93,4 +94,5 @@
     <string name="payment_pending">Payment Pending</string>
     <string name="coming_soon">Coming Soon</string>
     <string name="agent_added">Agent Added</string>
+    <string name="agent_found">Agent Found</string>
 </resources>

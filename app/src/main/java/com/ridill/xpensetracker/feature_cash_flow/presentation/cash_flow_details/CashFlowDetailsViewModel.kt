@@ -124,7 +124,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                 CashFlowDetailsOptions.EDIT -> {
                     editModeActive.value = !editModeActive.value!!
                 }
-                CashFlowDetailsOptions.CLEAR_CASH_FLOW -> {
+                CashFlowDetailsOptions.DELETE_AGENT -> {
                     showClearCashFlowDialog.value = true
                 }
             }.exhaustive
@@ -137,10 +137,13 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onDismissEditMode() {
         agentLiveData.value?.let {
-            if (it.id == 0L) viewModelScope.launch {
-                eventsChannel.send(CashFlowDetailsEvents.NavigateBack)
-            } else {
-                editModeActive.value = false
+            viewModelScope.launch {
+                if (it.id == 0L) {
+                    eventsChannel.send(CashFlowDetailsEvents.NavigateBack)
+                } else {
+                    agentLiveData.value = repo.getAgentById(it.id)
+                    editModeActive.value = false
+                }
             }
         }
     }
@@ -152,30 +155,33 @@ class CashFlowDetailsViewModel @Inject constructor(
                     eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_empty))
                     return@launch
                 }
-                if (isNew) {
-                    checkExistingAgentAndReplace(agent)
-                    isNew = false
+
+                val cashFlowAgent = repo.getAgentByName(agent.name)
+                if (cashFlowAgent != null) {
+                    if (isNew) {
+                        agentLiveData.value = cashFlowAgent
+                        editModeActive.value = false
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_found))
+                    } else {
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_already_exists))
+                    }
+                } else {
                     cacheAgent(agent)
                     editModeActive.value = false
-                    onAddCashFlowClick()
-                    return@launch
+                    if (isNew) {
+                        isNew = false
+                        onAddCashFlowClick()
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_added))
+                    } else {
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_updated))
+                    }
                 }
-                cacheAgent(agent)
+                /*if (isNew) {
+                    onAddCashFlowClick()
+                    isNew = false
+                }*/
+//                editModeActive.value = false
             }
-        }
-    }
-
-    // Check if agent with same name exists and replace active agent
-    private suspend fun checkExistingAgentAndReplace(agent: CashFlowAgent) {
-        val cashFlowAgent = repo.getAgentByName(agent.name)
-        if (cashFlowAgent != null) {
-            agentLiveData.value = cashFlowAgent
-            eventsChannel.send(
-                CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
-            )
-            editModeActive.value = false
-            showAddCashFlowButton.value = true
-            eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.name_updated))
         }
     }
 
@@ -268,11 +274,11 @@ class CashFlowDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onClearCashFlowDismiss() {
+    override fun onDeleteAgentDismiss() {
         showClearCashFlowDialog.value = false
     }
 
-    override fun onClearCashFlowConfirm() {
+    override fun onDeleteAgentConfirm() {
         viewModelScope.launch {
             agentLiveData.value?.let {
                 showClearCashFlowDialog.value = false

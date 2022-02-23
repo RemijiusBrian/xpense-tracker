@@ -5,5 +5,5 @@ import com.ridill.xpensetracker.R
 
 enum class CashFlowDetailsOptions(@StringRes val label: Int) {
     EDIT(R.string.edit),
-    CLEAR_CASH_FLOW(R.string.clear)
+    DELETE_AGENT(R.string.delete)
 }

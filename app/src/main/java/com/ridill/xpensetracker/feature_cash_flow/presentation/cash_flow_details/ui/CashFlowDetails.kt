@@ -264,13 +264,13 @@ private fun ScreenContent(
         }
         if (state.showClearCashFlowConfirmation) {
             ConfirmationDialog(
-                title = stringResource(R.string.confirm_clear_cash_flow),
+                title = stringResource(R.string.confirm_delete_agent),
                 text = stringResource(
                     R.string.confirm_action_message,
-                    stringResource(R.string.clear_this_cash_flow)
+                    stringResource(R.string.delete_this_agent)
                 ),
-                onDismiss = actions::onClearCashFlowDismiss,
-                onConfirm = actions::onClearCashFlowConfirm
+                onDismiss = actions::onDeleteAgentDismiss,
+                onConfirm = actions::onDeleteAgentConfirm
             )
         }
     }

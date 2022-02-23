@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -44,18 +45,17 @@ fun AgentDetails(
     aggregateAmountState: AggregateAmountState,
     onEditConfirm: () -> Unit
 ) {
-    val transition =
-        updateTransition(
-            targetState = isEditMode,
-            label = "Background Gradient Transition"
-        )
+    val transition = updateTransition(
+        targetState = isEditMode,
+        label = "Background Gradient Transition"
+    )
     val gradientStartColor by transition.animateColor(label = "Background Gradient Start Color") { editMode ->
-        if (editMode) MaterialTheme.colors.surface
-        else MaterialTheme.colors.primaryVariant.copy(alpha = 0.48f)
+        if (editMode) Color.Transparent
+        else MaterialTheme.colors.secondaryVariant.copy(alpha = 0.32f)
     }
     val gradientEndColor by transition.animateColor(label = "Background Gradient End Color") { editMode ->
         if (editMode) MaterialTheme.colors.onSurface.copy(alpha = 0.24f)
-        else MaterialTheme.colors.primary
+        else MaterialTheme.colors.secondaryVariant
     }
     val focusRequester = remember {
         FocusRequester()
@@ -97,7 +97,7 @@ fun AgentDetails(
                         modifier = Modifier
                             .weight(1f)
                             .focusRequester(focusRequester),
-                        label = { Text(stringResource(R.string.person_name)) },
+                        label = { Text(stringResource(R.string.benefactor_or_beneficiary)) },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Done
@@ -117,28 +117,35 @@ fun AgentDetails(
                         singleLine = true
                     )
                 } else {
-                    Column {
-                        Text(
-                            text = name,
-                            style = MaterialTheme.typography.h6,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = date,
-                            style = MaterialTheme.typography.caption
-                        )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.h6,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                text = date,
+                                style = MaterialTheme.typography.caption,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(SpacingMedium))
+                        AnimatedVisibility(visible = !isEditMode) {
+                            AnimatedContent(targetState = aggregateAmountState) { status ->
+                                CashFlowStatusIndicator(
+                                    amount = aggregateAmount,
+                                    statusMessage = status.label,
+                                    cleared = status == AggregateAmountState.CLEARED
+                                )
+                            }
+                        }
                     }
-                }
-            }
-            Spacer(modifier = Modifier.width(SpacingMedium))
-            AnimatedVisibility(visible = !isEditMode) {
-                AnimatedContent(targetState = aggregateAmountState) { status ->
-                    CashFlowStatusIndicator(
-                        amount = aggregateAmount,
-                        statusMessage = status.label,
-                        cleared = status == AggregateAmountState.CLEARED
-                    )
                 }
             }
         }
@@ -161,7 +168,7 @@ private fun CashFlowStatusIndicator(
                     text = amount,
                     style = MaterialTheme.typography.subtitle1,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onPrimary
+//                    color = MaterialTheme.colors.onPrimary
                 )
             }
         }
@@ -172,14 +179,14 @@ private fun CashFlowStatusIndicator(
                 text = stringResource(statusMessage),
                 style = MaterialTheme.typography.body2,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onPrimary
+//                color = MaterialTheme.colors.onPrimary
             )
             AnimatedVisibility(visible = cleared) {
                 Spacer(modifier = Modifier.width(SpacingMedium))
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primaryVariant
+//                    tint = MaterialTheme.colors.primaryVariant
                 )
             }
         }
