@@ -1,15 +1,14 @@
 package com.ridill.xpensetracker.core.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ fun SearchView(
     modifier: Modifier = Modifier,
     @StringRes placeholder: Int? = null,
     textColor: Color = Color.White,
-    onCancelClick: () -> Unit,
     onClearQueryClick: () -> Unit,
     onDone: () -> Unit = {}
 ) {
@@ -52,18 +50,21 @@ fun SearchView(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            BackArrowButton(onClick = onCancelClick)
             Box(
                 modifier = Modifier
                     .weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
-                if (placeholder != null && query.isEmpty()) {
-                    Text(stringResource(placeholder))
+                this@Row.AnimatedVisibility(placeholder != null && query.isEmpty()) {
+                    Text(
+                        stringResource(placeholder!!),
+                        style = MaterialTheme.typography.body2,
+                        color = textColor.copy(alpha = ContentAlpha.medium)
+                    )
                 }
                 innerTextField()
             }
-            if (query.isNotEmpty()) {
+            AnimatedVisibility(query.isNotEmpty()) {
                 IconButton(onClick = onClearQueryClick) {
                     Icon(
                         imageVector = Icons.Default.Clear,

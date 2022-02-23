@@ -2,7 +2,10 @@ package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -16,17 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.AddFab
+import com.ridill.xpensetracker.core.ui.components.BackArrowButton
 import com.ridill.xpensetracker.core.ui.components.EmptyGridIndicator
 import com.ridill.xpensetracker.core.ui.components.SearchView
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
-import com.ridill.xpensetracker.core.ui.theme.onPrimarySurface
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregate
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowActions
@@ -110,45 +112,35 @@ private fun ScreenContent(
         },
         floatingActionButtonPosition = FabPosition.End,
         topBar = {
-            TopAppBar {
-                AnimatedContent(targetState = searchModeActive) { searchMode ->
-                    if (searchMode) {
-                        SearchView(
-                            query = searchQuery,
-                            onQueryChange = actions::onSearchQueryChange,
-                            onClearQueryClick = actions::onSearchQueryClear,
-                            placeholder = R.string.search,
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            onCancelClick = actions::onSearchDismiss
-                        )
-                    } else {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                stringResource(Destination.CashFlow.label),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = PaddingMedium),
-                                style = MaterialTheme.typography.h6,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colors.onPrimarySurface
+            TopAppBar(
+                title = {
+                    AnimatedContent(targetState = searchModeActive) { searchMode ->
+                        if (searchMode) {
+                            SearchView(
+                                query = searchQuery,
+                                onQueryChange = actions::onSearchQueryChange,
+                                onClearQueryClick = actions::onSearchQueryClear,
+                                placeholder = R.string.search,
                             )
-                            IconButton(
-                                onClick = {
-                                    actions.onSearchClick()
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Search,
-                                    contentDescription = stringResource(R.string.search)
-                                )
-                            }
+                        } else {
+                            Text(stringResource(Destination.CashFlow.label))
                         }
                     }
-                }
-            }
+                },
+                actions = {
+                    AnimatedVisibility(visible = !searchModeActive) {
+                        IconButton(onClick = actions::onSearchClick) {
+                            Icon(
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = stringResource(R.string.search)
+                            )
+                        }
+                    }
+                },
+                navigationIcon = if (searchModeActive) {
+                    { BackArrowButton(onClick = actions::onSearchDismiss) }
+                } else null
+            )
         },
     ) {
         Column(
