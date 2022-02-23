@@ -14,5 +14,6 @@ data class CashFlowAgentEntity(
     fun toAgent(): CashFlowAgent = CashFlowAgent(
         id = id,
         name = name,
+        createdDateMillis = createdDateMillis
     )
 }

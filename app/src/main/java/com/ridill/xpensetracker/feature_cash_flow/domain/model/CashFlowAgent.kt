@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class CashFlowAgent(
     val id: Long = 0L,
     val name: String,
-    val createdDateMillis: Long = System.currentTimeMillis(),
+    val createdDateMillis: Long,
 ) : Parcelable {
     val createdDateFormatted: String get() = TextUtil.formatDate(createdDateMillis)
 
@@ -22,6 +22,7 @@ data class CashFlowAgent(
     companion object {
         val DEFAULT = CashFlowAgent(
             name = "",
+            createdDateMillis = System.currentTimeMillis()
         )
     }
 }
