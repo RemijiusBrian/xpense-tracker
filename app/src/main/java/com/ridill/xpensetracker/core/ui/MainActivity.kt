@@ -100,17 +100,6 @@ private fun ScreenContent() {
                             )
                         }
                     }
-                    /*IconButton(
-                        onClick = { navController.navigate(Destination.Settings.route) },
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = stringResource(R.string.settings),
-                            tint = MaterialTheme.colors.onPrimarySurface.copy(alpha = 0.54f)
-                        )
-                    }*/
                 }
             }
         }
