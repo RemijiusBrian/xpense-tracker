@@ -150,14 +150,15 @@ class ExpensesViewModel @Inject constructor(
         showExpenditureLimitUpdateDialog.value = true
     }
 
-    override fun onExpenditureLimitUpdateDialogDismissed() {
+    override fun onExpenditureLimitUpdateDismiss() {
         showExpenditureLimitUpdateDialog.value = false
     }
 
-    override fun onExpenditureLimitUpdateDialogConfirmed(limit: String) {
+    override fun onExpenditureLimitUpdateConfirm(limit: String) {
         viewModelScope.launch {
             val amount = limit.toLongOrNull() ?: preferences.first().expenditureLimit
-            if (amount < 0) {
+            if (amount <= 0) {
+                showExpenditureLimitUpdateDialog.value = false
                 eventsChannel.send(ExpenseEvents.ShowSnackbar(R.string.error_amount_invalid))
                 return@launch
             }

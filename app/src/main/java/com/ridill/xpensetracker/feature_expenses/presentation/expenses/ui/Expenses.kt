@@ -1,13 +1,14 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +26,7 @@ import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.PaddingListBottom
 import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
 import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
+import com.ridill.xpensetracker.core.ui.util.rememberSnackbarController
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
@@ -45,6 +47,8 @@ fun Expenses(
     val scaffoldState = rememberScaffoldState()
     val hapticFeedback = LocalHapticFeedback.current
     val currentBackStackEntry = navController.currentBackStackEntry
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarController = rememberSnackbarController(coroutineScope)
 
     // Add/Edit Expense Result
     val addEditExpenseResult = currentBackStackEntry
@@ -58,11 +62,9 @@ fun Expenses(
                 RESULT_EXPENSE_ADDED -> R.string.expense_added
                 RESULT_EXPENSE_UPDATED -> R.string.expense_updated
                 RESULT_EXPENSE_DELETED -> R.string.expense_deleted
-                else -> R.string.empty
+                else -> return@let
             }
-            context.getString(message).takeIf { it.isNotEmpty() }?.let { msg ->
-                scaffoldState.snackbarHostState.showSnackbar(msg)
-            }
+            scaffoldState.snackbarHostState.showSnackbar(context.getString(message))
         }
     }
 
@@ -75,16 +77,19 @@ fun Expenses(
                     navController.navigate(event.route)
                 }
                 is ExpensesViewModel.ExpenseEvents.ShowUndoDeleteOption -> {
-                    val result = scaffoldState.snackbarHostState.showSnackbar(
+                    snackbarController.showSnackbar(
+                        scaffoldState,
                         context.getString(R.string.expense_deleted),
-                        actionLabel = context.getString(R.string.undo)
-                    )
-                    when (result) {
-                        SnackbarResult.Dismissed -> Unit
-                        SnackbarResult.ActionPerformed -> {
-                            viewModel.undoExpenseDelete(event.expense)
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = { result ->
+                            when (result) {
+                                SnackbarResult.Dismissed -> Unit
+                                SnackbarResult.ActionPerformed -> {
+                                    viewModel.undoExpenseDelete(event.expense)
+                                }
+                            }
                         }
-                    }
+                    )
                 }
                 is ExpensesViewModel.ExpenseEvents.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
@@ -111,28 +116,17 @@ private fun ScreenContent(
     scaffoldState: ScaffoldState,
     actions: ExpensesActions,
 ) {
-    val listState = rememberLazyListState()
-    val showAddFab by remember {
-        derivedStateOf { listState.firstVisibleItemIndex < 2 }
-    }
-
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize(),
         floatingActionButton = {
-            AnimatedVisibility(visible = showAddFab) {
-                AddFab(
-                    onClick = actions::onAddExpenseClick,
-                    contentDescription = R.string.add_expense
-                )
-            }
-        },
-        topBar = {
-            TransparentTopAppBar(
-                title = stringResource(Destination.Expenses.label),
+            AddFab(
+                onClick = actions::onAddExpenseClick,
+                contentDescription = R.string.add_expense
             )
         },
+        topBar = { TransparentTopAppBar(stringResource(Destination.Expenses.label)) },
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -165,7 +159,6 @@ private fun ScreenContent(
                         contentPadding = PaddingValues(
                             bottom = PaddingListBottom
                         ),
-                        state = listState,
                     ) {
                         state.monthsList.forEach { month ->
                             item(key = month) {
@@ -203,8 +196,8 @@ private fun ScreenContent(
                 title = R.string.update_expenditure_limit,
                 message = R.string.update_expenditure_limit_message,
                 placeholder = state.expenditureLimit.ifEmpty { stringResource(R.string.limit) },
-                onDismiss = actions::onExpenditureLimitUpdateDialogDismissed,
-                onConfirm = actions::onExpenditureLimitUpdateDialogConfirmed
+                onDismiss = actions::onExpenditureLimitUpdateDismiss,
+                onConfirm = actions::onExpenditureLimitUpdateConfirm
             )
         }
     }

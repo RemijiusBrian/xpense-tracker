@@ -27,6 +27,7 @@ import com.ridill.xpensetracker.core.ui.components.BackArrowButton
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.theme.*
+import com.ridill.xpensetracker.core.ui.util.rememberSnackbarController
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlowDetailsOptions
@@ -50,13 +51,16 @@ fun CashFlowDetails(
     val context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val hapticFeedback = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarController = rememberSnackbarController(coroutineScope)
 
     LaunchedEffect(Unit) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         viewModel.events.collectLatest { event ->
             when (event) {
                 is CashFlowDetailsViewModel.CashFlowDetailsEvents.ShowSnackbar -> {
-                    bottomSheetScaffoldState.snackbarHostState.showSnackbar(
+                    snackbarController.showSnackbar(
+                        bottomSheetScaffoldState,
                         context.getString(event.message)
                     )
                 }
@@ -73,13 +77,16 @@ fun CashFlowDetails(
                     }
                 }
                 is CashFlowDetailsViewModel.CashFlowDetailsEvents.ShowCashFlowDeleteUndo -> {
-                    val snackbarResult = bottomSheetScaffoldState.snackbarHostState.showSnackbar(
+                    snackbarController.showSnackbar(
+                        bottomSheetScaffoldState,
                         context.getString(R.string.cash_flow_deleted),
-                        actionLabel = context.getString(R.string.undo)
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = { result ->
+                            if (result == SnackbarResult.ActionPerformed) {
+                                viewModel.onUndoCashFlowDelete(event.cashFlow)
+                            } else Unit
+                        }
                     )
-                    if (snackbarResult == SnackbarResult.ActionPerformed) {
-                        viewModel.onUndoCashFlowDelete(event.cashFlow)
-                    } else Unit
                 }
                 is CashFlowDetailsViewModel.CashFlowDetailsEvents.NavigateBackWithResult -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
@@ -136,6 +143,7 @@ private fun ScreenContent(
             }
         },
         sheetPeekHeight = ZeroDp,
+        sheetGesturesEnabled = false,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Destination.CashFlowDetails.label)) },
@@ -207,7 +215,8 @@ private fun ScreenContent(
                 Text(
                     text = stringResource(R.string.cash_flow),
                     style = MaterialTheme.typography.caption,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary
                 )
                 AnimatedVisibility(visible = state.showAddCashFlowButton) {
                     IconButton(onClick = actions::onAddCashFlowClick) {
@@ -235,40 +244,35 @@ private fun ScreenContent(
                         .fillMaxWidth()
                 ) {
                     items(state.cashFlow, key = { it.id }) { cashFlow ->
-                        val dismissState = rememberDismissState(
-                            confirmStateChange = { dismissValue ->
-                                if (dismissValue == DismissValue.DismissedToEnd || dismissValue == DismissValue.DismissedToStart) {
-                                    actions.onCashFlowSwipeDelete(cashFlow)
-                                }
-                                true
-                            }
+                        CashFlowItem(
+                            modifier = Modifier,
+                            name = cashFlow.name,
+                            amount = cashFlow.amountFormatted,
+                            date = cashFlow.dateFormatted,
+                            lending = cashFlow.lending,
+                            onClick = { actions.onCashFlowClick(cashFlow) },
+                            onSwipeDismiss = { actions.onCashFlowSwipeDelete(cashFlow) }
                         )
-                        SwipeToDismiss(
-                            state = dismissState,
-                            background = {},
-                            modifier = Modifier
-                                .animateItemPlacement()
-                        ) {
-                            CashFlowItem(
-                                modifier = Modifier,
-                                name = cashFlow.name,
-                                amount = cashFlow.amountFormatted,
-                                date = cashFlow.dateFormatted,
-                                lending = cashFlow.lending,
-                                onClick = { actions.onCashFlowClick(cashFlow) }
-                            )
-                        }
                     }
                 }
             }
         }
-        if (state.showClearCashFlowConfirmation) {
+        if (state.showDeleteAgentDialog) {
             ConfirmationDialog(
                 title = stringResource(R.string.confirm_delete_agent),
                 text = stringResource(
                     R.string.confirm_action_message,
                     stringResource(R.string.delete_this_agent)
                 ),
+                onDismiss = actions::onDeleteAgentDismiss,
+                onConfirm = actions::onDeleteAgentConfirm
+            )
+        }
+
+        if (state.showCashFlowClearedDialog) {
+            ConfirmationDialog(
+                title = stringResource(R.string.cash_flow_cleared),
+                text = stringResource(R.string.cash_flow_cleared_delete_agent),
                 onDismiss = actions::onDeleteAgentDismiss,
                 onConfirm = actions::onDeleteAgentConfirm
             )

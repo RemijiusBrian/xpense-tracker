@@ -5,7 +5,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
@@ -21,11 +20,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
+import com.ridill.xpensetracker.core.ui.components.BackArrowButton
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.util.rememberSnackbarController
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
@@ -42,9 +44,12 @@ fun AddEditExpense(
     val showDeleteExpenseConfirmation by viewModel.showDeleteExpenseDialog.observeAsState(false)
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarController = rememberSnackbarController(coroutineScope)
 
     // Collect Events
     LaunchedEffect(Unit) {
+        @Suppress("IMPLICIT_CAST_TO_ANY")
         viewModel.events.collectLatest { event ->
             when (event) {
                 is AddEditExpenseViewModel.AddEditExpenseEvents.NavigateBackWithResult -> {
@@ -54,7 +59,8 @@ fun AddEditExpense(
                     navController.popBackStack()
                 }
                 is AddEditExpenseViewModel.AddEditExpenseEvents.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
+                    snackbarController.showSnackbar(
+                        scaffoldState,
                         context.getString(event.message)
                     )
                 }
@@ -98,14 +104,7 @@ private fun ScreenContent(
                         )
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = navigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.navigate_back)
-                        )
-                    }
-                },
+                navigationIcon = { BackArrowButton(onClick = navigateBack) },
                 actions = {
                     if (isEditMode) {
                         var expanded by remember { mutableStateOf(false) }
@@ -147,9 +146,9 @@ private fun ScreenContent(
         Column(
             modifier = Modifier
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = PaddingMedium)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(SpacingMedium))
             OutlinedTextField(
                 value = expense.name,
                 onValueChange = actions::onNameChange,
@@ -171,12 +170,12 @@ private fun ScreenContent(
                 if (!isEditMode) focusRequester.requestFocus()
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(SpacingMedium))
             TextField(
                 value = expense.amount.takeIf { it > 0L }?.toString().orEmpty(),
                 onValueChange = actions::onAmountChange,
                 modifier = Modifier
-                    .fillMaxWidth(0.50f)
+                    .fillMaxWidth()
                     .align(Alignment.End),
                 label = { Text(stringResource(R.string.amount)) },
                 singleLine = true,
@@ -188,7 +187,7 @@ private fun ScreenContent(
                     onDone = { actions.onSaveClick() }
                 )
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(SpacingMedium))
             Row(
                 modifier = Modifier
                     .align(Alignment.Start),

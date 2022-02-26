@@ -66,7 +66,7 @@ class AddEditExpenseViewModel @Inject constructor(
                     eventsChannel.send(AddEditExpenseEvents.ShowSnackbar(R.string.error_name_empty))
                     return@launch
                 }
-                if (expense.amount < 0) {
+                if (expense.amount <= 0) {
                     eventsChannel.send(AddEditExpenseEvents.ShowSnackbar(R.string.error_amount_invalid))
                     return@launch
                 }

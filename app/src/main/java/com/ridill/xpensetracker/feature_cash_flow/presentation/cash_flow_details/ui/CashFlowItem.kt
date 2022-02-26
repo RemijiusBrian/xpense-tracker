@@ -2,9 +2,7 @@ package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_detail
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,54 +21,70 @@ fun CashFlowItem(
     amount: String,
     date: String,
     lending: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onSwipeDismiss: () -> Unit
 ) {
-    Card(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = PaddingSmall)
-            .padding(top = PaddingSmall),
-        elevation = ZeroDp
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(PaddingMedium),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-            ) {
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.subtitle2,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = date,
-                    style = MaterialTheme.typography.caption
-                )
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd) {
+                onSwipeDismiss()
             }
-            Column {
-                AnimatedContent(
-                    targetState = amount,
-                    transitionSpec = { numberSliderTransition { targetState > initialState } }
+            true
+        }
+    )
+    SwipeToDismiss(
+        state = dismissState,
+        background = {},
+        modifier = modifier,
+        directions = setOf(DismissDirection.StartToEnd)
+    ) {
+        Card(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = PaddingSmall)
+                .padding(top = PaddingSmall),
+            elevation = ZeroDp
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(PaddingMedium),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
                 ) {
                     Text(
-                        text = amount,
-                        style = MaterialTheme.typography.subtitle1,
-                        fontWeight = FontWeight.Bold
+                        text = name,
+                        style = MaterialTheme.typography.subtitle2,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.caption
                     )
                 }
-                Text(
-                    text = stringResource(
-                        if (lending) R.string.lent
-                        else R.string.borrowed
-                    ),
-                    style = MaterialTheme.typography.caption
-                )
+                Column {
+                    AnimatedContent(
+                        targetState = amount,
+                        transitionSpec = { numberSliderTransition { targetState > initialState } }
+                    ) {
+                        Text(
+                            text = amount,
+                            style = MaterialTheme.typography.subtitle1,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Text(
+                        text = stringResource(
+                            if (lending) R.string.lent
+                            else R.string.borrowed
+                        ),
+                        style = MaterialTheme.typography.caption
+                    )
+                }
             }
         }
     }

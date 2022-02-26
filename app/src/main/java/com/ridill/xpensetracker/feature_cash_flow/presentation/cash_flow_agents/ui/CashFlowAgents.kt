@@ -34,7 +34,7 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.model.AgentWithAggregat
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowActions
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.CashFlowViewModel
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.CASH_FLOW_RESULT
-import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_CASH_FLOW_CLEARED
+import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.RESULT_AGENT_DELETED
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -69,12 +69,10 @@ fun CashFlow(
 
         cashFlowResult?.value?.let { result ->
             val message = when (result) {
-                RESULT_CASH_FLOW_CLEARED -> R.string.cash_flow_cleared
-                else -> R.string.empty
+                RESULT_AGENT_DELETED -> R.string.agent_deleted
+                else -> return@let
             }
-            context.getString(message).takeIf { it.isNotEmpty() }?.let { msg ->
-                scaffoldState.snackbarHostState.showSnackbar(msg)
-            }
+            scaffoldState.snackbarHostState.showSnackbar(context.getString(message))
         }
     }
 

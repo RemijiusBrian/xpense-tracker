@@ -15,6 +15,7 @@ import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepo
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -55,6 +56,14 @@ class CashFlowDetailsViewModel @Inject constructor(
     // Show Add CashFlow Button
     private val showAddCashFlowButton = savedStateHandle.getLiveData("showAddCashFlowButton", false)
 
+    // Delete agent dialog
+    private val showDeleteAgentDialog =
+        savedStateHandle.getLiveData("showDeleteAgentDialog", false)
+
+    // Cash Flow cleared dialog
+    private val showCashFlowClearedDialog =
+        savedStateHandle.getLiveData("showCashFlowClearedDialog", false)
+
     // CashFlow
     private val cashFlow = agentLiveData.asFlow().flatMapLatest { agent ->
         repo.getCashFlowForAgent(agent.id)
@@ -82,10 +91,6 @@ class CashFlowDetailsViewModel @Inject constructor(
     private val _activeCashFlow = savedStateHandle.getLiveData<CashFlow?>("activeCashFlow", null)
     val activeCashFlow: LiveData<CashFlow?> = _activeCashFlow
 
-    // Show Clear Confirmation Dialog
-    private val showClearCashFlowDialog =
-        savedStateHandle.getLiveData("showClearConfirmationDialog", false)
-
     // Ui State
     val state = combineTuple(
         editModeActive.asFlow(),
@@ -93,14 +98,16 @@ class CashFlowDetailsViewModel @Inject constructor(
         cashFlow,
         cashFlowAggregate,
         cashFLowStatus,
-        showClearCashFlowDialog.asFlow()
+        showDeleteAgentDialog.asFlow(),
+        showCashFlowClearedDialog.asFlow()
     ).map { (
                 editMode,
                 showAddCashFlowButton,
                 cashFlow,
                 cashFlowAggregate,
                 cashFlowStatus,
-                showClearConfirmationDialog
+                showDeleteAgentDialog,
+                showCashFlowClearedDialog
             ) ->
         CashFlowDetailsState(
             editMode = editMode,
@@ -110,7 +117,8 @@ class CashFlowDetailsViewModel @Inject constructor(
                 TextUtil.formatNumber(abs(cashFlowAggregate))
             }",
             cashFlowStatus = cashFlowStatus,
-            showClearCashFlowConfirmation = showClearConfirmationDialog
+            showDeleteAgentDialog = showDeleteAgentDialog,
+            showCashFlowClearedDialog = showCashFlowClearedDialog
         )
     }.asLiveData()
 
@@ -125,7 +133,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                     editModeActive.value = !editModeActive.value!!
                 }
                 CashFlowDetailsOptions.DELETE_AGENT -> {
-                    showClearCashFlowDialog.value = true
+                    showDeleteAgentDialog.value = true
                 }
             }.exhaustive
         }
@@ -141,8 +149,8 @@ class CashFlowDetailsViewModel @Inject constructor(
                 if (it.id == 0L) {
                     eventsChannel.send(CashFlowDetailsEvents.NavigateBack)
                 } else {
-                    agentLiveData.value = repo.getAgentById(it.id)
                     editModeActive.value = false
+                    agentLiveData.value = repo.getAgentById(it.id)
                 }
             }
         }
@@ -150,23 +158,23 @@ class CashFlowDetailsViewModel @Inject constructor(
 
     override fun onSaveAgent() {
         viewModelScope.launch {
-            agentLiveData.value?.let { agent ->
-                if (agent.name.isEmpty()) {
+            agentLiveData.value?.let {
+                if (it.name.isEmpty()) {
                     eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_empty))
                     return@launch
                 }
-
-                val cashFlowAgent = repo.getAgentByName(agent.name)
+                val trimmedAgent = it.copy(name = it.name.trim())
+                val cashFlowAgent = repo.getAgentByName(trimmedAgent.name)
                 if (cashFlowAgent != null) {
                     if (isNew) {
                         agentLiveData.value = cashFlowAgent
                         editModeActive.value = false
-                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_found))
+                        eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_already_exists))
                     } else {
                         eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.error_name_already_exists))
                     }
                 } else {
-                    cacheAgent(agent)
+                    cacheAgent(trimmedAgent)
                     editModeActive.value = false
                     if (isNew) {
                         isNew = false
@@ -176,11 +184,7 @@ class CashFlowDetailsViewModel @Inject constructor(
                         eventsChannel.send(CashFlowDetailsEvents.ShowSnackbar(R.string.agent_updated))
                     }
                 }
-                /*if (isNew) {
-                    onAddCashFlowClick()
-                    isNew = false
-                }*/
-//                editModeActive.value = false
+                showAddCashFlowButton.value = true
             }
         }
     }
@@ -223,6 +227,7 @@ class CashFlowDetailsViewModel @Inject constructor(
         viewModelScope.launch {
             activeCashFlow.value?.let { cashFlow ->
                 val repayment = repaymentAmount.toLongOrNull() ?: 0L
+
                 if (validateCashFlow(cashFlow, repayment)) {
                     repo.cacheCashFlow(
                         cashFlow.copy(
@@ -230,6 +235,12 @@ class CashFlowDetailsViewModel @Inject constructor(
                             amount = cashFlow.amount - repayment
                         )
                     )
+                    eventsChannel.send(
+                        CashFlowDetailsEvents.ShowSnackbar(
+                            if (cashFlow.id == 0L) R.string.cash_flow_added else R.string.cash_flow_updated
+                        )
+                    )
+                    eventsChannel.send(CashFlowDetailsEvents.ToggleAddEditCashFlow(false))
                 }
             }
         }
@@ -254,6 +265,10 @@ class CashFlowDetailsViewModel @Inject constructor(
     override fun onCashFlowSwipeDelete(cashFlow: CashFlow) {
         viewModelScope.launch {
             repo.deleteCashFlow(cashFlow)
+            if (this@CashFlowDetailsViewModel.cashFlow.first().isEmpty()) {
+                showCashFlowClearedDialog.value = true
+                return@launch
+            }
             eventsChannel.send(
                 CashFlowDetailsEvents.ProvideHapticFeedback(HapticFeedbackType.LongPress)
             )
@@ -275,17 +290,19 @@ class CashFlowDetailsViewModel @Inject constructor(
     }
 
     override fun onDeleteAgentDismiss() {
-        showClearCashFlowDialog.value = false
+        showDeleteAgentDialog.value = false
+        showCashFlowClearedDialog.value = false
     }
 
     override fun onDeleteAgentConfirm() {
         viewModelScope.launch {
             agentLiveData.value?.let {
-                showClearCashFlowDialog.value = false
                 repo.clearAgentWithCashFlow(it)
+                showCashFlowClearedDialog.value = false
+                showDeleteAgentDialog.value = false
                 eventsChannel.send(
                     CashFlowDetailsEvents.NavigateBackWithResult(
-                        RESULT_CASH_FLOW_CLEARED
+                        RESULT_AGENT_DELETED
                     )
                 )
             }
@@ -307,4 +324,4 @@ class CashFlowDetailsViewModel @Inject constructor(
 private const val KEY_CASH_FLOW_AGENT = "KEY_CASH_FLOW_AGENT"
 
 const val CASH_FLOW_RESULT = "CASH_FLOW_RESULT"
-const val RESULT_CASH_FLOW_CLEARED = "RESULT_CASH_FLOW_CLEARED"
+const val RESULT_AGENT_DELETED = "RESULT_AGENT_DELETED"

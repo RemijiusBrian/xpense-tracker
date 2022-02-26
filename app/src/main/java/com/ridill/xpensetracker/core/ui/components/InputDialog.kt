@@ -14,8 +14,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 
 @Composable
 fun InputDialog(
@@ -44,7 +44,7 @@ fun InputDialog(
                     text = stringResource(message),
                     style = MaterialTheme.typography.body2
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(PaddingMedium))
                 OutlinedTextField(
                     value = input,
                     onValueChange = { input = it },

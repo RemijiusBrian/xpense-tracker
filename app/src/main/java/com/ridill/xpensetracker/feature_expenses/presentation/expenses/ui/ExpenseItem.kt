@@ -26,7 +26,7 @@ fun ExpenseItem(
 ) {
     val dismissState = rememberDismissState(
         confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+            if (it == DismissValue.DismissedToEnd) {
                 onSwipeDeleted()
             }
             true
@@ -36,7 +36,8 @@ fun ExpenseItem(
     SwipeToDismiss(
         state = dismissState,
         background = {},
-        modifier = modifier
+        modifier = modifier,
+        directions = setOf(DismissDirection.StartToEnd)
     ) {
         Card(
             onClick = onClick,

@@ -110,14 +110,7 @@ fun AddEditCashFlowBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
-                label = {
-                    Text(
-                        stringResource(
-                            R.string.reason_for_cash_flow,
-                            stringResource(if (lending) R.string.lending else R.string.borrowing)
-                        )
-                    )
-                },
+                label = { Text(stringResource(R.string.description)) },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     imeAction = ImeAction.Next
@@ -191,11 +184,15 @@ fun AddEditCashFlowBottomSheet(
                             onValueChange = { repaymentAmount = it.trim() },
                             modifier = Modifier
                                 .width(TotalSliderWidth),
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number
-                            ),
                             placeholder = { Text(stringResource(R.string.repaid_amount)) },
-                            singleLine = true
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { onConfirm(repaymentAmount) }
+                            )
                         )
                     } else {
                         LendingSlider(

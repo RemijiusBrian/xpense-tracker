@@ -8,6 +8,6 @@ interface ExpensesActions {
     fun onExpenseSwipeDeleted(expense: Expense)
     fun onMonthSelect(month: String)
     fun onEditExpenditureLimitClick()
-    fun onExpenditureLimitUpdateDialogDismissed()
-    fun onExpenditureLimitUpdateDialogConfirmed(limit: String)
+    fun onExpenditureLimitUpdateDismiss()
+    fun onExpenditureLimitUpdateConfirm(limit: String)
 }
