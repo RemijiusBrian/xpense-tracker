@@ -77,6 +77,7 @@ private fun ScreenContent() {
                             BottomNavigationItem(
                                 selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true,
                                 onClick = {
+                                    if (currentDestination?.route == destination.route) return@BottomNavigationItem
                                     navController.navigate(destination.route) {
                                         popUpTo(navController.graph.findStartDestination().id) {
                                             saveState = true
@@ -93,9 +94,7 @@ private fun ScreenContent() {
                                         )
                                     }
                                 },
-                                label = {
-                                    Text(stringResource(destination.label))
-                                },
+                                label = { Text(stringResource(destination.label)) },
                                 alwaysShowLabel = false
                             )
                         }

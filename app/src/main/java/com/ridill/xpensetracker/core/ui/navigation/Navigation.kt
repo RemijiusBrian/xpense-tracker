@@ -29,43 +29,44 @@ fun Navigation(
     ) {
         composable(
             route = Destination.Expenses.route,
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = { fadeOut(animationSpec = tween(500)) },
-            popEnterTransition = { fadeIn(animationSpec = tween(500)) },
-            popExitTransition = { fadeOut(animationSpec = tween(500)) },
+            enterTransition = { fadeIn(animationSpec = tween()) },
+            exitTransition = { fadeOut(animationSpec = tween()) },
+            popEnterTransition = { fadeIn(animationSpec = tween()) },
+            popExitTransition = { fadeOut(animationSpec = tween()) },
         ) {
             Expenses(navController = navController)
         }
 
         composable(
             route = Destination.CashFlow.route,
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = { fadeOut(animationSpec = tween(500)) },
-            popEnterTransition = { fadeIn(animationSpec = tween(500)) },
-            popExitTransition = { fadeOut(animationSpec = tween(500)) },
+            enterTransition = { fadeIn(animationSpec = tween()) },
+            exitTransition = { fadeOut(animationSpec = tween()) },
+            popEnterTransition = { fadeIn(animationSpec = tween()) },
+            popExitTransition = { fadeOut(animationSpec = tween()) },
         ) {
             CashFlow(navController = navController)
         }
 
         composable(
+            route = Destination.ExpensePlans.route,
+            enterTransition = { fadeIn(animationSpec = tween()) },
+            exitTransition = { fadeOut(animationSpec = tween()) },
+            popEnterTransition = { fadeIn(animationSpec = tween()) },
+            popExitTransition = { fadeOut(animationSpec = tween()) },
+        ) {
+            ExpensePlans()
+        }
+
+        composable(
             route = Destination.Settings.route,
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = { fadeOut(animationSpec = tween(500)) },
-            popEnterTransition = { fadeIn(animationSpec = tween(500)) },
-            popExitTransition = { fadeOut(animationSpec = tween(500)) },
+            enterTransition = { fadeIn(animationSpec = tween()) },
+            exitTransition = { fadeOut(animationSpec = tween()) },
+            popEnterTransition = { fadeIn(animationSpec = tween()) },
+            popExitTransition = { fadeOut(animationSpec = tween()) },
         ) {
             Settings()
         }
 
-        composable(
-            route = Destination.ExpensePlans.route,
-            enterTransition = { fadeIn(animationSpec = tween(500)) },
-            exitTransition = { fadeOut(animationSpec = tween(500)) },
-            popEnterTransition = { fadeIn(animationSpec = tween(500)) },
-            popExitTransition = { fadeOut(animationSpec = tween(500)) },
-        ) {
-            ExpensePlans()
-        }
         composable(
             route = Destination.AddEditExpense.route + "?${NavArgs.EXPENSE_ID}={${NavArgs.EXPENSE_ID}}",
             arguments = Destination.AddEditExpense.arguments,

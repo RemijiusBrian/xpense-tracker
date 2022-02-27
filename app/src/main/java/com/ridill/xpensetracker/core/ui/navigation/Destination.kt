@@ -68,18 +68,13 @@ sealed class Destination(
     object Settings : Destination(
         route = "settings",
         label = R.string.settings,
-        icon = R.drawable.ic_settings,
-        /*arguments = listOf(
-            navArgument(ARG_HIDE_BOTTOM_BAR) {
-                defaultValue = true
-            }
-        )*/
+        icon = R.drawable.ic_settings
     )
 }
 
 val BottomNavDestinations = listOf<Destination>(
-    Destination.CashFlow,
     Destination.Expenses,
+    Destination.CashFlow,
     Destination.ExpensePlans,
     Destination.Settings
 )
