@@ -42,7 +42,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun AddEditCashFlowBottomSheet(
-    showRepaymentOption: Boolean,
+    isNew: Boolean,
     name: String,
     onNameChange: (String) -> Unit,
     amount: String,
@@ -53,15 +53,13 @@ fun AddEditCashFlowBottomSheet(
     onConfirm: (String) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember {
-        FocusRequester()
-    }
+    val focusRequester = remember { FocusRequester() }
     var repaymentMode by remember { mutableStateOf(false) }
     var repaymentAmount by remember { mutableStateOf("") }
     val repaymentToggleRotation by animateFloatAsState(targetValue = if (repaymentMode) 180f else 0f)
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        if (isNew) focusRequester.requestFocus()
     }
 
     Column(
@@ -116,9 +114,7 @@ fun AddEditCashFlowBottomSheet(
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
+                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
                 ),
                 singleLine = true
             )
@@ -145,7 +141,7 @@ fun AddEditCashFlowBottomSheet(
                 modifier = Modifier
                     .align(Alignment.End)
             ) {
-                if (showRepaymentOption) {
+                if (!isNew) {
                     OutlinedButton(
                         onClick = {
                             repaymentAmount = ""
@@ -220,6 +216,9 @@ private fun LendingSlider(
             true
         }
     )
+    LaunchedEffect(key1 = lending) {
+        swipeableState.animateTo(lending)
+    }
     val maxWidth =
         with(LocalDensity.current) { (TotalSliderWidth - (SliderSize + 16.dp)).toPx() }
     val anchors = mapOf(0f to true, maxWidth to false)
