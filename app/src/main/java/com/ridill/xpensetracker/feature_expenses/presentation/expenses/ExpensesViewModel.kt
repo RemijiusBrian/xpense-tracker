@@ -40,9 +40,14 @@ class ExpensesViewModel @Inject constructor(
     // Months
     private val dateParser = SimpleDateFormat("MM-yyyy", Locale.getDefault())
     private val dateFormatter = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
-    private val monthsList = repo.getMonthNames().map { dates ->
-        dates.map { mapMonthNumberToName(it) }
-    }
+    private val datesList = repo.getDates().map { dates ->
+        dates.toMutableList().apply {
+            val currentMonth = getCurrentMonth()
+            if (dates.isEmpty() || dates.first() != currentMonth) {
+                add(0, currentMonth)
+            }
+        }.toList()
+    }.map { dates -> dates.map { mapMonthNumberToName(it) } }
 
     private val dateParserForMonthName = SimpleDateFormat("MMMM-yyyy", Locale.getDefault())
     private val dateFormatterToMonthNumber = SimpleDateFormat("MM-yyyy", Locale.getDefault())
@@ -79,7 +84,7 @@ class ExpensesViewModel @Inject constructor(
 
     // Ui State
     val state = combineTuple(
-        monthsList,
+        datesList,
         expenses,
         preferences,
         currentExpenditure,
@@ -88,7 +93,7 @@ class ExpensesViewModel @Inject constructor(
         selectedDate.asFlow(),
         showExpenditureLimitUpdateDialog.asFlow()
     ).map { (
-                monthsList,
+                datesList,
                 expenses,
                 preferences,
                 currentExpenditure,
@@ -98,7 +103,7 @@ class ExpensesViewModel @Inject constructor(
                 showExpenditureLimitUpdateDialog
             ) ->
         ExpensesState(
-            monthsList = monthsList,
+            datesList = datesList,
             expenses = expenses,
             expenditureLimit = preferences.expenditureLimit.takeIf { it > 0L }
                 ?.let { formatAmount(it) }.orEmpty(),
@@ -140,8 +145,8 @@ class ExpensesViewModel @Inject constructor(
         }
     }
 
-    override fun onMonthSelect(month: String) {
-        val monthFormatted = mapMonthNameToNumber(month)
+    override fun onDateSelect(date: String) {
+        val monthFormatted = mapMonthNameToNumber(date)
         if (selectedDate.value == monthFormatted) return
         selectedDate.value = monthFormatted
     }

@@ -36,9 +36,6 @@
     <string name="delete_empty_cash_flow">Delete Empty Cash Flows</string>
     <string name="add_cash_flow">Add Cash Flow</string>
     <string name="cleared">Cleared</string>
-    <string name="balance_animation">Balance Animation</string>
-    <string name="balance_transition_width">Balance Card Width</string>
-    <string name="balance_transition_color">Balance Card Color</string>
     <string name="yearning">Yearning</string>
     <string name="cash_flow">Cash Flow</string>
     <string name="name">Name</string>
@@ -97,4 +94,6 @@
     <string name="agent_already_exists">Agent already exists</string>
     <string name="agent_deleted">Agent Deleted</string>
     <string name="cash_flow_updated">Cash Flow Updated</string>
+    <string name="empty_expenses">No expenses so far…</string>
+    <string name="budget_planning">Budget</string>
 </resources>

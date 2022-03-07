@@ -20,13 +20,17 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.BackArrowButton
 import com.ridill.xpensetracker.core.ui.components.ConfirmationDialog
 import com.ridill.xpensetracker.core.ui.navigation.Destination
-import com.ridill.xpensetracker.core.ui.theme.*
+import com.ridill.xpensetracker.core.ui.theme.ElevationSmall
+import com.ridill.xpensetracker.core.ui.theme.PaddingLarge
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import com.ridill.xpensetracker.core.ui.theme.ZeroDp
 import com.ridill.xpensetracker.core.ui.util.rememberSnackbarController
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_cash_flow.domain.model.CashFlow
@@ -208,7 +212,7 @@ private fun ScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = IconButtonSize),
+                    .heightIn(min = CashFlowTitleRowHeight),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -279,3 +283,5 @@ private fun ScreenContent(
         }
     }
 }
+
+private val CashFlowTitleRowHeight = 48.dp

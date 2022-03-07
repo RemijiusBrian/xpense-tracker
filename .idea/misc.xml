@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_budget_plans.xml" value="0.138" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_cash_flow.xml" value="0.134" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_deselect.xml" value="0.134" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_expense.xml" value="0.134" />
