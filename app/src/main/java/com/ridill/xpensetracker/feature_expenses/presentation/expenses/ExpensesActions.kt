@@ -6,7 +6,7 @@ interface ExpensesActions {
     fun onExpenseClick(expense: Expense)
     fun onAddExpenseClick()
     fun onExpenseSwipeDeleted(expense: Expense)
-    fun onMonthSelect(month: String)
+    fun onDateSelect(date: String)
     fun onEditExpenditureLimitClick()
     fun onExpenditureLimitUpdateDismiss()
     fun onExpenditureLimitUpdateConfirm(limit: String)

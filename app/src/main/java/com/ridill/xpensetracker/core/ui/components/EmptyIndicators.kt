@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.core.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.infiniteRepeatable
@@ -8,7 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,27 +18,32 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
+import com.ridill.xpensetracker.core.ui.theme.CornerRadiusSmall
 import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
 import com.ridill.xpensetracker.core.ui.theme.SpacingExtraSmall
 import kotlinx.coroutines.delay
 
 @Composable
-fun EmptyListIndicator() {
+fun EmptyListIndicator(
+    modifier: Modifier = Modifier,
+    @StringRes message: Int? = null
+) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val animationValues = (1..3).map { index ->
             var offset by remember { mutableStateOf(0f) }
 
             LaunchedEffect(Unit) {
-                delay(Delay * index)
+                delay(DELAY * index)
                 animate(
                     initialValue = 0f,
                     targetValue = -12f,
                     animationSpec = infiniteRepeatable(
                         animation = tween(
-                            durationMillis = Duration,
-                            delayMillis = IntervalDuration
+                            durationMillis = DURATION,
+                            delayMillis = INTERVAL_DURATION
                         ),
                         repeatMode = RepeatMode.Reverse,
                     )
@@ -58,29 +64,33 @@ fun EmptyListIndicator() {
         }
         Spacer(modifier = Modifier.height(SpacingExtraSmall))
         Text(
-            text = stringResource(R.string.list_empty),
+            text = stringResource(message ?: R.string.list_empty),
             style = MaterialTheme.typography.caption
         )
     }
 }
 
 @Composable
-fun EmptyGridIndicator() {
+fun EmptyGridIndicator(
+    modifier: Modifier = Modifier,
+    @StringRes message: Int? = null
+) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val animationValues = (1..4).map { index ->
             var offset by remember { mutableStateOf(0f) }
 
             LaunchedEffect(Unit) {
-                delay(Delay * index)
+                delay(DELAY * index)
                 animate(
                     initialValue = 0f,
                     targetValue = 6f,
                     animationSpec = infiniteRepeatable(
                         animation = tween(
-                            durationMillis = Duration,
-                            delayMillis = IntervalDuration
+                            durationMillis = DURATION,
+                            delayMillis = INTERVAL_DURATION
                         ),
                         repeatMode = RepeatMode.Reverse,
                     )
@@ -120,7 +130,7 @@ fun EmptyGridIndicator() {
         }
         Spacer(modifier = Modifier.height(SpacingExtraSmall))
         Text(
-            text = stringResource(R.string.grid_empty),
+            text = stringResource(message ?: R.string.grid_empty),
             style = MaterialTheme.typography.caption
         )
     }
@@ -135,12 +145,13 @@ private fun Square(
     Box(
         modifier = modifier
             .offset(x = xOffset, y = yOffset)
-            .size(8.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .size(SquareSize)
+            .clip(RoundedCornerShape(CornerRadiusSmall))
             .background(MaterialTheme.colors.primary)
     )
 }
 
-private const val Duration = 500
-private const val Delay = 100L
-private const val IntervalDuration = 3_000
+private const val DURATION = 500
+private const val DELAY = 100L
+private const val INTERVAL_DURATION = 3_000
+private val SquareSize = 8.dp

@@ -12,7 +12,6 @@ import com.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui.CashFlowDetails
-import com.ridill.xpensetracker.feature_expense_plan.presentation.expense_plans.ui.ExpensePlans
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ui.AddEditExpense
 import com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui.Expenses
 import com.ridill.xpensetracker.feature_settings.presentation.settings.ui.Settings
@@ -27,6 +26,7 @@ fun Navigation(
         startDestination = Destination.Expenses.route,
         modifier = modifier
     ) {
+        // Expenses
         composable(
             route = Destination.Expenses.route,
             enterTransition = { fadeIn(animationSpec = tween()) },
@@ -37,6 +37,7 @@ fun Navigation(
             Expenses(navController = navController)
         }
 
+        // Cash Flow
         composable(
             route = Destination.CashFlow.route,
             enterTransition = { fadeIn(animationSpec = tween()) },
@@ -47,16 +48,16 @@ fun Navigation(
             CashFlow(navController = navController)
         }
 
+        // Expense Plans
         composable(
-            route = Destination.ExpensePlans.route,
+            route = Destination.BudgetPlans.route,
             enterTransition = { fadeIn(animationSpec = tween()) },
             exitTransition = { fadeOut(animationSpec = tween()) },
             popEnterTransition = { fadeIn(animationSpec = tween()) },
             popExitTransition = { fadeOut(animationSpec = tween()) },
-        ) {
-            ExpensePlans()
-        }
+        ) {}
 
+        // Settings
         composable(
             route = Destination.Settings.route,
             enterTransition = { fadeIn(animationSpec = tween()) },
@@ -67,6 +68,7 @@ fun Navigation(
             Settings()
         }
 
+        // Add/Edit Expense
         composable(
             route = Destination.AddEditExpense.route + "?${NavArgs.EXPENSE_ID}={${NavArgs.EXPENSE_ID}}",
             arguments = Destination.AddEditExpense.arguments,
@@ -76,6 +78,7 @@ fun Navigation(
             AddEditExpense(navController = navController)
         }
 
+        // Cash Flow Details
         composable(
             route = Destination.CashFlowDetails.route + "?${NavArgs.AGENT_ID}={${NavArgs.AGENT_ID}}",
             arguments = Destination.CashFlowDetails.arguments,
@@ -84,6 +87,5 @@ fun Navigation(
         ) {
             CashFlowDetails(navController = navController)
         }
-
     }
 }

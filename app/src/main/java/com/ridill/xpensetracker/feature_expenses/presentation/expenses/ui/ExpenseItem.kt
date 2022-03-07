@@ -1,10 +1,14 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,15 +39,29 @@ fun ExpenseItem(
 
     SwipeToDismiss(
         state = dismissState,
-        background = {},
-        modifier = modifier,
+        background = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(MaterialTheme.colors.primaryVariant)
+                    .padding(horizontal = PaddingMedium),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.delete)
+                )
+            }
+        },
+        modifier = modifier
+            .padding(top = PaddingSmall),
         directions = setOf(DismissDirection.StartToEnd)
     ) {
         Card(
             onClick = onClick,
             modifier = modifier
-                .fillMaxWidth()
-                .padding(top = PaddingSmall),
+                .fillMaxWidth(),
             elevation = 0.dp
         ) {
             Column(
@@ -78,5 +96,23 @@ fun ExpenseItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ExpenseDateSeparator(
+    modifier: Modifier = Modifier,
+    date: String,
+    onClick: (String) -> Unit
+) {
+    TextButton(
+        onClick = { onClick(date) },
+        modifier = modifier
+    ) {
+        Text(
+            text = date,
+            style = MaterialTheme.typography.body2,
+            fontWeight = FontWeight.Bold,
+        )
     }
 }

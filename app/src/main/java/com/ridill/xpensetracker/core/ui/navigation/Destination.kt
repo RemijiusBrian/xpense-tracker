@@ -70,12 +70,19 @@ sealed class Destination(
         label = R.string.settings,
         icon = R.drawable.ic_settings
     )
+
+    // Budget Plans
+    object BudgetPlans : Destination(
+        route = "budgetPlanning",
+        label = R.string.budget_planning,
+        icon = R.drawable.ic_budget_planning
+    )
 }
 
 val BottomNavDestinations = listOf<Destination>(
     Destination.Expenses,
     Destination.CashFlow,
-    Destination.ExpensePlans,
+    Destination.BudgetPlans,
     Destination.Settings
 )
 

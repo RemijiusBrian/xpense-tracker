@@ -14,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.AddFab
-import com.ridill.xpensetracker.core.ui.components.EmptyListIndicator
 import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.components.TransparentTopAppBar
 import com.ridill.xpensetracker.core.ui.navigation.Destination
@@ -150,27 +149,35 @@ private fun ScreenContent(
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                if (state.expenses.isEmpty()) {
-                    EmptyListIndicator()
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            bottom = PaddingListBottom
-                        ),
-                    ) {
-                        state.monthsList.forEach { month ->
-                            item(key = month) {
-                                DateSeparator(
-                                    modifier = Modifier
-                                        .animateItemPlacement(),
-                                    month = month,
-                                    onClick = actions::onMonthSelect
-                                )
-                            }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = PaddingListBottom),
+                ) {
+                    state.datesList.forEach { date ->
+                        item(key = date) {
+                            ExpenseDateSeparator(
+                                modifier = Modifier
+                                    .animateItemPlacement(),
+                                date = date,
+                                onClick = actions::onDateSelect
+                            )
+                        }
 
-                            if (state.selectedDate == month) {
+                        if (state.selectedDate == date) {
+                            if (state.expenses.isEmpty()) {
+                                item {
+                                    Text(
+                                        text = stringResource(R.string.empty_expenses),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(PaddingSmall),
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1,
+                                        style = MaterialTheme.typography.body2
+                                    )
+                                }
+                            } else {
                                 items(state.expenses, key = { it.id }) { expense ->
                                     ExpenseItem(
                                         modifier = Modifier
@@ -200,23 +207,5 @@ private fun ScreenContent(
                 onConfirm = actions::onExpenditureLimitUpdateConfirm
             )
         }
-    }
-}
-
-@Composable
-private fun DateSeparator(
-    modifier: Modifier = Modifier,
-    month: String,
-    onClick: (String) -> Unit
-) {
-    TextButton(
-        onClick = { onClick(month) },
-        modifier = modifier
-    ) {
-        Text(
-            text = month,
-            style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.Bold,
-        )
     }
 }

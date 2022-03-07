@@ -4,7 +4,6 @@ import com.ridill.xpensetracker.core.data.local.db.XTDatabase
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.repository.ExpenseRepositoryImpl
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
-import com.ridill.xpensetracker.feature_expenses.domain.use_case.CheckCurrentMonthAndUpdateMonthlyExpenseUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,10 +23,4 @@ object ExpenseModule {
     @Singleton
     @Provides
     fun provideExpenseRepository(dao: ExpenseDao): ExpenseRepository = ExpenseRepositoryImpl(dao)
-
-    @Provides
-    fun provideCheckCurrentMonthAndUpdateMonthlyExpenseUseCase(
-        repository: ExpenseRepository
-    ): CheckCurrentMonthAndUpdateMonthlyExpenseUseCase =
-        CheckCurrentMonthAndUpdateMonthlyExpenseUseCase(repository)
 }

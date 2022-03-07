@@ -3,8 +3,7 @@ package com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,10 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ridill.xpensetracker.R
-import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
-import com.ridill.xpensetracker.core.ui.theme.PaddingSmall
-import com.ridill.xpensetracker.core.ui.theme.SpacingExtraSmall
-import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
+import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.ui.util.numberSliderTransition
 
 @Composable
@@ -186,15 +182,12 @@ private fun CurrentExpenditureAndSpendingBalance(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.onPrimary)
-        ) {
-            val transition = updateTransition(
-                targetState = balancePercent,
-                label = stringResource(R.string.balance_animation)
+            border = BorderStroke(
+                width = XTBorderWidth,
+                color = MaterialTheme.colors.onPrimary
             )
-            val progress by transition.animateFloat(
-                label = stringResource(R.string.balance_transition_width)
-            ) { percentage -> percentage }
+        ) {
+            val progress by animateFloatAsState(targetValue = balancePercent)
             val backgroundColor by animateColorAsState(
                 targetValue = if (balancePercent <= 0f) MaterialTheme.colors.error
                 else MaterialTheme.colors.surface
