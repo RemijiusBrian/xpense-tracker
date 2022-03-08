@@ -13,6 +13,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
@@ -52,7 +53,8 @@ fun InputDialog(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = keyboardType,
-                        imeAction = ImeAction.Done
+                        imeAction = ImeAction.Done,
+                        capitalization = KeyboardCapitalization.Words
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = { onConfirm(input) }

@@ -103,18 +103,18 @@ class AddEditExpenseViewModel @Inject constructor(
         expenseLiveData.value = expenseLiveData.value?.copy(tag = tag)
     }
 
-    override fun onNewTagClick() {
+    override fun onAddTagClick() {
         _showNewTagDialog.value = true
     }
 
-    override fun onNewTagConfirm(tag: String) {
+    override fun onAddTagConfirm(tag: String) {
         viewModelScope.launch {
             repo.cacheTag(ExpenseTag(tag))
             _showNewTagDialog.value = false
         }
     }
 
-    override fun onNewTagDismiss() {
+    override fun onAddTagDismiss() {
         _showNewTagDialog.value = false
     }
 

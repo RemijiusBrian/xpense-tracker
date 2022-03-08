@@ -9,7 +9,7 @@ interface AddEditExpenseActions {
     fun onDeleteDialogDismissed()
     fun onDeleteDialogConfirmed()
     fun onTagSelect(tag: String)
-    fun onNewTagClick()
-    fun onNewTagConfirm(tag: String)
-    fun onNewTagDismiss()
+    fun onAddTagClick()
+    fun onAddTagConfirm(tag: String)
+    fun onAddTagDismiss()
 }

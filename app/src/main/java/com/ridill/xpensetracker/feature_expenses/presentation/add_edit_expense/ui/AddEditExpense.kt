@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,6 +32,7 @@ import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.theme.PaddingExtraSmall
 import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import com.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import com.ridill.xpensetracker.core.ui.theme.SpacingSmall
 import com.ridill.xpensetracker.core.ui.util.rememberSnackbarController
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
@@ -210,7 +212,13 @@ private fun ScreenContent(
                     onCheckedChange = actions::onRepeatEveryMonthToggle
                 )
             }
-
+            Spacer(modifier = Modifier.height(SpacingSmall))
+            Text(
+                text = stringResource(R.string.tags),
+                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.primary
+            )
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -223,7 +231,7 @@ private fun ScreenContent(
                     )
                 }
             }
-            AddTagChip(onClick = actions::onNewTagClick)
+            AddTagChip(onClick = actions::onAddTagClick)
         }
     }
 
@@ -242,8 +250,9 @@ private fun ScreenContent(
     if (showNewTagDialog) {
         InputDialog(
             message = R.string.add_tag,
-            onDismiss = actions::onNewTagDismiss,
-            onConfirm = actions::onNewTagConfirm
+            onDismiss = actions::onAddTagDismiss,
+            onConfirm = actions::onAddTagConfirm,
+            keyboardType = KeyboardType.Text
         )
     }
 }
