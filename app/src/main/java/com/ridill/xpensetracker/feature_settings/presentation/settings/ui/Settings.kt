@@ -148,7 +148,7 @@ private fun ToggleablePreference(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.80f),
+                .fillMaxWidth(0.70f),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
