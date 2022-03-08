@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "65881912404",
+    "project_id": "xpense-tracker-5aab7",
+    "storage_bucket": "xpense-tracker-5aab7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65881912404:android:19905a1a287178f1e5a9c1",
+        "android_client_info": {
+          "package_name": "com.ridill.xpensetracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65881912404-1gaa356ffmbpbk7hv2rr5pkd758kmc6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiRIktV_fraHHnS-ftSG_t_HJdQ7O1_5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65881912404-1gaa356ffmbpbk7hv2rr5pkd758kmc6q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
