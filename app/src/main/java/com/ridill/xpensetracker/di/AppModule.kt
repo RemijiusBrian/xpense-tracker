@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.ridill.xpensetracker.core.data.local.db.MIGRATION_1_2
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManagerImpl
@@ -31,9 +30,7 @@ object AppModule {
             application,
             XTDatabase::class.java,
             XTDatabase.NAME
-        ).addMigrations(MIGRATION_1_2)
-            .fallbackToDestructiveMigration()
-            .build()
+        ).fallbackToDestructiveMigration().build()
 
     @Singleton
     @Provides
