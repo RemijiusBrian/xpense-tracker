@@ -187,7 +187,8 @@ private fun ScreenContent(
                                         date = expense.dateFormatted,
                                         isMonthly = expense.isMonthly,
                                         onClick = { actions.onExpenseClick(expense) },
-                                        onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) }
+                                        onSwipeDeleted = { actions.onExpenseSwipeDeleted(expense) },
+                                        tag = expense.tag
                                     )
                                 }
                             }

@@ -80,10 +80,9 @@ class CashFlowDetailsViewModel @Inject constructor(
     ).map { (cashFlow, aggregate) ->
         when {
             cashFlow.isEmpty() -> AggregateAmountState.CLEARED
-            cashFlow.isNotEmpty() && aggregate == 0L -> AggregateAmountState.BALANCED
+            aggregate == 0L -> AggregateAmountState.BALANCED
             aggregate > 0 -> AggregateAmountState.IN_CREDIT
-            aggregate < 0 -> AggregateAmountState.IN_DEBT
-            else -> null
+            else -> AggregateAmountState.IN_DEBT
         }
     }
 

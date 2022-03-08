@@ -26,7 +26,8 @@ fun ExpenseItem(
     date: String,
     isMonthly: Boolean,
     onClick: () -> Unit,
-    onSwipeDeleted: () -> Unit
+    onSwipeDeleted: () -> Unit,
+    tag: String?
 ) {
     val dismissState = rememberDismissState(
         confirmStateChange = {
@@ -64,36 +65,47 @@ fun ExpenseItem(
                 .fillMaxWidth(),
             elevation = 0.dp
         ) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
-                verticalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .weight(1f),
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = name,
                         style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .weight(1f),
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
+                    Spacer(modifier = Modifier.height(SpacingExtraSmall))
+                    Text(
+                        text = if (isMonthly) stringResource(R.string.monthly) else date,
+                        style = MaterialTheme.typography.caption,
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Text(
                         text = amount,
                         style = MaterialTheme.typography.h6,
                         fontWeight = FontWeight.Bold
                     )
+                    tag?.let {
+                        Spacer(modifier = Modifier.height(SpacingExtraSmall))
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.overline,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colors.primary
+                        )
+                    }
                 }
-                Spacer(modifier = Modifier.height(SpacingExtraSmall))
-                Text(
-                    text = if (isMonthly) stringResource(R.string.monthly) else date,
-                    style = MaterialTheme.typography.caption,
-                )
             }
         }
     }

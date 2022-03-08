@@ -7,10 +7,12 @@ import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowAgen
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowEntity
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
+import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseTagEntity
 
 @Database(
     entities = [
         ExpenseEntity::class,
+        ExpenseTagEntity::class,
         CashFlowAgentEntity::class,
         CashFlowEntity::class
     ],

@@ -2,6 +2,7 @@ package com.ridill.xpensetracker.feature_expenses.data.repository
 
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseTag
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,6 +37,13 @@ class ExpenseRepositoryImpl(
         dao.delete(expense.toEntity())
     }
 
-    override suspend fun getMonthlyExpenses(): List<Expense> =
-        dao.getMonthlyExpenses().map { it.toExpense() }
+    override fun getAllTags(): Flow<List<ExpenseTag>> = dao.getAllTags().map { tags ->
+        tags.map { it.toTag() }
+    }
+
+    override suspend fun cacheTag(tag: ExpenseTag) = dao.insertTag(tag.toEntity())
+
+    override suspend fun deleteTag(name: String) = withContext(Dispatchers.IO) {
+        dao.deleteTag(name)
+    }
 }

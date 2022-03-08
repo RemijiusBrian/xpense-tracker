@@ -1,10 +1,21 @@
 package com.ridill.xpensetracker.feature_expenses.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 
-@Entity
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = ExpenseTagEntity::class,
+            parentColumns = ["name"],
+            childColumns = ["tag"]
+        )
+    ],
+    indices = [Index("tag")]
+)
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
@@ -12,6 +23,7 @@ data class ExpenseEntity(
     val amount: Long,
     val dateMillis: Long,
     val isMonthly: Boolean,
+    val tag: String?
 ) {
     fun toExpense(): Expense = Expense(
         id = id,
@@ -19,5 +31,6 @@ data class ExpenseEntity(
         amount = amount,
         dateMillis = dateMillis,
         isMonthly = isMonthly,
+        tag = tag
     )
 }

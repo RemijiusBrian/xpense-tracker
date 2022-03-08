@@ -14,6 +14,7 @@ data class Expense(
     val amount: Long,
     val dateMillis: Long,
     val isMonthly: Boolean,
+    val tag: String?
 ) : Parcelable {
 
     val dateFormatted: String
@@ -28,6 +29,7 @@ data class Expense(
         amount = amount,
         dateMillis = dateMillis,
         isMonthly = isMonthly,
+        tag = tag
     )
 
     companion object {
@@ -37,6 +39,7 @@ data class Expense(
             amount = 0L,
             dateMillis = System.currentTimeMillis(),
             isMonthly = false,
+            tag = null
         )
     }
 }

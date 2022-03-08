@@ -89,7 +89,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-navigation-animation:$accompanist_version")
     implementation("com.google.accompanist:accompanist-swiperefresh:$accompanist_version")
     implementation("com.google.accompanist:accompanist-flowlayout:$accompanist_version")
-    implementation("com.google.accompanist:accompanist-systemuicontroller:$accompanist_version")
 
     // Kotlin Coroutines
     def coroutines_version = "1.6.0"

@@ -1,13 +1,11 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseTag
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -34,6 +32,10 @@ class AddEditExpenseViewModel @Inject constructor(
     )
     val showDeleteExpenseDialog: LiveData<Boolean> = _showDeleteExpenseDialog
 
+    // Show New Tag
+    private val _showNewTagDialog = savedStateHandle.getLiveData("showNewTag", false)
+    val showNewTagDialog: LiveData<Boolean> = _showNewTagDialog
+
     init {
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && isEditMode) viewModelScope.launch {
@@ -41,6 +43,9 @@ class AddEditExpenseViewModel @Inject constructor(
             } else expenseLiveData.value = Expense.DEFAULT
         }
     }
+
+    // Tags
+    val tags: LiveData<List<ExpenseTag>> = repo.getAllTags().asLiveData()
 
     // Events Channel
     private val eventsChannel = Channel<AddEditExpenseEvents>()
@@ -92,6 +97,25 @@ class AddEditExpenseViewModel @Inject constructor(
             _showDeleteExpenseDialog.value = false
             eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
         }
+    }
+
+    override fun onTagSelect(tag: String) {
+        expenseLiveData.value = expenseLiveData.value?.copy(tag = tag)
+    }
+
+    override fun onNewTagClick() {
+        _showNewTagDialog.value = true
+    }
+
+    override fun onNewTagConfirm(tag: String) {
+        viewModelScope.launch {
+            repo.cacheTag(ExpenseTag(tag))
+            _showNewTagDialog.value = false
+        }
+    }
+
+    override fun onNewTagDismiss() {
+        _showNewTagDialog.value = false
     }
 
     // Events

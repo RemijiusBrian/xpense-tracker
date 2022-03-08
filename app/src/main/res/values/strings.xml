@@ -96,4 +96,5 @@
     <string name="cash_flow_updated">Cash Flow Updated</string>
     <string name="empty_expenses">No expenses so far…</string>
     <string name="budget_planning">Budget</string>
+    <string name="add_tag">Add Tag</string>
 </resources>
