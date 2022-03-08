@@ -58,7 +58,7 @@ fun AddEditCashFlowBottomSheet(
     var repaymentAmount by remember { mutableStateOf("") }
     val repaymentToggleRotation by animateFloatAsState(targetValue = if (repaymentMode) 180f else 0f)
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isNew) {
         if (isNew) focusRequester.requestFocus()
     }
 
