@@ -102,7 +102,7 @@ fun XpenseTrackerTheme(
     content: @Composable () -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
-    
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = if (darkTheme) DarkSurface else LightPrimary
