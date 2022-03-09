@@ -16,7 +16,7 @@ import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseTagEnt
         CashFlowAgentEntity::class,
         CashFlowEntity::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 )
 abstract class XTDatabase : RoomDatabase() {
