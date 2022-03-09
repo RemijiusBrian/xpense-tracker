@@ -5,6 +5,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
     primary = DarkPrimary,
@@ -99,6 +101,14 @@ fun XpenseTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+    
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = if (darkTheme) DarkSurface else LightPrimary
+        )
+    }
+
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {

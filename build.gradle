@@ -2,7 +2,6 @@
 buildscript {
     ext {
         compose_version = '1.2.0-alpha04'
-        accompanist_version = '0.22.0-rc'
         hilt_version = '2.40.1'
     }
     repositories {
