@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.di
 
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
+import com.ridill.xpensetracker.core.util.DispatcherProvider
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import com.ridill.xpensetracker.feature_expenses.data.repository.ExpenseRepositoryImpl
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
@@ -22,5 +23,8 @@ object ExpenseModule {
     // Expense Repository
     @Singleton
     @Provides
-    fun provideExpenseRepository(dao: ExpenseDao): ExpenseRepository = ExpenseRepositoryImpl(dao)
+    fun provideExpenseRepository(
+        dao: ExpenseDao,
+        dispatcherProvider: DispatcherProvider
+    ): ExpenseRepository = ExpenseRepositoryImpl(dao, dispatcherProvider)
 }

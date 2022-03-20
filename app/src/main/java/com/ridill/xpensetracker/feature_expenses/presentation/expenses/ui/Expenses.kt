@@ -3,7 +3,10 @@ package com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.ui.components.AddFab
+import com.ridill.xpensetracker.core.ui.components.EmptyListIndicator
 import com.ridill.xpensetracker.core.ui.components.InputDialog
 import com.ridill.xpensetracker.core.ui.components.TransparentTopAppBar
 import com.ridill.xpensetracker.core.ui.navigation.Destination
@@ -167,14 +170,10 @@ private fun ScreenContent(
                         if (state.selectedDate == date) {
                             if (state.expenses.isEmpty()) {
                                 item {
-                                    Text(
-                                        text = stringResource(R.string.empty_expenses),
+                                    EmptyListIndicator(
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(PaddingSmall),
-                                        textAlign = TextAlign.Center,
-                                        maxLines = 1,
-                                        style = MaterialTheme.typography.body2
+                                            .fillParentMaxWidth(),
+                                        message = R.string.empty_expenses
                                     )
                                 }
                             } else {

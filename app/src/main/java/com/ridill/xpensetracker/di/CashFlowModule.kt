@@ -1,6 +1,7 @@
 package com.ridill.xpensetracker.di
 
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
+import com.ridill.xpensetracker.core.util.DispatcherProvider
 import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
 import com.ridill.xpensetracker.feature_cash_flow.data.repository.CashFlowRepositoryImpl
 import com.ridill.xpensetracker.feature_cash_flow.domain.repository.CashFlowRepository
@@ -23,5 +24,6 @@ object CashFlowModule {
     @Provides
     fun provideCashFlowRepository(
         dao: CashFlowDao,
-    ): CashFlowRepository = CashFlowRepositoryImpl(dao)
+        dispatcherProvider: DispatcherProvider
+    ): CashFlowRepository = CashFlowRepositoryImpl(dao, dispatcherProvider)
 }

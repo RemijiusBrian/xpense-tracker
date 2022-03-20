@@ -13,6 +13,4 @@ interface XTPreferencesManager {
     suspend fun updateExpenditureLimit(limit: Long)
 
     suspend fun updateCashFlowIncludedInExpenditure(include: Boolean)
-
-    suspend fun toggleIsFirstLaunchFalse()
 }

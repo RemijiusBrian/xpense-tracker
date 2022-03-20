@@ -1,16 +1,18 @@
 package com.ridill.xpensetracker.core.data.preferences
 
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.ridill.xpensetracker.core.domain.model.AppPreferences
 import com.ridill.xpensetracker.core.domain.model.AppTheme
+import com.ridill.xpensetracker.core.util.DispatcherProvider
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class XTPreferencesManagerImpl(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val dispatcherProvider: DispatcherProvider
 ) : XTPreferencesManager {
 
     override val preferences = dataStore.data
@@ -23,37 +25,35 @@ class XTPreferencesManagerImpl(
             val expenditureLimit = preferences[Keys.EXPENDITURE_LIMIT] ?: 0L
             val cashFlowIncludedInExpenditure =
                 preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] ?: false
-            val isFirstAppLaunch = preferences[Keys.IS_FIRST_APP_LAUNCH] ?: true
 
             AppPreferences(
                 theme = theme,
                 expenditureLimit = expenditureLimit,
                 cashFlowIncludedInExpenditure = cashFlowIncludedInExpenditure,
-                isFirstAppLaunch = isFirstAppLaunch
             )
         }
 
     override suspend fun updateAppTheme(theme: AppTheme) {
-        dataStore.edit { preferences ->
-            preferences[Keys.APP_THEME] = theme.name
+        withContext(dispatcherProvider.io) {
+            dataStore.edit { preferences ->
+                preferences[Keys.APP_THEME] = theme.name
+            }
         }
     }
 
     override suspend fun updateExpenditureLimit(limit: Long) {
-        dataStore.edit { preferences ->
-            preferences[Keys.EXPENDITURE_LIMIT] = limit
+        withContext(dispatcherProvider.io) {
+            dataStore.edit { preferences ->
+                preferences[Keys.EXPENDITURE_LIMIT] = limit
+            }
         }
     }
 
     override suspend fun updateCashFlowIncludedInExpenditure(include: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] = include
-        }
-    }
-
-    override suspend fun toggleIsFirstLaunchFalse() {
-        dataStore.edit { preferences ->
-            preferences[Keys.IS_FIRST_APP_LAUNCH] = false
+        withContext(dispatcherProvider.io) {
+            dataStore.edit { preferences ->
+                preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] = include
+            }
         }
     }
 
@@ -62,18 +62,5 @@ class XTPreferencesManagerImpl(
         val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
         val CASH_FLOW_INCLUDED_IN_EXPENDITURE =
             booleanPreferencesKey("CASH_FLOW_INCLUDED_IN_EXPENDITURE")
-        val IS_FIRST_APP_LAUNCH = booleanPreferencesKey("IS_FIRST_APP_LAUNCH")
     }
-}
-
-class XTPreferencesMigration : DataMigration<Preferences> {
-    override suspend fun cleanUp() {
-
-    }
-
-    override suspend fun migrate(currentData: Preferences): Preferences {
-        return currentData
-    }
-
-    override suspend fun shouldMigrate(currentData: Preferences): Boolean = true
 }

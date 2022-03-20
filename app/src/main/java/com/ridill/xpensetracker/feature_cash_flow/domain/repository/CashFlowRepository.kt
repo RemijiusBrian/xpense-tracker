@@ -27,5 +27,5 @@ interface CashFlowRepository {
 
     suspend fun clearAgentWithCashFlow(agent: CashFlowAgent)
 
-    suspend fun deleteCashFlow(cashFlow: CashFlow)
+    suspend fun deleteCashFlow(cashFlow: CashFlow): Int
 }

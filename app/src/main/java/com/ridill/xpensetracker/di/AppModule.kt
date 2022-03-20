@@ -12,6 +12,8 @@ import androidx.room.Room
 import com.ridill.xpensetracker.core.data.local.db.XTDatabase
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManagerImpl
+import com.ridill.xpensetracker.core.util.DispatcherProvider
+import com.ridill.xpensetracker.core.util.DispatcherProviderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -45,8 +47,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAppPreferencesManager(dataStore: DataStore<Preferences>): XTPreferencesManager =
-        XTPreferencesManagerImpl(dataStore)
+    fun provideAppPreferencesManager(
+        dataStore: DataStore<Preferences>,
+        dispatcherProvider: DispatcherProvider
+    ): XTPreferencesManager = XTPreferencesManagerImpl(dataStore, dispatcherProvider)
+
+    @Provides
+    fun provideDispatcherProvider(): DispatcherProvider = DispatcherProviderImpl()
 }
 
 private const val XT_PREFERENCES = "XT_PREFERENCES"

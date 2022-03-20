@@ -1,7 +1,6 @@
 package com.ridill.xpensetracker.feature_expenses.domain.repository
 
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
-import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseTag
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
@@ -19,10 +18,4 @@ interface ExpenseRepository {
     suspend fun cacheExpense(expense: Expense): Long
 
     suspend fun deleteExpense(expense: Expense)
-
-    fun getAllTags(): Flow<List<ExpenseTag>>
-
-    suspend fun cacheTag(tag: ExpenseTag)
-
-    suspend fun deleteTag(name: String)
 }
