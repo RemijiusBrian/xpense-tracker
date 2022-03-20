@@ -7,6 +7,7 @@ import com.ridill.xpensetracker.core.ui.navigation.NavArgs
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseTag
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
+import com.ridill.xpensetracker.feature_expenses.domain.repository.TagsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val repo: ExpenseRepository
+    private val expenseRepo: ExpenseRepository,
+    private val tagsRepo: TagsRepository
 ) : ViewModel(), AddEditExpenseActions {
 
     // Expense
@@ -39,13 +41,13 @@ class AddEditExpenseViewModel @Inject constructor(
     init {
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && isEditMode) viewModelScope.launch {
-                expenseLiveData.value = repo.getExpenseById(expenseId)
+                expenseLiveData.value = expenseRepo.getExpenseById(expenseId)
             } else expenseLiveData.value = Expense.DEFAULT
         }
     }
 
     // Tags
-    val tags: LiveData<List<ExpenseTag>> = repo.getAllTags().asLiveData()
+    val tags: LiveData<List<ExpenseTag>> = tagsRepo.getAllTags().asLiveData()
 
     // Events Channel
     private val eventsChannel = Channel<AddEditExpenseEvents>()
@@ -75,7 +77,7 @@ class AddEditExpenseViewModel @Inject constructor(
                     eventsChannel.send(AddEditExpenseEvents.ShowSnackbar(R.string.error_amount_invalid))
                     return@launch
                 }
-                repo.cacheExpense(trimmedExpense)
+                expenseRepo.cacheExpense(trimmedExpense)
                 val result = if (isEditMode) RESULT_EXPENSE_UPDATED
                 else RESULT_EXPENSE_ADDED
                 eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(result))
@@ -93,7 +95,7 @@ class AddEditExpenseViewModel @Inject constructor(
 
     override fun onDeleteDialogConfirmed() {
         viewModelScope.launch {
-            expenseLiveData.value?.let { repo.deleteExpense(it) }
+            expenseLiveData.value?.let { expenseRepo.deleteExpense(it) }
             _showDeleteExpenseDialog.value = false
             eventsChannel.send(AddEditExpenseEvents.NavigateBackWithResult(RESULT_EXPENSE_DELETED))
         }
@@ -109,7 +111,7 @@ class AddEditExpenseViewModel @Inject constructor(
 
     override fun onAddTagConfirm(tag: String) {
         viewModelScope.launch {
-            repo.cacheTag(ExpenseTag(tag))
+            tagsRepo.cacheTag(ExpenseTag(tag))
             _showNewTagDialog.value = false
         }
     }

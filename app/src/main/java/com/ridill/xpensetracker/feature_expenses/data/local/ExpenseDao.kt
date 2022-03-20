@@ -2,7 +2,6 @@ package com.ridill.xpensetracker.feature_expenses.data.local
 
 import androidx.room.*
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
-import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseTagEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,7 +14,7 @@ interface ExpenseDao {
         ORDER BY dateMillis DESC
         """
     )
-    fun getMonthsOfExpenses(): Flow<List<String>>
+    fun getDatesList(): Flow<List<String>>
 
     @Query(
         """
@@ -49,13 +48,4 @@ interface ExpenseDao {
 
     @Delete
     fun delete(expenseEntity: ExpenseEntity)
-
-    @Query("SELECT * FROM ExpenseTagEntity ORDER BY name ASC")
-    fun getAllTags(): Flow<List<ExpenseTagEntity>>
-
-    @Insert
-    suspend fun insertTag(tag: ExpenseTagEntity)
-
-    @Query("DELETE FROM ExpenseTagEntity WHERE name = :name")
-    suspend fun deleteTag(name: String)
 }
