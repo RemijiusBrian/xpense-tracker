@@ -13,6 +13,7 @@ import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents.ui.CashFlow
 import com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_details.ui.CashFlowDetails
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ui.AddEditExpense
+import com.ridill.xpensetracker.feature_expenses.presentation.expense_tags.ExpenseTags
 import com.ridill.xpensetracker.feature_expenses.presentation.expenses.ui.Expenses
 import com.ridill.xpensetracker.feature_settings.presentation.settings.ui.Settings
 
@@ -48,15 +49,6 @@ fun Navigation(
             CashFlow(navController = navController)
         }
 
-        // Expense Plans
-        composable(
-            route = Destination.BudgetPlans.route,
-            enterTransition = { fadeIn(animationSpec = tween()) },
-            exitTransition = { fadeOut(animationSpec = tween()) },
-            popEnterTransition = { fadeIn(animationSpec = tween()) },
-            popExitTransition = { fadeOut(animationSpec = tween()) },
-        ) {}
-
         // Settings
         composable(
             route = Destination.Settings.route,
@@ -86,6 +78,17 @@ fun Navigation(
             popExitTransition = { slideOutHorizontallyWithFadeOut() }
         ) {
             CashFlowDetails(navController = navController)
+        }
+
+        // Expense Tags
+        composable(
+            route = Destination.ExpenseTags.route,
+            enterTransition = { fadeIn(animationSpec = tween()) },
+            exitTransition = { fadeOut(animationSpec = tween()) },
+            popEnterTransition = { fadeIn(animationSpec = tween()) },
+            popExitTransition = { fadeOut(animationSpec = tween()) },
+        ) {
+            ExpenseTags(navController = navController)
         }
     }
 }

@@ -2,14 +2,11 @@ package com.ridill.xpensetracker.feature_cash_flow.presentation.cash_flow_agents
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyGridState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
@@ -140,10 +137,11 @@ private fun ScreenContent(
                 } else null
             )
         },
-    ) {
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(innerPadding)
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -153,17 +151,16 @@ private fun ScreenContent(
                     EmptyGridIndicator()
                 } else {
                     LazyVerticalGrid(
-                        cells = GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
                             bottom = PaddingListBottom,
                             start = PaddingMedium,
                             end = PaddingMedium
                         ),
-                        state = gridState
+                        state = gridState,
+                        columns = GridCells.Fixed(2)
                     ) {
-                        items(agents) { agent ->
+                        items(items = agents, key = { it.id }) { agent ->
                             AgentItem(
                                 name = agent.name,
                                 isPending = agent.isPending,

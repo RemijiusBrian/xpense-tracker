@@ -26,11 +26,6 @@ class ExpenseRepositoryImpl(
         dao.getExpenseById(id)?.toExpense()
     }
 
-    override suspend fun getExpenseByName(name: String): Expense? =
-        withContext(dispatcherProvider.io) {
-            dao.getExpenseByName(name)?.toExpense()
-        }
-
     override suspend fun cacheExpense(expense: Expense): Long = withContext(dispatcherProvider.io) {
         dao.insert(expense.toEntity())
     }

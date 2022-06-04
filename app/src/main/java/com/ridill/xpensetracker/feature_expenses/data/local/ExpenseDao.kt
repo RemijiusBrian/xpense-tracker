@@ -20,12 +20,12 @@ interface ExpenseDao {
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month OR isMonthly = 1)
+        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :date OR isMonthly = 1)
         ORDER BY isMonthly DESC, dateMillis DESC
     """
     )
     fun getExpenses(
-        month: String
+        date: String
     ): Flow<List<ExpenseEntity>>
 
     @Query(
@@ -39,9 +39,6 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM ExpenseEntity WHERE id = :id")
     suspend fun getExpenseById(id: Long): ExpenseEntity?
-
-    @Query("SELECT * FROM ExpenseEntity WHERE name = :name LIMIT 1")
-    suspend fun getExpenseByName(name: String): ExpenseEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expenseEntity: ExpenseEntity): Long

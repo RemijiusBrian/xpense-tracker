@@ -2,6 +2,7 @@ package com.ridill.xpensetracker.core.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowAgentDao
 import com.ridill.xpensetracker.feature_cash_flow.data.local.CashFlowDao
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowAgentEntity
 import com.ridill.xpensetracker.feature_cash_flow.data.local.entity.CashFlowEntity
@@ -28,6 +29,7 @@ abstract class XTDatabase : RoomDatabase() {
 
     // Dao
     abstract val expenseDao: ExpenseDao
+    abstract val cashFlowAgentDao: CashFlowAgentDao
     abstract val cashFlowDao: CashFlowDao
     abstract val tagsDao: TagsDao
 }

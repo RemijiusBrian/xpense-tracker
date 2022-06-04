@@ -9,5 +9,5 @@ data class ExpenseTagEntity(
     @PrimaryKey(autoGenerate = false)
     val name: String
 ) {
-    fun toTag(): ExpenseTag = ExpenseTag(name)
+    fun toTag(): ExpenseTag = ExpenseTag(name, )
 }

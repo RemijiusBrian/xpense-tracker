@@ -25,10 +25,9 @@ sealed class Destination(
         icon = R.drawable.ic_cash_flow
     )
 
-    object ExpensePlans : Destination(
-        route = "expensePlans",
-        label = R.string.expense_plans,
-        icon = R.drawable.ic_expense_plans
+    object ExpenseTags : Destination(
+        route = "expenseTags",
+        label = R.string.tags
     )
 
     object AddEditExpense : Destination(
@@ -70,19 +69,12 @@ sealed class Destination(
         label = R.string.settings,
         icon = R.drawable.ic_settings
     )
-
-    // Budget Plans
-    object BudgetPlans : Destination(
-        route = "budgetPlanning",
-        label = R.string.budget_planning,
-        icon = R.drawable.ic_budget_planning
-    )
 }
 
 val BottomNavDestinations = listOf<Destination>(
     Destination.Expenses,
     Destination.CashFlow,
-    Destination.BudgetPlans,
+    Destination.ExpenseTags,
     Destination.Settings
 )
 

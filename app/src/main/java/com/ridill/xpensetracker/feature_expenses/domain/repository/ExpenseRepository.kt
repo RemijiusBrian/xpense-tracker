@@ -13,8 +13,6 @@ interface ExpenseRepository {
 
     suspend fun getExpenseById(id: Long): Expense?
 
-    suspend fun getExpenseByName(name: String): Expense?
-
     suspend fun cacheExpense(expense: Expense): Long
 
     suspend fun deleteExpense(expense: Expense)
