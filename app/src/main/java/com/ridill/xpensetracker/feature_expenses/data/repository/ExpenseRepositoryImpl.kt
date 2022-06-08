@@ -16,7 +16,7 @@ class ExpenseRepositoryImpl(
     override fun getDates(): Flow<List<String>> = dao.getDatesList()
 
     override fun getExpensesForMonth(month: String): Flow<List<Expense>> =
-        dao.getExpenses(month).map { entities ->
+        dao.getExpensesForDateFilteredByTag(month, "").map { entities ->
             entities.map { it.toExpense() }
         }
 
@@ -30,8 +30,8 @@ class ExpenseRepositoryImpl(
         dao.insert(expense.toEntity())
     }
 
-    override suspend fun deleteExpense(expense: Expense) = withContext(dispatcherProvider.io) {
-        dao.delete(expense.toEntity())
+    override suspend fun deleteExpenseById(id: Long) = withContext(dispatcherProvider.io) {
+        dao.deleteById(id)
     }
 }
 

@@ -8,13 +8,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultAlpha
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -58,8 +62,8 @@ fun SearchView(
                 this@Row.AnimatedVisibility(placeholder != null && query.isEmpty()) {
                     Text(
                         stringResource(placeholder!!),
-                        style = MaterialTheme.typography.body2,
-                        color = textColor.copy(alpha = ContentAlpha.medium)
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = textColor.copy(alpha = DefaultAlpha)
                     )
                 }
                 innerTextField()

@@ -1,44 +1,14 @@
 package com.ridill.xpensetracker.core.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-private val DarkColorPalette = darkColors(
-    primary = DarkPrimary,
-    primaryVariant = DarkPrimaryContainer,
-    secondary = DarkSecondary,
-    secondaryVariant = DarkSecondaryContainer,
-    background = DarkBackground,
-    surface = DarkSurface,
-    error = Error,
-    onPrimary = DarkOnPrimary,
-    onSecondary = DarkOnSecondary,
-    onBackground = DarkOnBackground,
-    onSurface = DarkOnSurface,
-    onError = DarkOnError
-)
-
-private val LightColorPalette = lightColors(
-    primary = LightPrimary,
-    primaryVariant = LightPrimaryContainer,
-    secondary = LightSecondary,
-    secondaryVariant = LightSecondaryContainer,
-    background = LightBackground,
-    surface = LightSurface,
-    error = LightError,
-    onPrimary = LightOnPrimary,
-    onSecondary = LightOnSecondary,
-    onBackground = LightOnBackground,
-    onSurface = LightOnSurface,
-    onError = LightOnError
-)
-
-/*private val DarkColorScheme = darkColorScheme(
+private val DarkColorScheme = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
     primaryContainer = DarkPrimaryContainer,
@@ -94,7 +64,7 @@ private val LightColorScheme = lightColorScheme(
     errorContainer = LightErrorContainer,
     onErrorContainer = LightOnErrorContainer,
     outline = LightOutline
-)*/
+)
 
 @Composable
 fun XpenseTrackerTheme(
@@ -109,14 +79,16 @@ fun XpenseTrackerTheme(
         )
     }
 
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
+    val canUseDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val colorScheme = when {
+        /*canUseDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        canUseDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)*/
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
     }
 
     MaterialTheme(
-        colors = colors,
+        colorScheme = colorScheme,
         typography = Typography,
         shapes = Shapes,
         content = content

@@ -8,8 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,14 +58,14 @@ fun EmptyListIndicator(
                     .width(24.dp)
                     .height(4.dp)
                     .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colors.primary)
+                    .background(MaterialTheme.colorScheme.primary)
             )
             Spacer(modifier = Modifier.height(SpacingExtraSmall))
         }
         Spacer(modifier = Modifier.height(SpacingExtraSmall))
         Text(
             text = stringResource(message ?: R.string.list_empty),
-            style = MaterialTheme.typography.caption
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
@@ -131,7 +131,7 @@ fun EmptyGridIndicator(
         Spacer(modifier = Modifier.height(SpacingExtraSmall))
         Text(
             text = stringResource(message ?: R.string.grid_empty),
-            style = MaterialTheme.typography.caption
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
@@ -147,7 +147,7 @@ private fun Square(
             .offset(x = xOffset, y = yOffset)
             .size(SquareSize)
             .clip(RoundedCornerShape(CornerRadiusSmall))
-            .background(MaterialTheme.colors.primary)
+            .background(MaterialTheme.colorScheme.primary)
     )
 }
 

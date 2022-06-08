@@ -1,6 +1,9 @@
 package com.ridill.xpensetracker.feature_expenses.data.local
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -20,12 +23,13 @@ interface ExpenseDao {
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :date OR isMonthly = 1)
+        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :date OR isMonthly = 1) AND tag = :tag
         ORDER BY isMonthly DESC, dateMillis DESC
     """
     )
-    fun getExpenses(
-        date: String
+    fun getExpensesForDateFilteredByTag(
+        date: String,
+        tag: String
     ): Flow<List<ExpenseEntity>>
 
     @Query(
@@ -43,6 +47,6 @@ interface ExpenseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(expenseEntity: ExpenseEntity): Long
 
-    @Delete
-    fun delete(expenseEntity: ExpenseEntity)
+    @Query("DELETE FROM ExpenseEntity WHERE id = :id")
+    fun deleteById(id: Long)
 }

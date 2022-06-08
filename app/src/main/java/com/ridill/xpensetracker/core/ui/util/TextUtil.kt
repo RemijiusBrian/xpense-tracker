@@ -12,7 +12,7 @@ object TextUtil {
         NumberFormat.getNumberInstance().format(number)
 
     fun formatNumber(number: Long): String =
-        NumberFormat.getNumberInstance().format(number)
+        numberFormat.format(number)
 
     fun formatDate(dateInMillis: Long, pattern: Int = SimpleDateFormat.MEDIUM): String =
         SimpleDateFormat.getDateInstance(pattern).format(Date(dateInMillis))

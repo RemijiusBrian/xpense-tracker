@@ -15,5 +15,5 @@ interface ExpenseRepository {
 
     suspend fun cacheExpense(expense: Expense): Long
 
-    suspend fun deleteExpense(expense: Expense)
+    suspend fun deleteExpenseById(id: Long)
 }

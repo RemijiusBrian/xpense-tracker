@@ -1,4 +1,4 @@
-package com.ridill.xpensetracker.feature_expenses.presentation.expenses
+package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 
