@@ -107,7 +107,7 @@ class ExpensesViewModel @Inject constructor(
         viewModelScope.launch {
             val amount = limit.toLongOrNull().orZero()
             if (amount <= 0L) {
-                eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(R.string.error_amount_invalid)))
+                eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
             preferencesManager.updateExpenditureLimit(amount)

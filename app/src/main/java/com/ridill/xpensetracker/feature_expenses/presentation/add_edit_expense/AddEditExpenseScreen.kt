@@ -15,8 +15,11 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -54,6 +57,7 @@ fun AddEditExpenseScreen(navController: NavController) {
     val amount by viewModel.amount.observeAsState("")
     val name by viewModel.name.observeAsState("")
     val state by viewModel.state.observeAsState(AddEditExpenseState.INITIAL)
+    val newTagInput by viewModel.newTagInput.observeAsState("")
 
     val snackbarController = rememberSnackbarController()
     val context = LocalContext.current
@@ -93,6 +97,7 @@ fun AddEditExpenseScreen(navController: NavController) {
         isEditMode = viewModel.editMode,
         amount = amount,
         name = name,
+        newTagInput = newTagInput,
         state = state,
         actions = viewModel,
         navigateUp = navController::popBackStack
@@ -105,6 +110,7 @@ private fun ScreenContent(
     isEditMode: Boolean,
     amount: String,
     name: String,
+    newTagInput: String,
     state: AddEditExpenseState,
     actions: AddEditExpenseActions,
     navigateUp: () -> Unit
@@ -226,7 +232,12 @@ private fun ScreenContent(
                     )
                 }
                 AddNewTagChip(
-                    onNewTagAdd = actions::onNewTagConfirm
+                    onNewTagClick = actions::onNewTagClick,
+                    newTagInputActive = state.newTagModeActive,
+                    tagInput = newTagInput,
+                    onInputChange = actions::onNewTagValueChange,
+                    onDismiss = actions::onNewTagInputDismiss,
+                    onConfirmInput = actions::onNewTagConfirm
                 )
             }
         }
@@ -260,19 +271,19 @@ private fun ScreenContent(
 
 @Composable
 private fun AddNewTagChip(
-    onNewTagAdd: (String) -> Unit
+    onNewTagClick: () -> Unit,
+    newTagInputActive: Boolean,
+    tagInput: String,
+    onInputChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirmInput: () -> Unit
 ) {
-    var newTagInputModeActive by remember { mutableStateOf(false) }
-    var tagInput by remember { mutableStateOf("") }
-
     Box(
         modifier = Modifier,
     ) {
         ElevatedAssistChip(
-            onClick = { newTagInputModeActive = !newTagInputModeActive },
-            label = {
-                Text(stringResource(R.string.new_tag))
-            },
+            onClick = onNewTagClick,
+            label = { Text(stringResource(R.string.new_tag)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -286,7 +297,7 @@ private fun AddNewTagChip(
             )
         )
         AnimatedVisibility(
-            visible = newTagInputModeActive,
+            visible = newTagInputActive,
             enter = scaleIn(transformOrigin = TransformOrigin(0f, 0f))
         ) {
             Surface(
@@ -302,7 +313,7 @@ private fun AddNewTagChip(
                 ) {
                     TextField(
                         value = tagInput,
-                        onValueChange = { tagInput = it },
+                        onValueChange = onInputChange,
                         colors = TextFieldDefaults.textFieldColors(
                             containerColor = Color.Transparent
                         ),
@@ -314,21 +325,14 @@ private fun AddNewTagChip(
                         },
                         trailingIcon = {
                             Row {
-                                IconButton(onClick = {
-                                    tagInput = ""
-                                    newTagInputModeActive = false
-                                }) {
+                                IconButton(onClick = onDismiss) {
                                     Icon(
                                         imageVector = Icons.Rounded.Cancel,
                                         contentDescription = stringResource(R.string.action_cancel)
                                     )
                                 }
 
-                                IconButton(onClick = {
-                                    newTagInputModeActive = false
-                                    onNewTagAdd(tagInput)
-                                    tagInput = ""
-                                }) {
+                                IconButton(onClick = onConfirmInput) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
                                         contentDescription = stringResource(R.string.action_confirm)
@@ -344,11 +348,7 @@ private fun AddNewTagChip(
                             imeAction = ImeAction.Done
                         ),
                         keyboardActions = KeyboardActions(
-                            onDone = {
-                                newTagInputModeActive = false
-                                onNewTagAdd(tagInput)
-                                tagInput = ""
-                            }
+                            onDone = { onConfirmInput() }
                         )
                     )
                 }
@@ -425,14 +425,18 @@ private fun PreviewScreenContent() {
                 override fun onNameChange(value: String) {}
                 override fun onMonthlyCheckChange(isChecked: Boolean) {}
                 override fun onTagSelect(tag: String) {}
-                override fun onNewTagConfirm(tag: String) {}
+                override fun onNewTagClick() {}
+                override fun onNewTagValueChange(value: String) {}
+                override fun onNewTagInputDismiss() {}
+                override fun onNewTagConfirm() {}
                 override fun onDeleteClick() {}
                 override fun onDeleteDismiss() {}
                 override fun onDeleteConfirm() {}
                 override fun onSave() {}
             },
             navigateUp = {},
-            snackbarController = rememberSnackbarController()
+            snackbarController = rememberSnackbarController(),
+            newTagInput = ""
         )
     }
 }
