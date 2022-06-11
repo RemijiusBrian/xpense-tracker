@@ -45,6 +45,11 @@ class ExpenseRepositoryImpl(
         }
     }
 
+    override suspend fun doesExpensesForTagExist(tag: String): Boolean =
+        withContext(dispatcherProvider.io) {
+            expenseDao.getExpensesByTag(tag).isNotEmpty()
+        }
+
     override suspend fun getExpenseById(id: Long): Expense? = withContext(dispatcherProvider.io) {
         expenseDao.getExpenseById(id)?.toExpense()
     }
@@ -62,7 +67,11 @@ class ExpenseRepositoryImpl(
     }
 
     override suspend fun deleteTag(tag: String) = withContext(dispatcherProvider.io) {
-        tagDao.resetExpenseTagsAndDeleteTag(tag)
+        tagDao.deleteTag(tag)
+    }
+
+    override suspend fun deleteTagWithExpenses(tag: String) = withContext(dispatcherProvider.io) {
+        tagDao.deleteTagWithExpenses(tag)
     }
 }
 

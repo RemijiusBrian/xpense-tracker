@@ -12,6 +12,7 @@ data class ExpensesState(
     val expenditureLimit: Long = 0L,
     val tagDeletableModeActive: Boolean = false,
     val showExpenditureLimitUpdateDialog: Boolean = false,
+    val showTagDeleteConfirmation: Boolean = false
 ) {
     companion object {
         val INITIAL: ExpensesState = ExpensesState()

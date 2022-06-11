@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -26,6 +29,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,12 +45,13 @@ import com.ridill.xpensetracker.core.ui.components.XTSnackbarHost
 import com.ridill.xpensetracker.core.ui.components.rememberSnackbarController
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.ui.util.TextUtil
+import com.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
+import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.ridill.xpensetracker.core.util.Constants
 import com.ridill.xpensetracker.core.util.exhaustive
 import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import com.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditurePercent
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
-import com.ridill.xpensetracker.feature_expenses.presentation.components.TagFilterChip
 import kotlin.math.roundToInt
 
 @Composable
@@ -161,10 +168,15 @@ private fun ScreenContent(
                         end = ListPaddingLarge,
                         start = PaddingMedium
                     ),
-                    horizontalArrangement = Arrangement.spacedBy(SpacingSmall)
+                    horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     item {
-                        AnimatedVisibility(visible = !state.tagDeletableModeActive) {
+                        AnimatedVisibility(
+                            visible = !state.tagDeletableModeActive,
+                            enter = slideInHorizontallyWithFadeIn(false),
+                            exit = slideOutHorizontallyWithFadeOut(false)
+                        ) {
                             FilterChip(
                                 selected = state.selectedTag == Constants.STRING_ALL,
                                 onClick = { actions.onTagFilterSelect(Constants.STRING_ALL) },
@@ -173,20 +185,16 @@ private fun ScreenContent(
                         }
                     }
                     items(state.tags) { tag ->
-                        TagFilterChip(
-                            selected = state.selectedTag == tag,
+                        TagItem(
+                            selected = tag == state.selectedTag,
                             label = tag,
                             onClick = { actions.onTagFilterSelect(tag) },
                             onLongClick = actions::onTagLongClick,
-                            deleteMode = state.tagDeletableModeActive,
-                            onDelete = { actions.onTagDeleteClick(tag) }
+                            deleteModeActive = state.tagDeletableModeActive,
+                            onDelete = { actions.onTagDeleteClick(tag) },
+                            modifier = Modifier
+                                .animateItemPlacement()
                         )
-
-                        /*FilterChip(
-                            selected = state.selectedTag == tag,
-                            onClick = { actions.onTagFilterSelect(tag) },
-                            label = { Text(tag) }
-                        )*/
                     }
                 }
             }
@@ -231,6 +239,30 @@ private fun ScreenContent(
                 previousLimit = TextUtil.formatAmountWithCurrency(state.expenditureLimit),
                 onDismiss = actions::onExpenditureLimitUpdateDialogDismiss,
                 onConfirm = actions::onExpenditureLimitUpdateDialogConfirm
+            )
+        }
+
+        if (state.showTagDeleteConfirmation) {
+            AlertDialog(
+                onDismissRequest = actions::onDeleteExpensesWithTagDismiss,
+                confirmButton = {
+                    Button(onClick = actions::onDeleteExpensesWithTagConfirm) {
+                        Text(stringResource(R.string.action_confirm))
+                    }
+                },
+                dismissButton = {
+                    OutlinedButton(onClick = actions::onDeleteExpensesWithTagDismiss) {
+                        Text(stringResource(R.string.action_cancel))
+                    }
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Rounded.DeleteForever,
+                        contentDescription = null
+                    )
+                },
+                title = { Text(stringResource(R.string.delete_tagged_expenses_question)) },
+                text = { Text(stringResource(R.string.delete_tagged_expenses_message)) }
             )
         }
     }
@@ -408,6 +440,59 @@ private fun MonthBar(
 }
 
 @Composable
+private fun TagItem(
+    selected: Boolean,
+    label: String,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    deleteModeActive: Boolean,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = FilterChipDefaults.filterChipColors()
+            .containerColor(enabled = true, selected = selected).value,
+        modifier = modifier
+            .padding(vertical = PaddingSmall)
+            .semantics { role = Role.Checkbox }
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
+        shape = MaterialTheme.shapes.small,
+        border = FilterChipDefaults.filterChipBorder()
+            .borderStroke(enabled = true, selected = selected).value,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .defaultMinSize(minHeight = FilterChipDefaults.Height)
+                .padding(horizontal = PaddingSmall)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier
+                    .padding(horizontal = PaddingSmall)
+            )
+            AnimatedVisibility(visible = deleteModeActive) {
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier
+                        .size(FilterChipDefaults.IconSize)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = stringResource(R.string.content_description_delete_tag)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun ExpenseItem(
     name: String,
     date: String,
@@ -532,6 +617,8 @@ private fun PreviewScreenContent() {
                 override fun onTagFilterSelect(tag: String) {}
                 override fun onTagLongClick() {}
                 override fun onTagDeleteClick(tag: String) {}
+                override fun onDeleteExpensesWithTagDismiss() {}
+                override fun onDeleteExpensesWithTagConfirm() {}
                 override fun onAddFabClick() {}
                 override fun onMonthSelect(month: String) {}
                 override fun onExpenseClick(id: Long) {}

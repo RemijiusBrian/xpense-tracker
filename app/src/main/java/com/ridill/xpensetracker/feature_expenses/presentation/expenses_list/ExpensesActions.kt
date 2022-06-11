@@ -7,6 +7,8 @@ interface ExpensesActions {
     fun onTagFilterSelect(tag: String)
     fun onTagLongClick()
     fun onTagDeleteClick(tag: String)
+    fun onDeleteExpensesWithTagDismiss()
+    fun onDeleteExpensesWithTagConfirm()
     fun onAddFabClick()
     fun onMonthSelect(month: String)
     fun onExpenseClick(id: Long)

@@ -13,15 +13,15 @@ interface ExpenseTagDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ExpenseTagEntity)
 
-    @Query("UPDATE ExpenseEntity SET tag = NULL WHERE tag = :tag")
-    suspend fun resetTagsForExpensesWithTag(tag: String)
-
     @Query("DELETE FROM ExpenseTagEntity WHERE name = :tag")
     suspend fun deleteTag(tag: String)
 
+    @Query("DELETE FROM ExpenseEntity WHERE tag = :tag")
+    suspend fun deleteExpensesForTag(tag: String)
+
     @Transaction
-    suspend fun resetExpenseTagsAndDeleteTag(tag: String) {
-        resetTagsForExpensesWithTag(tag)
+    suspend fun deleteTagWithExpenses(tag: String) {
+        deleteExpensesForTag(tag)
         deleteTag(tag)
     }
 }

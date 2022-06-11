@@ -18,6 +18,8 @@ interface ExpenseRepository {
         tag: String
     ): Flow<List<ExpenseListItem>>
 
+    suspend fun doesExpensesForTagExist(tag: String): Boolean
+
     suspend fun getExpenseById(id: Long): Expense?
 
     suspend fun cacheExpense(expense: Expense): Long
@@ -27,4 +29,6 @@ interface ExpenseRepository {
     suspend fun cacheTag(tag: String)
 
     suspend fun deleteTag(tag: String)
+
+    suspend fun deleteTagWithExpenses(tag: String)
 }

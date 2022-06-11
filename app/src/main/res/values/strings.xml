@@ -28,6 +28,8 @@
     <string name="delete_expense_confirmation_message">Are you sure you want to delete this expense? This action cannot be undone.</string>
     <string name="enter_tag">Tag</string>
     <string name="amount">Amount</string>
+    <string name="delete_tagged_expenses_question">Delete tagged expenses?</string>
+    <string name="delete_tagged_expenses_message">You have some expenses linked to this tag. Deleting the tag with delete those expenses as well.\nAre you sure you want to proceed?</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>

@@ -47,6 +47,9 @@ class ExpensesViewModel @Inject constructor(
     private val showExpenditureLimitUpdateDialog =
         savedStateHandle.getLiveData("showExpenditureLimitUpdateDialog", false)
 
+    private val showTagDeleteConfirmation =
+        savedStateHandle.getLiveData("showTagDeleteConfirmation", false)
+
     private val expenseList = combineTuple(
         selectedMonth.asFlow(),
         selectedTag.asFlow(),
@@ -63,7 +66,8 @@ class ExpensesViewModel @Inject constructor(
         months,
         selectedMonth.asFlow(),
         expenseList,
-        showExpenditureLimitUpdateDialog.asFlow()
+        showExpenditureLimitUpdateDialog.asFlow(),
+        showTagDeleteConfirmation.asFlow()
     ).map { (
                 preferences,
                 tags,
@@ -72,7 +76,8 @@ class ExpensesViewModel @Inject constructor(
                 months,
                 selectedMonth,
                 expenseList,
-                showExpenditureUpdateDialog
+                showExpenditureUpdateDialog,
+                showTagDeleteConfirmation
             ) ->
         ExpensesState(
             tags = tags,
@@ -82,7 +87,8 @@ class ExpensesViewModel @Inject constructor(
             expenses = expenseList,
             expenditureLimit = preferences.expenditureLimit,
             showExpenditureLimitUpdateDialog = showExpenditureUpdateDialog,
-            tagDeletableModeActive = tagDeleteModeActive
+            tagDeletableModeActive = tagDeleteModeActive,
+            showTagDeleteConfirmation = showTagDeleteConfirmation
         )
     }.asLiveData()
 
@@ -114,13 +120,33 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onTagLongClick() {
-        tagDeleteModeActive.value = true
+        tagDeleteModeActive.value = tagDeleteModeActive.value?.not()
     }
 
+    private var tagDeletion: String? = null
     override fun onTagDeleteClick(tag: String) {
         viewModelScope.launch {
-            repo.deleteTag(tag)
-            resetSelectedTagIfDeleted(tag)
+            if (repo.doesExpensesForTagExist(tag)) {
+                tagDeletion = tag
+                showTagDeleteConfirmation.value = true
+            } else {
+                repo.deleteTag(tag)
+                resetSelectedTagIfDeleted(tag)
+            }
+        }
+    }
+
+    override fun onDeleteExpensesWithTagDismiss() {
+        showTagDeleteConfirmation.value = false
+    }
+
+    override fun onDeleteExpensesWithTagConfirm() {
+        tagDeletion?.let {
+            viewModelScope.launch {
+                repo.deleteTagWithExpenses(it)
+                tagDeletion = null
+                showTagDeleteConfirmation.value = false
+            }
         }
     }
 

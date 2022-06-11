@@ -43,6 +43,9 @@ interface ExpenseDao {
     )
     fun getExpenditureForCurrentMonth(): Flow<Long>
 
+    @Query("SELECT * FROM ExpenseEntity WHERE tag = :tag")
+    suspend fun getExpensesByTag(tag: String): List<ExpenseEntity>
+
     @Query("UPDATE ExpenseEntity SET tag = :tag WHERE id IN (:ids)")
     suspend fun setTagForExpenses(tag: String?, ids: List<Long>)
 
