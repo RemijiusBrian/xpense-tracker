@@ -2,7 +2,7 @@ package com.ridill.xpensetracker.feature_expenses.data.mapper
 
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Constants
-import com.ridill.xpensetracker.core.util.orZero
+import com.ridill.xpensetracker.core.util.toDoubleOrZero
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 import com.ridill.xpensetracker.feature_expenses.data.local.relation.MonthAndExpenditureRelation
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
@@ -34,7 +34,7 @@ fun ExpenseEntity.toExpense(): Expense = Expense(
 fun Expense.toEntity(): ExpenseEntity = ExpenseEntity(
     id = id,
     name = name,
-    amount = amount.toLongOrNull().orZero(),
+    amount = amount.toDoubleOrZero(),
     dateMillis = dateMillis,
     isMonthly = monthly,
     tag = tag

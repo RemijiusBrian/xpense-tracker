@@ -19,7 +19,7 @@ data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val name: String,
-    val amount: Long,
+    val amount: Double,
     val dateMillis: Long,
     val isMonthly: Boolean,
     val tag: String? = null

@@ -7,7 +7,7 @@ import com.ridill.xpensetracker.core.domain.model.UiText
 import com.ridill.xpensetracker.core.ui.navigation.Destination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Constants
-import com.ridill.xpensetracker.core.util.orZero
+import com.ridill.xpensetracker.core.util.toLongOrZero
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
 import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETED
@@ -105,7 +105,7 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onExpenditureLimitUpdateDialogConfirm(limit: String) {
         viewModelScope.launch {
-            val amount = limit.toLongOrNull().orZero()
+            val amount = limit.toLongOrZero()
             if (amount <= 0L) {
                 eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch

@@ -10,4 +10,6 @@ inline fun <T> tryOrNull(tryBlock: () -> T): T? = try {
     null
 }
 
-fun Long?.orZero(): Long = this ?: 0L
+fun String.toDoubleOrZero(): Double = this.toDoubleOrNull() ?: 0.0
+
+fun String.toLongOrZero(): Long = this.toLongOrNull() ?: 0L

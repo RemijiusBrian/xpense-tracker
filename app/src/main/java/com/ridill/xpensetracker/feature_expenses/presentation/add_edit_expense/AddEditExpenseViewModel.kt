@@ -5,7 +5,7 @@ import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.domain.model.UiText
 import com.ridill.xpensetracker.core.ui.navigation.ARG_EXPENSE_ID
 import com.ridill.xpensetracker.core.ui.navigation.INVALID_ID
-import com.ridill.xpensetracker.core.util.orZero
+import com.ridill.xpensetracker.core.util.toDoubleOrZero
 import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import com.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import com.zhuinden.flowcombinetuplekt.combineTuple
@@ -144,8 +144,8 @@ class AddEditExpenseViewModel @Inject constructor(
 
     override fun onSave() {
         viewModelScope.launch {
-            val amount = amount.value.orEmpty()
-            if (amount.isEmpty() || amount.toLongOrNull().orZero() <= 0L) {
+            val amount = amount.value?.trim().orEmpty()
+            if (amount.isEmpty() || amount.toDoubleOrZero() <= 0.0) {
                 eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }

@@ -15,9 +15,6 @@ data class Expense(
     val tag: String?
 ) : Parcelable {
 
-    val dateFormatted: String
-        get() = SimpleDateFormat("dd, EEEE", Locale.getDefault()).format(Date(dateMillis))
-
     companion object {
         val DEFAULT = Expense(
             id = 0L,
