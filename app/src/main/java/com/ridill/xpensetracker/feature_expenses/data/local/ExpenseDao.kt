@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
+import com.ridill.xpensetracker.feature_expenses.data.local.relation.MonthAndExpenditureRelation
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -12,25 +13,26 @@ interface ExpenseDao {
 
     @Query(
         """
-        SELECT DISTINCT(strftime('%m-%Y', dateMillis / 1000, 'unixepoch'))
+        SELECT DISTINCT(strftime('%m-%Y', dateMillis / 1000, 'unixepoch')) as month, SUM(amount) as expenditure
         FROM ExpenseEntity 
-        ORDER BY dateMillis DESC
+        GROUP BY month
+        ORDER BY month DESC
         """
     )
-    fun getDatesList(): Flow<List<String>>
+    fun getMonthAndExpenditureList(): Flow<List<MonthAndExpenditureRelation>>
 
     @Query(
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :date OR isMonthly = 1) AND tag = :tag
+        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month OR isMonthly = 1)
         ORDER BY isMonthly DESC, dateMillis DESC
     """
     )
-    fun getExpensesForDateFilteredByTag(
-        date: String,
-        tag: String
+    fun getAllExpensesForMonth(
+        month: String
     ): Flow<List<ExpenseEntity>>
+
 
     @Query(
         """
@@ -40,6 +42,9 @@ interface ExpenseDao {
         """
     )
     fun getExpenditureForCurrentMonth(): Flow<Long>
+
+    @Query("UPDATE ExpenseEntity SET tag = :tag WHERE id IN (:ids)")
+    suspend fun setTagForExpenses(tag: String?, ids: List<Long>)
 
     @Query("SELECT * FROM ExpenseEntity WHERE id = :id")
     suspend fun getExpenseById(id: Long): ExpenseEntity?

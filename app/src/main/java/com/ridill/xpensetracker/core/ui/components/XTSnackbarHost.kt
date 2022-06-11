@@ -1,9 +1,12 @@
 package com.ridill.xpensetracker.core.ui.components
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import com.ridill.xpensetracker.core.ui.theme.PaddingMedium
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -18,7 +21,10 @@ fun XTSnackbarHost(
                 TextButton(onClick = { data.performAction() }) {
                     Text(data.visuals.actionLabel.orEmpty())
                 }
-            }
+            },
+            modifier = Modifier
+                .padding(PaddingMedium),
+            shape = MaterialTheme.shapes.medium
         ) {
             Text(data.visuals.message)
         }

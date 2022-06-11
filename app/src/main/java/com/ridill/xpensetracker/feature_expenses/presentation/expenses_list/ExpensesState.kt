@@ -1,15 +1,16 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
+import com.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
+import com.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditurePercent
 
 data class ExpensesState(
-    val datesList: List<String> = emptyList(),
-    val expenses: List<Expense> = emptyList(),
-    val expenditureLimit: String = "",
-    val currentExpenditure: String = "",
-    val spendingBalance: String = "",
-    val balancePercentage: Float = 0f,
-    val selectedDate: String = "",
+    val tags: List<String> = emptyList(),
+    val selectedTag: String = "",
+    val monthsToExpenditurePercents: List<MonthAndExpenditurePercent> = emptyList(),
+    val selectedMonth: String = "",
+    val expenses: List<ExpenseListItem> = emptyList(),
+    val expenditureLimit: Long = 0L,
+    val tagDeletableModeActive: Boolean = false,
     val showExpenditureLimitUpdateDialog: Boolean = false,
 ) {
     companion object {

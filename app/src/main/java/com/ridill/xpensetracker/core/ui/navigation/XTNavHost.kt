@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
 import com.ridill.xpensetracker.feature_expenses.presentation.expenses_list.ExpensesListScreen
 
 @Composable
@@ -20,6 +21,14 @@ fun XTNavHost(
         // Expenses
         composable(route = Destination.Expenses.route) {
             ExpensesListScreen(navController = navController)
+        }
+
+        // Add/Edit Expense
+        composable(
+            route = Destination.AddEditExpense.navRoute,
+            arguments = Destination.AddEditExpense.arguments
+        ) {
+            AddEditExpenseScreen(navController = navController)
         }
     }
 }

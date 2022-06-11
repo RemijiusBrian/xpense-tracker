@@ -1,6 +1,5 @@
 package com.ridill.xpensetracker.core.ui.navigation
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
@@ -11,71 +10,28 @@ sealed class Destination(
     val route: String,
     @StringRes val label: Int,
     val arguments: List<NamedNavArgument> = emptyList(),
-    @DrawableRes val icon: Int? = null,
 ) {
     object Expenses : Destination(
         route = "expenses",
-        label = R.string.expenses,
-        icon = R.drawable.ic_expense
-    )
-
-    object CashFlow : Destination(
-        route = "cashFlow",
-        label = R.string.cash_flow,
-        icon = R.drawable.ic_cash_flow
-    )
-
-    object ExpenseTags : Destination(
-        route = "expenseTags",
-        label = R.string.tags
+        label = R.string.destination_expenses,
     )
 
     object AddEditExpense : Destination(
         route = "addEditExpense",
-        label = R.string.add_edit_expense,
+        label = R.string.destination_add_edit_expense,
         arguments = listOf(
-            navArgument(NavArgs.EXPENSE_ID) {
+            navArgument(ARG_EXPENSE_ID) {
                 type = NavType.LongType
                 nullable = false
-                defaultValue = -1L
-            },
-            navArgument(ARG_HIDE_BOTTOM_BAR) {
-                defaultValue = true
+                defaultValue = INVALID_ID
             }
         )
     ) {
-        fun buildRoute(expenseId: Long): String = "$route?${NavArgs.EXPENSE_ID}=$expenseId"
+        val navRoute get() = "$route?$ARG_EXPENSE_ID={$ARG_EXPENSE_ID}"
+        fun withArg(expenseId: Long): String = "$route?$ARG_EXPENSE_ID=$expenseId"
     }
-
-    object CashFlowDetails : Destination(
-        route = "cashFlowDetails",
-        label = R.string.cash_flow_details,
-        arguments = listOf(
-            navArgument(NavArgs.AGENT_ID) {
-                type = NavType.LongType
-                nullable = false
-                defaultValue = -1L
-            },
-            navArgument(ARG_HIDE_BOTTOM_BAR) {
-                defaultValue = true
-            }
-        )
-    ) {
-        fun buildRoute(agentId: Long): String = "$route?${NavArgs.AGENT_ID}=$agentId"
-    }
-
-    object Settings : Destination(
-        route = "settings",
-        label = R.string.settings,
-        icon = R.drawable.ic_settings
-    )
 }
 
-val BottomNavDestinations = listOf<Destination>(
-    Destination.Expenses,
-    Destination.CashFlow,
-    Destination.ExpenseTags,
-    Destination.Settings
-)
+const val ARG_EXPENSE_ID = "ARG_EXPENSE_ID"
 
-const val ARG_HIDE_BOTTOM_BAR = "hideBottomBar"
+const val INVALID_ID = -1L

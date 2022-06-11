@@ -1,13 +1,13 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
-
 interface ExpensesActions {
-    fun onExpenseClick(expense: Expense)
-    fun onAddExpenseClick()
-    fun onExpenseSwipeDeleted(expense: Expense)
-    fun onDateSelect(date: String)
-    fun onEditExpenditureLimitClick()
-    fun onExpenditureLimitUpdateDismiss()
-    fun onExpenditureLimitUpdateConfirm(limit: String)
+    fun onExpenditureLimitUpdateClick()
+    fun onExpenditureLimitUpdateDialogDismiss()
+    fun onExpenditureLimitUpdateDialogConfirm(limit: String)
+    fun onTagFilterSelect(tag: String)
+    fun onTagLongClick()
+    fun onTagDeleteClick(tag: String)
+    fun onAddFabClick()
+    fun onMonthSelect(month: String)
+    fun onExpenseClick(id: Long)
 }

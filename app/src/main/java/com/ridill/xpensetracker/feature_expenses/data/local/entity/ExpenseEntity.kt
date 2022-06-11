@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.ridill.xpensetracker.feature_expenses.domain.model.Expense
 
 @Entity(
     foreignKeys = [
@@ -23,14 +22,5 @@ data class ExpenseEntity(
     val amount: Long,
     val dateMillis: Long,
     val isMonthly: Boolean,
-    val tag: String?
-) {
-    fun toExpense(): Expense = Expense(
-        id = id,
-        name = name,
-        amount = amount,
-        dateMillis = dateMillis,
-        isMonthly = isMonthly,
-        tag = tag
-    )
-}
+    val tag: String? = null
+)

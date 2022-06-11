@@ -8,17 +8,17 @@ object TextUtil {
     private val dateFormat = SimpleDateFormat.getDateInstance()
     private val numberFormat = NumberFormat.getNumberInstance()
 
-    fun formatNumber(number: Int): String =
-        NumberFormat.getNumberInstance().format(number)
-
     fun formatNumber(number: Long): String =
         numberFormat.format(number)
 
     fun formatDate(dateInMillis: Long, pattern: Int = SimpleDateFormat.MEDIUM): String =
         SimpleDateFormat.getDateInstance(pattern).format(Date(dateInMillis))
 
-    fun formatDate(date: Date): String =
-        SimpleDateFormat.getDateInstance().format(date)
+    fun formatDateWithPattern(dateInMillis: Long, pattern: String): String =
+        SimpleDateFormat(pattern, Locale.getDefault()).format(dateInMillis)
+
+    fun formatAmountWithCurrency(amount: Long): String =
+        "$currencySymbol ${formatNumber(amount)}"
 
     val currencySymbol: String
         get() = Currency.getInstance(Locale.getDefault()).symbol

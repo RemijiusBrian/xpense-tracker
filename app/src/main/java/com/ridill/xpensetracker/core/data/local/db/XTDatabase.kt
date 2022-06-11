@@ -3,6 +3,7 @@ package com.ridill.xpensetracker.core.data.local.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
+import com.ridill.xpensetracker.feature_expenses.data.local.ExpenseTagDao
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 import com.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseTagEntity
 
@@ -22,4 +23,5 @@ abstract class XTDatabase : RoomDatabase() {
 
     // Dao
     abstract val expenseDao: ExpenseDao
+    abstract val expenseTagDao: ExpenseTagDao
 }
