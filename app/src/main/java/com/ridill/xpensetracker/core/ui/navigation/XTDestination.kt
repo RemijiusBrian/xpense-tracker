@@ -6,17 +6,17 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.ridill.xpensetracker.R
 
-sealed class Destination(
+sealed class XTDestination(
     val route: String,
     @StringRes val label: Int,
     val arguments: List<NamedNavArgument> = emptyList(),
 ) {
-    object Expenses : Destination(
+    object Expenses : XTDestination(
         route = "expenses",
         label = R.string.destination_expenses,
     )
 
-    object AddEditExpense : Destination(
+    object AddEditExpense : XTDestination(
         route = "addEditExpense",
         label = R.string.destination_add_edit_expense,
         arguments = listOf(

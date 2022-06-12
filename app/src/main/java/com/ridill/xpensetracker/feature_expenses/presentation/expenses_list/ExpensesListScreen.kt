@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateFloat
@@ -45,6 +46,7 @@ import com.ridill.xpensetracker.core.ui.components.XTSnackbarHost
 import com.ridill.xpensetracker.core.ui.components.rememberSnackbarController
 import com.ridill.xpensetracker.core.ui.theme.*
 import com.ridill.xpensetracker.core.ui.util.TextUtil
+import com.ridill.xpensetracker.core.ui.util.numberSliderTransition
 import com.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import com.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.ridill.xpensetracker.core.util.Constants
@@ -278,7 +280,7 @@ private fun GreetingAndLimit(
             .padding(PaddingMedium)
     ) {
         Text(
-            text = stringResource(R.string.greeting),
+            text = stringResource(R.string.greeting_comma),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.SemiBold
@@ -296,11 +298,18 @@ private fun GreetingAndLimit(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.width(SpacingSmall))
-                Text(
-                    text = TextUtil.formatAmountWithCurrency(limit),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                AnimatedContent(
+                    targetState = limit,
+                    transitionSpec = {
+                        numberSliderTransition { targetState > initialState }
+                    }
+                ) { value ->
+                    Text(
+                        text = TextUtil.formatAmountWithCurrency(value),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
                 Spacer(modifier = Modifier.width(SpacingSmall))
                 IconButton(
                     onClick = onLimitUpdate,

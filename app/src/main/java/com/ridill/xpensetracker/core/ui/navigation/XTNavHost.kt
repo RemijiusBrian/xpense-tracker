@@ -15,18 +15,18 @@ fun XTNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Destination.Expenses.route,
+        startDestination = XTDestination.Expenses.route,
         modifier = modifier
     ) {
         // Expenses
-        composable(route = Destination.Expenses.route) {
+        composable(route = XTDestination.Expenses.route) {
             ExpensesListScreen(navController = navController)
         }
 
         // Add/Edit Expense
         composable(
-            route = Destination.AddEditExpense.navRoute,
-            arguments = Destination.AddEditExpense.arguments
+            route = XTDestination.AddEditExpense.navRoute,
+            arguments = XTDestination.AddEditExpense.arguments
         ) {
             AddEditExpenseScreen(navController = navController)
         }

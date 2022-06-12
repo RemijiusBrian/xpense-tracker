@@ -8,6 +8,4 @@ interface XTPreferencesManager {
     val preferences: Flow<AppPreferences>
 
     suspend fun updateExpenditureLimit(limit: Long)
-
-    suspend fun updateCashFlowIncludedInExpenditure(include: Boolean)
 }

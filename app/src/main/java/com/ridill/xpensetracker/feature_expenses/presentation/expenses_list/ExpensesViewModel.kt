@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.ridill.xpensetracker.R
 import com.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
 import com.ridill.xpensetracker.core.domain.model.UiText
-import com.ridill.xpensetracker.core.ui.navigation.Destination
+import com.ridill.xpensetracker.core.ui.navigation.XTDestination
 import com.ridill.xpensetracker.core.ui.util.TextUtil
 import com.ridill.xpensetracker.core.util.Constants
 import com.ridill.xpensetracker.core.util.toLongOrZero
@@ -168,7 +168,7 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onAddFabClick() {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.Navigate(Destination.AddEditExpense.route))
+            eventsChannel.send(ExpenseListEvent.Navigate(XTDestination.AddEditExpense.route))
         }
     }
 
@@ -178,7 +178,7 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onExpenseClick(id: Long) {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.Navigate(Destination.AddEditExpense.withArg(id)))
+            eventsChannel.send(ExpenseListEvent.Navigate(XTDestination.AddEditExpense.withArg(id)))
         }
     }
 

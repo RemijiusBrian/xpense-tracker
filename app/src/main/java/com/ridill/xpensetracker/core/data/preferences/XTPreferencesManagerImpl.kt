@@ -20,12 +20,9 @@ class XTPreferencesManagerImpl(
             else throw exception
         }.map { preferences ->
             val expenditureLimit = preferences[Keys.EXPENDITURE_LIMIT] ?: 0L
-            val cashFlowIncludedInExpenditure =
-                preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] ?: false
 
             AppPreferences(
-                expenditureLimit = expenditureLimit,
-                cashFlowIncludedInExpenditure = cashFlowIncludedInExpenditure,
+                expenditureLimit = expenditureLimit
             )
         }
 
@@ -37,17 +34,7 @@ class XTPreferencesManagerImpl(
         }
     }
 
-    override suspend fun updateCashFlowIncludedInExpenditure(include: Boolean) {
-        withContext(dispatcherProvider.io) {
-            dataStore.edit { preferences ->
-                preferences[Keys.CASH_FLOW_INCLUDED_IN_EXPENDITURE] = include
-            }
-        }
-    }
-
     private object Keys {
         val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
-        val CASH_FLOW_INCLUDED_IN_EXPENDITURE =
-            booleanPreferencesKey("CASH_FLOW_INCLUDED_IN_EXPENDITURE")
     }
 }
