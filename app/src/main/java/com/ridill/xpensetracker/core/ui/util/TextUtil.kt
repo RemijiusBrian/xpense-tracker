@@ -1,5 +1,6 @@
 package com.ridill.xpensetracker.core.ui.util
 
+import com.ridill.xpensetracker.core.util.tryOrNull
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,6 +22,10 @@ object TextUtil {
 
     fun formatAmountWithCurrency(amount: Long): String =
         "$currencySymbol ${formatNumber(amount)}"
+
+    fun parseDate(date: String, pattern: String): Date? = tryOrNull {
+        SimpleDateFormat(pattern, Locale.getDefault()).parse(date)
+    }
 
     val currencySymbol: String
         get() = Currency.getInstance(Locale.getDefault()).symbol

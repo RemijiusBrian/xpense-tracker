@@ -42,7 +42,7 @@ class ExpensesViewModel @Inject constructor(
     private val selectedMonth = savedStateHandle.getLiveData(
         key = "selectedMonth",
         initialValue = TextUtil
-            .formatDateWithPattern(System.currentTimeMillis(), Constants.MONTH_YEAR_PATTERN)
+            .formatDateWithPattern(System.currentTimeMillis(), Constants.MONTH_YEAR_DB_PATTERN)
     )
 
     private val showExpenditureLimitUpdateDialog =
@@ -54,7 +54,6 @@ class ExpensesViewModel @Inject constructor(
     private val expenseList = combineTuple(
         selectedMonth.asFlow(),
         selectedTag.asFlow(),
-        tagDeleteModeActive.asFlow()
     ).flatMapLatest { (month, tag) ->
         repo.getExpensesListForMonthFilteredByTag(month, tag)
     }

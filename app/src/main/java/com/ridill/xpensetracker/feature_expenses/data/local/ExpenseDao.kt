@@ -33,21 +33,17 @@ interface ExpenseDao {
         month: String
     ): Flow<List<ExpenseEntity>>
 
-
-    @Query(
+    /*@Query(
         """
         SELECT IFNULL(SUM(amount), 0)
         FROM ExpenseEntity
         WHERE (strftime('%m', dateMillis / 1000, 'unixepoch') = strftime('%m', date('now')) OR isMonthly = 1)
         """
     )
-    fun getExpenditureForCurrentMonth(): Flow<Long>
+    fun getExpenditureForCurrentMonth(): Flow<Long>*/
 
     @Query("SELECT * FROM ExpenseEntity WHERE tag = :tag")
     suspend fun getExpensesByTag(tag: String): List<ExpenseEntity>
-
-    @Query("UPDATE ExpenseEntity SET tag = :tag WHERE id IN (:ids)")
-    suspend fun setTagForExpenses(tag: String?, ids: List<Long>)
 
     @Query("SELECT * FROM ExpenseEntity WHERE id = :id")
     suspend fun getExpenseById(id: Long): ExpenseEntity?

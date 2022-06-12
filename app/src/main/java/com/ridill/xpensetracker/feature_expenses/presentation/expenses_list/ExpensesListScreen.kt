@@ -1,8 +1,6 @@
 package com.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColor
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
@@ -27,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -64,7 +61,6 @@ fun ExpensesListScreen(
     val state by viewModel.state.observeAsState(ExpensesState.INITIAL)
     val context = LocalContext.current
     val snackbarController = rememberSnackbarController()
-    val hapticFeedback = LocalHapticFeedback.current
     val currentBackStackEntry = navController.currentBackStackEntry
 
     // Add/Edit Expense Result
@@ -375,14 +371,15 @@ private fun MonthsBarsRow(
                     bottom = PaddingMedium
                 )
             ) {
-                items(months) { (month, expenditurePercent) ->
+                items(months) { monthAndPercent ->
                     MonthBar(
-                        month = month,
-                        selected = month == selectedMonth,
-                        expenditurePercentage = expenditurePercent,
-                        onClick = { onMonthSelect(month) },
+                        month = monthAndPercent.monthFormatted,
+                        selected = monthAndPercent.month == selectedMonth,
+                        expenditurePercentage = monthAndPercent.expenditurePercent,
+                        onClick = { onMonthSelect(monthAndPercent.month) },
                         modifier = Modifier
                             .fillParentMaxHeight()
+                            .animateItemPlacement()
                     )
                 }
             }
@@ -420,7 +417,9 @@ private fun MonthBar(
     ) {
         Column(
             modifier = Modifier
-                .weight(WEIGHT_1),
+                .weight(WEIGHT_1)
+                .clip(MaterialTheme.shapes.small)
+                .clickable(onClick = onClick),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -434,9 +433,10 @@ private fun MonthBar(
                     .width(MonthBarWidth)
                     .fillMaxHeight(expenditurePercentage.coerceAtMost(Constants.ONE_F))
                     .scale(scaleY = scale, scaleX = Constants.ONE_F)
-                    .clip(MaterialTheme.shapes.small)
-                    .background(color = color)
-                    .clickable(onClick = onClick)
+                    .background(
+                        color = color,
+                        shape = MaterialTheme.shapes.small
+                    )
             )
         }
         Spacer(modifier = Modifier.height(SpacingExtraSmall))
