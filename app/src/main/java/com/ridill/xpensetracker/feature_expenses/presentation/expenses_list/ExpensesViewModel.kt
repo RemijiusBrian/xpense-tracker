@@ -15,6 +15,7 @@ import com.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.R
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -130,10 +131,21 @@ class ExpensesViewModel @Inject constructor(
                 tagDeletion = tag
                 showTagDeleteConfirmation.value = true
             } else {
-                repo.deleteTag(tag)
-                resetSelectedTagIfDeleted(tag)
+                deleteTag(tag, false)
             }
         }
+    }
+
+    private suspend fun deleteTag(tag: String, hasExpensesLinked: Boolean) {
+        if (hasExpensesLinked) {
+            repo.deleteTag(tag)
+        } else {
+            repo.deleteTagWithExpenses(tag)
+            tagDeletion = null
+            showTagDeleteConfirmation.value = false
+        }
+        resetSelectedTagIfDeleted(tag)
+        tagDeleteModeActive.value = tags.first().isNotEmpty()
     }
 
     override fun onDeleteExpensesWithTagDismiss() {
@@ -143,9 +155,7 @@ class ExpensesViewModel @Inject constructor(
     override fun onDeleteExpensesWithTagConfirm() {
         tagDeletion?.let {
             viewModelScope.launch {
-                repo.deleteTagWithExpenses(it)
-                tagDeletion = null
-                showTagDeleteConfirmation.value = false
+                deleteTag(it, true)
             }
         }
     }
