@@ -9,7 +9,7 @@
     <!-- Texts -->
     <string name="add_expense">Add Xpense</string>
     <string name="edit_expense">Edit Xpense</string>
-    <string name="greeting">Greetings,</string>
+    <string name="greeting_comma">Hello,</string>
     <string name="expenditure_limit_label">Your limit is set to</string>
     <string name="name">Name</string>
     <string name="label_monthly_expense_marker">Mark as monthly expense</string>
