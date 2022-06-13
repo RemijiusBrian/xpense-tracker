@@ -108,19 +108,18 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNewTagConfirm() {
-        newTagInput.value?.let { tag ->
-            viewModelScope.launch {
-                if (tag.isEmpty()) {
-                    eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_tag_name)))
-                    return@launch
-                }
-                repo.cacheTag(tag)
-                expenseInput.value = expenseInput.value?.copy(
-                    tag = tag
-                )
-                _newTagInput.value = ""
-                newTagModeActive.value = false
+        val tag = newTagInput.value?.trim().orEmpty()
+        viewModelScope.launch {
+            if (tag.isEmpty()) {
+                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_tag_name)))
+                return@launch
             }
+            repo.cacheTag(tag)
+            expenseInput.value = expenseInput.value?.copy(
+                tag = tag
+            )
+            _newTagInput.value = ""
+            newTagModeActive.value = false
         }
     }
 
@@ -149,7 +148,7 @@ class AddEditExpenseViewModel @Inject constructor(
                 eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
-            val name = name.value.orEmpty()
+            val name = name.value?.trim().orEmpty()
             if (name.isEmpty()) {
                 eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_name)))
                 return@launch
