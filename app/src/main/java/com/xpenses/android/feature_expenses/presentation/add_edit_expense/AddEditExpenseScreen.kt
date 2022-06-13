@@ -2,12 +2,12 @@ package com.xpenses.android.feature_expenses.presentation.add_edit_expense
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.rounded.Cancel
@@ -49,6 +49,7 @@ import com.xpenses.android.core.ui.components.XTSnackbarHost
 import com.xpenses.android.core.ui.components.rememberSnackbarController
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.ui.util.TextUtil
+import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.exhaustive
 
 @Composable
@@ -160,84 +161,96 @@ private fun ScreenContent(
             }
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
+            contentPadding = PaddingValues(
+                vertical = ListPaddingLarge,
+                horizontal = PaddingMedium
+            ),
+            verticalArrangement = Arrangement.spacedBy(SpacingMedium),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
-                .padding(horizontal = PaddingMedium),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(ListPaddingLarge))
-            AmountInput(
-                value = amount,
-                onValueChange = actions::onAmountChange,
-                modifier = Modifier
-                    .focusRequester(focusRequester)
-            )
-            Spacer(modifier = Modifier.height(SpacingMedium))
-            TextField(
-                value = name,
-                onValueChange = actions::onNameChange,
-                shape = MaterialTheme.shapes.medium,
-                textStyle = TextStyle.Default.copy(
-                    textAlign = TextAlign.Center
-                ),
-                modifier = Modifier
-                    .defaultMinSize(minWidth = InputFieldMinWidth),
-                colors = TextFieldDefaults.textFieldColors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        .copy(alpha = ContentAlpha.PERCENT_32)
-                ),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Text,
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { actions.onSave() }
-                )
-            )
-            Spacer(modifier = Modifier.height(ListPaddingLarge))
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.label_monthly_expense_marker))
-                Checkbox(
-                    checked = state.expense?.monthly ?: false,
-                    onCheckedChange = actions::onMonthlyCheckChange
+            item {
+                AmountInput(
+                    value = amount,
+                    onValueChange = actions::onAmountChange,
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
                 )
             }
-            Spacer(modifier = Modifier.height(SpacingMedium))
-            Text(
-                text = stringResource(R.string.label_tag),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .align(Alignment.Start)
-            )
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                mainAxisSpacing = SpacingSmall
-            ) {
-                state.tagsList.forEach { tag ->
-                    FilterChip(selected = tag == state.expense?.tag,
-                        onClick = { actions.onTagSelect(tag) },
-                        label = { Text(tag) }
+            item {
+                TextField(
+                    value = name,
+                    onValueChange = actions::onNameChange,
+                    shape = MaterialTheme.shapes.medium,
+                    textStyle = TextStyle.Default.copy(
+                        textAlign = TextAlign.Center
+                    ),
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = InputFieldMinWidth),
+                    colors = TextFieldDefaults.textFieldColors(
+                        unfocusedIndicatorColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            .copy(alpha = ContentAlpha.PERCENT_32)
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { actions.onSave() }
                     )
+                )
+                Spacer(Modifier.width(SpacingMedium))
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.label_monthly_expense_marker))
+                    Checkbox(
+                        checked = state.expense?.monthly ?: false,
+                        onCheckedChange = actions::onMonthlyCheckChange
+                    )
+                }
+            }
+            item {
+                Text(
+                    text = stringResource(R.string.label_tag),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+//                        .align(Alignment.Start)
+                )
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    mainAxisSpacing = SpacingSmall
+                ) {
+                    state.tagsList.forEach { tag ->
+                        FilterChip(selected = tag == state.expense?.tag,
+                            onClick = { actions.onTagSelect(tag) },
+                            label = { Text(tag) }
+                        )
+                    }
                 }
                 AddNewTagChip(
                     onNewTagClick = actions::onNewTagClick,
-                    newTagInputActive = state.newTagModeActive,
+                    tagInputExpanded = state.tagInputExpanded,
                     tagInput = newTagInput,
                     onInputChange = actions::onNewTagValueChange,
                     onDismiss = actions::onNewTagInputDismiss,
-                    onConfirmInput = actions::onNewTagConfirm
+                    onConfirmInput = actions::onNewTagConfirm,
+                    modifier = Modifier
+                        .fillMaxWidth()
+//                        .align(Alignment.Start)
                 )
             }
         }
@@ -269,93 +282,6 @@ private fun ScreenContent(
     }
 }
 
-@Composable
-private fun AddNewTagChip(
-    onNewTagClick: () -> Unit,
-    newTagInputActive: Boolean,
-    tagInput: String,
-    onInputChange: (String) -> Unit,
-    onDismiss: () -> Unit,
-    onConfirmInput: () -> Unit
-) {
-    Box(
-        modifier = Modifier,
-    ) {
-        ElevatedAssistChip(
-            onClick = onNewTagClick,
-            label = { Text(stringResource(R.string.new_tag)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.content_description_tags)
-                )
-            },
-            colors = AssistChipDefaults.assistChipColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        )
-        AnimatedVisibility(
-            visible = newTagInputActive,
-            enter = scaleIn(transformOrigin = TransformOrigin(0f, 0f))
-        ) {
-            Surface(
-                shadowElevation = Elevation4dp,
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.small,
-                modifier = Modifier
-                    .padding(PaddingMedium)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .padding(PaddingSmall)
-                ) {
-                    TextField(
-                        value = tagInput,
-                        onValueChange = onInputChange,
-                        colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.Transparent
-                        ),
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_tags),
-                                contentDescription = null
-                            )
-                        },
-                        trailingIcon = {
-                            Row {
-                                IconButton(onClick = onDismiss) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Cancel,
-                                        contentDescription = stringResource(R.string.action_cancel)
-                                    )
-                                }
-
-                                IconButton(onClick = onConfirmInput) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Check,
-                                        contentDescription = stringResource(R.string.action_confirm)
-                                    )
-                                }
-                            }
-                        },
-                        label = { Text(stringResource(R.string.enter_tag)) },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            capitalization = KeyboardCapitalization.Words,
-                            keyboardType = KeyboardType.Text,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = { onConfirmInput() }
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun AmountInput(
@@ -406,6 +332,118 @@ private fun AmountInput(
     }
 }
 
+@Composable
+private fun AddNewTagChip(
+    onNewTagClick: () -> Unit,
+    tagInputExpanded: Boolean,
+    tagInput: String,
+    onInputChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirmInput: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        ElevatedAssistChip(
+            onClick = onNewTagClick,
+            label = { Text(stringResource(R.string.new_tag)) },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.content_description_tags)
+                )
+            },
+            colors = AssistChipDefaults.assistChipColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
+        NewTagInput(
+            expanded = tagInputExpanded,
+            tagInput = tagInput,
+            onInputChange = onInputChange,
+            onDismiss = onDismiss,
+            onConfirmInput = onConfirmInput
+        )
+    }
+}
+
+@Composable
+private fun NewTagInput(
+    expanded: Boolean,
+    tagInput: String,
+    onInputChange: (String) -> Unit,
+    onDismiss: () -> Unit,
+    onConfirmInput: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = expanded,
+        enter = scaleIn(transformOrigin = TransformOrigin(0f, 0f)),
+        exit = scaleOut(transformOrigin = TransformOrigin(0f, 0f))
+    ) {
+        Surface(
+            shadowElevation = Elevation4dp,
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.small,
+            modifier = Modifier
+                .padding(PaddingMedium)
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(PaddingSmall)
+            ) {
+                TextField(
+                    value = tagInput,
+                    onValueChange = {
+                        if (it.length <= Constants.TAG_NAME_MAX_LENGTH) onInputChange(it)
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.Transparent
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_tags),
+                            contentDescription = null
+                        )
+                    },
+                    trailingIcon = {
+                        Row {
+                            IconButton(onClick = onDismiss) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Cancel,
+                                    contentDescription = stringResource(R.string.action_cancel)
+                                )
+                            }
+
+                            IconButton(onClick = onConfirmInput) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Check,
+                                    contentDescription = stringResource(R.string.action_confirm)
+                                )
+                            }
+                        }
+                    },
+                    label = { Text(stringResource(R.string.enter_tag)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Words,
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { onConfirmInput() }
+                    ),
+                    placeholder = {
+                        Text(stringResource(R.string.max_chars, Constants.TAG_NAME_MAX_LENGTH))
+                    }
+                )
+            }
+        }
+    }
+}
+
 private val InputFieldMinWidth = 40.dp
 
 @Preview(showBackground = true)
@@ -437,6 +475,20 @@ private fun PreviewScreenContent() {
             navigateUp = {},
             snackbarController = rememberSnackbarController(),
             newTagInput = ""
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewTagInput() {
+    XpenseTrackerTheme {
+        NewTagInput(
+            expanded = true,
+            tagInput = "Name",
+            onInputChange = {},
+            onDismiss = {},
+            onConfirmInput = {}
         )
     }
 }

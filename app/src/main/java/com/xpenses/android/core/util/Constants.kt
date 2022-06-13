@@ -6,4 +6,6 @@ object Constants {
     const val MONTH_YEAR_UI_PATTERN = "MMM-yy"
     const val MONTH_YEAR_DB_PATTERN = "MM-yyyy"
     const val ONE_F = 1f
+
+    const val TAG_NAME_MAX_LENGTH = 10
 }

@@ -29,7 +29,7 @@ class AddEditExpenseViewModel @Inject constructor(
     val amount = expenseInput.map { it.amount }
     val name = expenseInput.map { it.name }
 
-    private val newTagModeActive = savedStateHandle.getLiveData("newTagModeActive", false)
+    private val tagInputExpanded = savedStateHandle.getLiveData("newTagModeActive", false)
 
     private val showDeleteConfirmation =
         savedStateHandle.getLiveData("showDeleteConfirmation", false)
@@ -52,18 +52,18 @@ class AddEditExpenseViewModel @Inject constructor(
     val state = combineTuple(
         expenseInput.asFlow(),
         tagsList,
-        newTagModeActive.asFlow(),
+        tagInputExpanded.asFlow(),
         showDeleteConfirmation.asFlow()
     ).map { (
                 expense,
                 tagsList,
-                newChipModeActive,
+                tagInputExpanded,
                 showDeleteConfirmation
             ) ->
         AddEditExpenseState(
             expense = expense,
             tagsList = tagsList,
-            newTagModeActive = newChipModeActive,
+            tagInputExpanded = tagInputExpanded,
             showDeleteConfirmation = showDeleteConfirmation
         )
     }.asLiveData()
@@ -94,7 +94,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNewTagClick() {
-        newTagModeActive.value = true
+        tagInputExpanded.value = true
     }
 
     private val _newTagInput = savedStateHandle.getLiveData("newTagInput", "")
@@ -104,7 +104,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNewTagInputDismiss() {
-        newTagModeActive.value = false
+        tagInputExpanded.value = false
     }
 
     override fun onNewTagConfirm() {
@@ -119,7 +119,7 @@ class AddEditExpenseViewModel @Inject constructor(
                 tag = tag
             )
             _newTagInput.value = ""
-            newTagModeActive.value = false
+            tagInputExpanded.value = false
         }
     }
 
