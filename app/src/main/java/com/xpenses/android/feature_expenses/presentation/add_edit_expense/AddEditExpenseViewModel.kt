@@ -120,6 +120,7 @@ class AddEditExpenseViewModel @Inject constructor(
             )
             _newTagInput.value = ""
             tagInputExpanded.value = false
+            eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.tag_created)))
         }
     }
 
