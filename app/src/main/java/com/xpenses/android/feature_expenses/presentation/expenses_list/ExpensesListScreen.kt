@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.xpenses.android.R
+import com.xpenses.android.core.ui.components.ListEmptyIndicator
 import com.xpenses.android.core.ui.components.SnackbarController
 import com.xpenses.android.core.ui.components.XTSnackbarHost
 import com.xpenses.android.core.ui.components.rememberSnackbarController
@@ -198,38 +199,49 @@ private fun ScreenContent(
                     }
                 }
             }
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(SpacingSmall),
-                contentPadding = PaddingValues(
-                    bottom = ListPaddingLarge,
-                    start = PaddingMedium,
-                    end = PaddingMedium
-                ),
+            Box(
                 modifier = Modifier
-                    .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    .fillMaxWidth()
+                    .weight(WEIGHT_1),
+                contentAlignment = Alignment.Center
             ) {
-                item {
-                    Text(
-                        text = stringResource(R.string.destination_expenses),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary,
+                if (state.expenses.isEmpty()) {
+                    ListEmptyIndicator(message = R.string.expense_list_empty_message)
+                } else {
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(SpacingSmall),
+                        contentPadding = PaddingValues(
+                            bottom = ListPaddingLarge,
+                            start = PaddingMedium,
+                            end = PaddingMedium
+                        ),
                         modifier = Modifier
-                            .paddingFromBaseline(
-                                top = PaddingMedium,
-                                bottom = PaddingSmall
+                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.destination_expenses),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .paddingFromBaseline(
+                                        top = PaddingMedium,
+                                        bottom = PaddingSmall
+                                    )
                             )
-                    )
-                }
-                items(state.expenses, key = { it.id }) { expense ->
-                    ExpenseItem(
-                        name = expense.name,
-                        date = expense.date,
-                        amount = expense.amount,
-                        onClick = { actions.onExpenseClick(expense.id) },
-                        modifier = Modifier
-                            .animateItemPlacement()
-                    )
+                        }
+                        items(state.expenses, key = { it.id }) { expense ->
+                            ExpenseItem(
+                                name = expense.name,
+                                date = expense.date,
+                                amount = expense.amount,
+                                onClick = { actions.onExpenseClick(expense.id) },
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                            )
+                        }
+                    }
                 }
             }
         }

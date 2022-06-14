@@ -32,6 +32,5 @@ sealed class XTDestination(
     }
 }
 
-const val ARG_EXPENSE_ID = "ARG_EXPENSE_ID"
-
 const val INVALID_ID = -1L
+const val ARG_EXPENSE_ID = "ARG_EXPENSE_ID"
