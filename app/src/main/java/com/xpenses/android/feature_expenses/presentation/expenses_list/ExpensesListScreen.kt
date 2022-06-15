@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
@@ -104,9 +106,15 @@ private fun ScreenContent(
     actions: ExpensesActions,
 ) {
     val topBarScrollState = rememberTopAppBarScrollState()
+    val decayAnimation = rememberSplineBasedDecay<Float>()
     val topAppBarScrollBehavior = remember {
-        TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
+            decayAnimationSpec = decayAnimation,
+            state = topBarScrollState
+        )
     }
+    val coroutineScope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
 
     Scaffold(
         snackbarHost = { XTSnackbarHost(snackbarController) },
@@ -216,7 +224,9 @@ private fun ScreenContent(
                             end = PaddingMedium
                         ),
                         modifier = Modifier
-                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                            .matchParentSize()
+                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+                        state = lazyListState
                     ) {
                         item {
                             Text(
