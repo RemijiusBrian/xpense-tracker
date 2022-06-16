@@ -1,5 +1,5 @@
 package com.xpenses.android.core.domain.model
 
-data class AppPreferences(
+data class XTPreferences(
     val expenditureLimit: Long
 )

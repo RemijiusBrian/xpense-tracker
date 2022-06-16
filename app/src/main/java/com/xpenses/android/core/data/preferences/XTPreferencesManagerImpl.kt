@@ -2,7 +2,7 @@ package com.xpenses.android.core.data.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import com.xpenses.android.core.domain.model.AppPreferences
+import com.xpenses.android.core.domain.model.XTPreferences
 import com.xpenses.android.core.util.DispatcherProvider
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -21,7 +21,7 @@ class XTPreferencesManagerImpl(
         }.map { preferences ->
             val expenditureLimit = preferences[Keys.EXPENDITURE_LIMIT] ?: 0L
 
-            AppPreferences(
+            XTPreferences(
                 expenditureLimit = expenditureLimit
             )
         }

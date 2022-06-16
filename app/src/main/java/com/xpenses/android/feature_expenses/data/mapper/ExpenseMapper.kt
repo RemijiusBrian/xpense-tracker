@@ -12,7 +12,7 @@ import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditurePerc
 fun MonthAndExpenditureRelation.toMonthAndExpenditurePercent(limit: Long): MonthAndExpenditurePercent =
     MonthAndExpenditurePercent(
         month = month,
-        expenditurePercent = expenditure / limit.toFloat()
+        expenditurePercent = (expenditure / limit).toFloat()
     )
 
 fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(
