@@ -45,6 +45,7 @@ import com.xpenses.android.core.ui.components.ListEmptyIndicator
 import com.xpenses.android.core.ui.components.SnackbarController
 import com.xpenses.android.core.ui.components.XTSnackbarHost
 import com.xpenses.android.core.ui.components.rememberSnackbarController
+import com.xpenses.android.core.ui.navigation.screen_specs.BottomBarScreenSpec
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.ui.util.numberSliderTransition
@@ -81,7 +82,7 @@ fun ExpensesListScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is ExpensesViewModel.ExpenseListEvent.Navigate -> {
+                is ExpensesViewModel.ExpenseListEvent.NavigateToAddEditScreen -> {
                     navController.navigate(event.route)
                 }
                 is ExpensesViewModel.ExpenseListEvent.ShowSnackbar -> {
@@ -129,7 +130,14 @@ private fun ScreenContent(
         bottomBar = {
             BottomAppBar(
                 icons = {
-
+                    BottomBarScreenSpec.screens.forEach { screen ->
+                        IconButton(onClick = {}) {
+                            Icon(
+                                imageVector = screen.icon,
+                                contentDescription = stringResource(screen.label)
+                            )
+                        }
+                    }
                 },
                 floatingActionButton = {
                     AnimatedVisibility(visible = state.expenditureLimit > 0L) {

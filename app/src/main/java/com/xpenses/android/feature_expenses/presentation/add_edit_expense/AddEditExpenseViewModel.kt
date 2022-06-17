@@ -3,8 +3,7 @@ package com.xpenses.android.feature_expenses.presentation.add_edit_expense
 import androidx.lifecycle.*
 import com.xpenses.android.R
 import com.xpenses.android.core.domain.model.UiText
-import com.xpenses.android.core.ui.navigation.ARG_EXPENSE_ID
-import com.xpenses.android.core.ui.navigation.INVALID_ID
+import com.xpenses.android.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
 import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.repository.ExpenseRepository
@@ -22,8 +21,9 @@ class AddEditExpenseViewModel @Inject constructor(
     private val repo: ExpenseRepository
 ) : ViewModel(), AddEditExpenseActions {
 
-    private val expenseId = savedStateHandle.get<Long>(ARG_EXPENSE_ID)
-    val editMode = expenseId != null && expenseId != INVALID_ID
+    private val expenseId =
+        AddEditExpenseScreenSpec.getExpenseIdFromSavedStateHandle(savedStateHandle)
+    val editMode = AddEditExpenseScreenSpec.isEditMode(expenseId)
 
     private val expenseInput = savedStateHandle.getLiveData<Expense>(KEY_EXPENSE_LIVE_DATA)
     val amount = expenseInput.map { it.amount }

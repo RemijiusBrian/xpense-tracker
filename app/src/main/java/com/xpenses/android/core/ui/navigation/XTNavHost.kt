@@ -5,8 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.xpenses.android.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
-import com.xpenses.android.feature_expenses.presentation.expenses_list.ExpensesListScreen
+import com.xpenses.android.core.ui.navigation.screen_specs.ScreenSpec
 
 @Composable
 fun XTNavHost(
@@ -15,20 +14,20 @@ fun XTNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = XTDestination.Expenses.route,
+        startDestination = ScreenSpec.allScreens.values.toList()[0].navHostRoute,
         modifier = modifier
     ) {
-        // Expenses
-        composable(route = XTDestination.Expenses.route) {
-            ExpensesListScreen(navController = navController)
-        }
-
-        // Add/Edit Expense
-        composable(
-            route = XTDestination.AddEditExpense.navRoute,
-            arguments = XTDestination.AddEditExpense.arguments
-        ) {
-            AddEditExpenseScreen(navController = navController)
+        ScreenSpec.allScreens.values.forEach { screenSpec ->
+            composable(
+                route = screenSpec.navHostRoute,
+                arguments = screenSpec.arguments,
+                deepLinks = screenSpec.deepLinks
+            ) { navBackStackEntry ->
+                screenSpec.Content(
+                    navController = navController,
+                    navBackStackEntry = navBackStackEntry
+                )
+            }
         }
     }
 }

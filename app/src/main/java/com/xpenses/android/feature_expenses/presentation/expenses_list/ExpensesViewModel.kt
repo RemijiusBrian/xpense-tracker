@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import com.xpenses.android.R
 import com.xpenses.android.core.data.preferences.XTPreferencesManager
 import com.xpenses.android.core.domain.model.UiText
-import com.xpenses.android.core.ui.navigation.XTDestination
+import com.xpenses.android.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.toLongOrZero
@@ -167,7 +167,7 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onAddFabClick() {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.Navigate(XTDestination.AddEditExpense.route))
+            eventsChannel.send(ExpenseListEvent.NavigateToAddEditScreen(AddEditExpenseScreenSpec.buildRoute()))
         }
     }
 
@@ -177,7 +177,11 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onExpenseClick(id: Long) {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.Navigate(XTDestination.AddEditExpense.withArg(id)))
+            eventsChannel.send(
+                ExpenseListEvent.NavigateToAddEditScreen(
+                    AddEditExpenseScreenSpec.buildRoute(id)
+                )
+            )
         }
     }
 
@@ -195,6 +199,6 @@ class ExpensesViewModel @Inject constructor(
 
     sealed class ExpenseListEvent {
         data class ShowSnackbar(val message: UiText) : ExpenseListEvent()
-        data class Navigate(val route: String) : ExpenseListEvent()
+        data class NavigateToAddEditScreen(val route: String) : ExpenseListEvent()
     }
 }
