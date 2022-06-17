@@ -21,6 +21,5 @@ data class ExpenseEntity(
     val name: String,
     val amount: Double,
     val dateMillis: Long,
-    val isMonthly: Boolean,
     val tag: String? = null
 )

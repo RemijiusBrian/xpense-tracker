@@ -25,11 +25,11 @@ interface ExpenseDao {
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE (strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month OR isMonthly = 1)
-        ORDER BY isMonthly DESC, dateMillis DESC
+        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month
+        ORDER BY dateMillis DESC
     """
     )
-    fun getAllExpensesForMonth(
+    fun getExpensesForMonth(
         month: String
     ): Flow<List<ExpenseEntity>>
 

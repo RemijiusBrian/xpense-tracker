@@ -27,7 +27,6 @@ fun ExpenseEntity.toExpense(): Expense = Expense(
     name = name,
     amount = TextUtil.formatNumber(amount),
     dateMillis = dateMillis,
-    monthly = isMonthly,
     tag = tag
 )
 
@@ -36,6 +35,5 @@ fun Expense.toEntity(): ExpenseEntity = ExpenseEntity(
     name = name,
     amount = amount.toDoubleOrZero(),
     dateMillis = dateMillis,
-    isMonthly = monthly,
     tag = tag
 )

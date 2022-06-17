@@ -9,7 +9,6 @@ data class Expense(
     val name: String,
     val amount: String,
     val dateMillis: Long,
-    val monthly: Boolean,
     val tag: String?
 ) : Parcelable {
 
@@ -19,7 +18,6 @@ data class Expense(
             name = "",
             amount = "",
             dateMillis = System.currentTimeMillis(),
-            monthly = false,
             tag = null
         )
     }

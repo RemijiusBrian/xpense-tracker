@@ -35,7 +35,7 @@ class ExpenseRepositoryImpl(
     override fun getExpensesListForMonthFilteredByTag(
         month: String,
         tag: String
-    ): Flow<List<ExpenseListItem>> = expenseDao.getAllExpensesForMonth(month).map { entities ->
+    ): Flow<List<ExpenseListItem>> = expenseDao.getExpensesForMonth(month).map { entities ->
         if (tag != Constants.STRING_ALL)
             entities.filter { it.tag == tag }
         else entities

@@ -208,26 +208,12 @@ private fun ScreenContent(
                 Spacer(Modifier.width(SpacingMedium))
             }
             item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.label_monthly_expense_marker))
-                    Checkbox(
-                        checked = state.expense?.monthly ?: false,
-                        onCheckedChange = actions::onMonthlyCheckChange
-                    )
-                }
-            }
-            item {
                 Text(
                     text = stringResource(R.string.label_tag),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
                         .fillMaxWidth()
-//                        .align(Alignment.Start)
                 )
                 FlowRow(
                     modifier = Modifier
@@ -461,7 +447,6 @@ private fun PreviewScreenContent() {
                 AddEditExpenseActions {
                 override fun onAmountChange(value: String) {}
                 override fun onNameChange(value: String) {}
-                override fun onMonthlyCheckChange(isChecked: Boolean) {}
                 override fun onTagSelect(tag: String) {}
                 override fun onNewTagClick() {}
                 override fun onNewTagValueChange(value: String) {}

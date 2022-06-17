@@ -80,12 +80,6 @@ class AddEditExpenseViewModel @Inject constructor(
         )
     }
 
-    override fun onMonthlyCheckChange(isChecked: Boolean) {
-        expenseInput.value = expenseInput.value?.copy(
-            monthly = isChecked
-        )
-    }
-
     override fun onTagSelect(tag: String) {
         val newTag = tag.takeIf { it != expenseInput.value?.tag }
         expenseInput.value = expenseInput.value?.copy(
