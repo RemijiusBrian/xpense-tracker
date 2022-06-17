@@ -5,6 +5,7 @@
     <string name="destination_expenses">Expenses</string>
     <string name="destination_add_edit_expense">Add/Edit Xpense</string>
     <string name="destination_cash_flow">Cash Flow</string>
+    <string name="destination_bills">Bills</string>
 
     <!-- Texts -->
     <string name="add_expense">Add Xpense</string>
@@ -12,7 +13,6 @@
     <string name="greeting_comma">Hello,</string>
     <string name="expenditure_limit_label">Your limit is set to</string>
     <string name="name">Name</string>
-    <string name="label_monthly_expense_marker">Mark as monthly expense</string>
     <string name="new_tag">New</string>
     <string name="label_tag">Tag</string>
     <string name="message_expense_added">Expense Added!</string>
@@ -32,6 +32,7 @@
     <string name="delete_tagged_expenses_message">You have some expenses linked to this tag. Deleting the tag with delete those expenses as well.\nAre you sure you want to proceed?</string>
     <string name="max_chars">Max %d characters</string>
     <string name="tag_created">Tag created!</string>
+    <string name="expense_list_label">Your Spending</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
@@ -52,5 +53,11 @@
     <!-- Misc -->
     <string name="anim_label_month_bar">Month Bar Animation</string>
     <string name="anim_label_month_bar_scale">Month Bar Scale</string>
-    <string name="anim_label_month_bar_color">Month Bar Color</string>
+    <string name="anim_label_month_bar_color">Month Bar Color</string>\
+
+    <!-- Bill Category -->
+    <string name="bill_category_electricity">Electricity</string>
+    <string name="bill_category_water">Water</string>
+    <string name="bill_category_broadband">Broadband</string>
+    <string name="bill_category_dtv">Digital TV</string>
 </resources>

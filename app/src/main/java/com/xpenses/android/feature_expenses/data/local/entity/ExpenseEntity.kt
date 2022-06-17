@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.xpenses.android.feature_bills.data.local.entity.BillEntity
 
 @Entity(
     foreignKeys = [
@@ -11,6 +12,11 @@ import androidx.room.PrimaryKey
             entity = ExpenseTagEntity::class,
             parentColumns = ["name"],
             childColumns = ["tag"]
+        ),
+        ForeignKey(
+            entity = BillEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["billId"]
         )
     ],
     indices = [Index("tag")]
@@ -21,5 +27,6 @@ data class ExpenseEntity(
     val name: String,
     val amount: Double,
     val dateMillis: Long,
-    val tag: String? = null
+    val tag: String? = null,
+    val billId: Long? = null
 )
