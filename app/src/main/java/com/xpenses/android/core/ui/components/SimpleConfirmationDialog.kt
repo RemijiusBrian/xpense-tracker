@@ -28,7 +28,7 @@ fun SimpleConfirmationDialog(
             }
         },
         dismissButton = {
-            OutlinedIconButton(onClick = onDismiss) {
+            OutlinedButton(onClick = onDismiss) {
                 Text(stringResource(R.string.action_cancel))
             }
         }

@@ -17,7 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xpenses.android.R
-import com.xpenses.android.core.ui.theme.SpacingExtraSmall
+import com.xpenses.android.core.ui.theme.SpacingXSmall
 import kotlinx.coroutines.delay
 
 @Composable
@@ -58,9 +58,9 @@ fun ListEmptyIndicator(
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary)
             )
-            Spacer(modifier = Modifier.height(SpacingExtraSmall))
+            Spacer(modifier = Modifier.height(SpacingXSmall))
         }
-        Spacer(modifier = Modifier.height(SpacingExtraSmall))
+        Spacer(modifier = Modifier.height(SpacingXSmall))
         Text(
             text = stringResource(message),
             style = MaterialTheme.typography.labelLarge

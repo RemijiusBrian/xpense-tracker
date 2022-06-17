@@ -43,10 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowRow
 import com.xpenses.android.R
-import com.xpenses.android.core.ui.components.BackArrowButton
-import com.xpenses.android.core.ui.components.SnackbarController
-import com.xpenses.android.core.ui.components.XTSnackbarHost
-import com.xpenses.android.core.ui.components.rememberSnackbarController
+import com.xpenses.android.core.ui.components.*
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
@@ -236,33 +233,17 @@ private fun ScreenContent(
                     onConfirmInput = actions::onNewTagConfirm,
                     modifier = Modifier
                         .fillMaxWidth()
-//                        .align(Alignment.Start)
                 )
             }
         }
 
         if (state.showDeleteConfirmation) {
-            AlertDialog(
-                onDismissRequest = actions::onDeleteDismiss,
-                confirmButton = {
-                    Button(onClick = actions::onDeleteConfirm) {
-                        Text(stringResource(R.string.action_confirm))
-                    }
-                },
-                dismissButton = {
-                    OutlinedButton(onClick = actions::onDeleteDismiss) {
-                        Text(stringResource(R.string.action_cancel))
-                    }
-                },
-                icon = {
-                    Icon(imageVector = Icons.Rounded.DeleteForever, contentDescription = null)
-                },
-                title = {
-                    Text(stringResource(R.string.delete_expense_question))
-                },
-                text = {
-                    Text(stringResource(R.string.delete_expense_confirmation_message))
-                }
+            SimpleConfirmationDialog(
+                title = R.string.delete_expense_question,
+                text = R.string.delete_expense_confirmation_message,
+                onDismiss = actions::onDeleteDismiss,
+                onConfirm = actions::onDeleteConfirm,
+                icon = Icons.Rounded.DeleteForever
             )
         }
     }
@@ -305,7 +286,7 @@ private fun AmountInput(
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.width(SpacingExtraSmall))
+                    Spacer(modifier = Modifier.width(SpacingXSmall))
                     Text(
                         text = value,
                         style = MaterialTheme.typography.displayMedium,
