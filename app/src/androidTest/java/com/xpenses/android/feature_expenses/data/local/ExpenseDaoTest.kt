@@ -50,12 +50,11 @@ class ExpenseDaoTest {
             name = "Test",
             amount = 100.0,
             dateMillis = currentDate,
-            isMonthly = false
         )
 
         dao.insert(expenseEntity)
 
-        val allExpenses = dao.getAllExpensesForMonth(
+        val allExpenses = dao.getExpensesForMonth(
             TextUtil.formatDateWithPattern(
                 currentDate,
                 Constants.MONTH_YEAR_DB_PATTERN
@@ -74,7 +73,6 @@ class ExpenseDaoTest {
             name = "Test",
             amount = amount,
             dateMillis = currentDate,
-            isMonthly = false
         )
 
         dao.insert(expenseEntity)
@@ -101,7 +99,6 @@ class ExpenseDaoTest {
             name = "Test",
             amount = 100.0,
             dateMillis = currentDate,
-            isMonthly = false,
             tag = tag
         )
         dao.insert(expenseEntity)
@@ -119,10 +116,9 @@ class ExpenseDaoTest {
             name = "Test",
             amount = 100.0,
             dateMillis = currentDate,
-            isMonthly = false
         )
         dao.insert(expenseEntity)
-        val list = dao.getAllExpensesForMonth(
+        val list = dao.getExpensesForMonth(
             TextUtil.formatDateWithPattern(currentDate, Constants.MONTH_YEAR_DB_PATTERN)
         ).first()
         assertThat(list).contains(expenseEntity)
@@ -131,7 +127,7 @@ class ExpenseDaoTest {
             amount = 1000.0
         )
         dao.insert(updatedExpense)
-        val listAfterUpdate = dao.getAllExpensesForMonth(
+        val listAfterUpdate = dao.getExpensesForMonth(
             TextUtil.formatDateWithPattern(currentDate, Constants.MONTH_YEAR_DB_PATTERN)
         ).first()
         assertThat(listAfterUpdate).doesNotContain(expenseEntity)
@@ -146,15 +142,14 @@ class ExpenseDaoTest {
             name = "Test",
             amount = 100.0,
             dateMillis = currentDate,
-            isMonthly = false
         )
         dao.insert(expenseEntity)
-        val expenseList = dao.getAllExpensesForMonth(
+        val expenseList = dao.getExpensesForMonth(
             TextUtil.formatDateWithPattern(currentDate, Constants.MONTH_YEAR_DB_PATTERN)
         ).first()
         assertThat(expenseList).contains(expenseEntity)
         dao.deleteById(expenseEntity.id)
-        val expenseListAfterDeletion = dao.getAllExpensesForMonth(
+        val expenseListAfterDeletion = dao.getExpensesForMonth(
             TextUtil.formatDateWithPattern(currentDate, Constants.MONTH_YEAR_DB_PATTERN)
         ).first()
         assertThat(expenseListAfterDeletion).doesNotContain(expenseEntity)
