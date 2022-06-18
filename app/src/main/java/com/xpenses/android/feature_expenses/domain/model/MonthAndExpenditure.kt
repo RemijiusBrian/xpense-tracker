@@ -3,8 +3,9 @@ package com.xpenses.android.feature_expenses.domain.model
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
 
-data class MonthAndExpenditurePercent(
+data class MonthAndExpenditure(
     val month: String,
+    val expenditureAmount: String,
     val expenditurePercent: Float
 ) {
     val monthFormatted: String

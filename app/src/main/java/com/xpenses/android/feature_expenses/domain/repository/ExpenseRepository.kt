@@ -2,14 +2,14 @@ package com.xpenses.android.feature_expenses.domain.repository
 
 import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.model.ExpenseListItem
-import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditurePercent
+import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditure
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
 
     fun getMonthAndExpenditurePercentList(
         limit: Long
-    ): Flow<List<MonthAndExpenditurePercent>>
+    ): Flow<List<MonthAndExpenditure>>
 
     fun getTagsList(): Flow<List<String>>
 

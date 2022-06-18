@@ -9,6 +9,7 @@ data class BillEntity(
     val id: Long = 0L,
     val name: String,
     val category: String,
+    val amount: Double,
     val payByDate: Long,
     val recurring: Boolean
 )

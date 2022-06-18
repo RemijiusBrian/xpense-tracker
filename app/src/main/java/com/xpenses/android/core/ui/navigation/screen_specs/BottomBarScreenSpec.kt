@@ -1,6 +1,5 @@
 package com.xpenses.android.core.ui.navigation.screen_specs
 
-import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed interface BottomBarScreenSpec : ScreenSpec {
@@ -13,7 +12,4 @@ sealed interface BottomBarScreenSpec : ScreenSpec {
     }
 
     val icon: ImageVector
-
-    @get:StringRes
-    val label: Int
 }

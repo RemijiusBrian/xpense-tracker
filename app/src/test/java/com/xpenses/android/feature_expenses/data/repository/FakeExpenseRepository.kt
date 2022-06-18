@@ -9,7 +9,7 @@ import com.xpenses.android.feature_expenses.data.mapper.toExpense
 import com.xpenses.android.feature_expenses.data.mapper.toExpenseListItem
 import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.model.ExpenseListItem
-import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditurePercent
+import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditure
 import com.xpenses.android.feature_expenses.domain.repository.ExpenseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -22,7 +22,7 @@ class FakeExpenseRepository : ExpenseRepository {
     private val tagsList = mutableListOf<ExpenseTagEntity>()
     private val tagsListFlow = flowOf(tagsList.toList())
 
-    override fun getMonthAndExpenditurePercentList(limit: Long): Flow<List<MonthAndExpenditurePercent>> {
+    override fun getMonthAndExpenditurePercentList(limit: Long): Flow<List<MonthAndExpenditure>> {
         return expenseListFlow.map { list ->
             list.distinctBy {
                 TextUtil.formatDateWithPattern(
@@ -32,9 +32,10 @@ class FakeExpenseRepository : ExpenseRepository {
             }
         }.map { list ->
             list.map {
-                MonthAndExpenditurePercent(
+                MonthAndExpenditure(
                     TextUtil.formatDateWithPattern(it.dateMillis, Constants.MONTH_YEAR_UI_PATTERN),
-                    expenditurePercent = (it.amount / limit).toFloat()
+                    expenditurePercent = (it.amount / limit).toFloat(),
+                    expenditureAmount = TextUtil.formatAmountWithCurrency(it.amount)
                 )
             }
         }

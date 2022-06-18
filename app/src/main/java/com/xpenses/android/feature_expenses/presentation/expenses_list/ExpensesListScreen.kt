@@ -7,7 +7,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,10 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.xpenses.android.R
-import com.xpenses.android.core.ui.components.ListEmptyIndicator
-import com.xpenses.android.core.ui.components.SnackbarController
-import com.xpenses.android.core.ui.components.XTSnackbarHost
-import com.xpenses.android.core.ui.components.rememberSnackbarController
+import com.xpenses.android.core.ui.components.*
 import com.xpenses.android.core.ui.navigation.screen_specs.BottomBarScreenSpec
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.ui.util.TextUtil
@@ -54,8 +50,10 @@ import com.xpenses.android.core.ui.util.slideOutHorizontallyWithFadeOut
 import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.exhaustive
 import com.xpenses.android.feature_expenses.domain.model.ExpenseListItem
-import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditurePercent
+import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditure
 import com.xpenses.android.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
@@ -95,7 +93,10 @@ fun ExpensesListScreen(
     ScreenContent(
         state = state,
         snackbarController = snackbarController,
-        actions = viewModel
+        actions = viewModel,
+        navigateToBottomBarDestination = {
+            navController.navigate(it.navHostRoute)
+        }
     )
 }
 
@@ -104,6 +105,7 @@ private fun ScreenContent(
     state: ExpensesState,
     snackbarController: SnackbarController,
     actions: ExpensesActions,
+    navigateToBottomBarDestination: (BottomBarScreenSpec) -> Unit
 ) {
     val topBarScrollState = rememberTopAppBarScrollState()
     val decayAnimation = rememberSplineBasedDecay<Float>()
@@ -131,7 +133,9 @@ private fun ScreenContent(
             BottomAppBar(
                 icons = {
                     BottomBarScreenSpec.screens.forEach { screen ->
-                        IconButton(onClick = {}) {
+                        IconButton(onClick = {
+                            navigateToBottomBarDestination(screen)
+                        }) {
                             Icon(
                                 imageVector = screen.icon,
                                 contentDescription = stringResource(screen.label)
@@ -170,7 +174,7 @@ private fun ScreenContent(
                 selectedMonth = state.selectedMonth,
                 onMonthSelect = actions::onMonthSelect,
                 modifier = Modifier
-                    .fillMaxHeight(MonthBarsHeightPercent)
+                    .fillMaxHeight(MONTHS_BARS_HEIGHT_PERCENT)
             )
             AnimatedVisibility(visible = state.tags.isNotEmpty()) {
                 LazyRow(
@@ -219,7 +223,7 @@ private fun ScreenContent(
                 contentAlignment = Alignment.Center
             ) {
                 if (state.expenses.isEmpty()) {
-                    ListEmptyIndicator(message = R.string.expense_list_empty_message)
+                    ListEmptyIndicator(message = R.string.empty_expenses_data_message)
                 } else {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(SpacingSmall),
@@ -233,17 +237,7 @@ private fun ScreenContent(
                             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                     ) {
                         item {
-                            Text(
-                                text = stringResource(R.string.destination_expenses),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier
-                                    .paddingFromBaseline(
-                                        top = PaddingMedium,
-                                        bottom = PaddingSmall
-                                    )
-                            )
+                            ListLabel(label = R.string.label_expense_list)
                         }
                         items(state.expenses, key = { it.id }) { expense ->
                             ExpenseItem(
@@ -269,26 +263,12 @@ private fun ScreenContent(
         }
 
         if (state.showTagDeleteConfirmation) {
-            AlertDialog(
-                onDismissRequest = actions::onDeleteExpensesWithTagDismiss,
-                confirmButton = {
-                    Button(onClick = actions::onDeleteExpensesWithTagConfirm) {
-                        Text(stringResource(R.string.action_confirm))
-                    }
-                },
-                dismissButton = {
-                    OutlinedButton(onClick = actions::onDeleteExpensesWithTagDismiss) {
-                        Text(stringResource(R.string.action_cancel))
-                    }
-                },
-                icon = {
-                    Icon(
-                        imageVector = Icons.Rounded.DeleteForever,
-                        contentDescription = null
-                    )
-                },
-                title = { Text(stringResource(R.string.delete_tagged_expenses_question)) },
-                text = { Text(stringResource(R.string.delete_tagged_expenses_message)) }
+            SimpleConfirmationDialog(
+                title = R.string.delete_tagged_expenses_question,
+                text = R.string.delete_tagged_expenses_message,
+                onDismiss = actions::onDeleteExpensesWithTagDismiss,
+                onConfirm = actions::onDeleteExpensesWithTagConfirm,
+                icon = Icons.Rounded.DeleteForever
             )
         }
     }
@@ -354,7 +334,7 @@ private fun GreetingAndLimit(
 
 @Composable
 private fun MonthsBarsRow(
-    months: List<MonthAndExpenditurePercent>,
+    months: List<MonthAndExpenditure>,
     selectedMonth: String,
     onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -396,15 +376,16 @@ private fun MonthsBarsRow(
                     start = PaddingMedium,
                     end = PaddingLarge,
                     top = PaddingSmall,
-                    bottom = PaddingMedium
+                    bottom = PaddingSmall
                 )
             ) {
-                items(months) { monthAndPercent ->
+                items(months) { monthAndExpenditure ->
                     MonthBar(
-                        month = monthAndPercent.monthFormatted,
-                        selected = monthAndPercent.month == selectedMonth,
-                        expenditurePercentage = monthAndPercent.expenditurePercent,
-                        onClick = { onMonthSelect(monthAndPercent.month) },
+                        month = monthAndExpenditure.monthFormatted,
+                        selected = monthAndExpenditure.month == selectedMonth,
+                        expenditureAmount = monthAndExpenditure.expenditureAmount,
+                        expenditurePercentage = monthAndExpenditure.expenditurePercent,
+                        onClick = { onMonthSelect(monthAndExpenditure.month) },
                         modifier = Modifier
                             .fillParentMaxHeight()
                             .animateItemPlacement()
@@ -419,6 +400,7 @@ private fun MonthsBarsRow(
 private fun MonthBar(
     month: String,
     selected: Boolean,
+    expenditureAmount: String,
     expenditurePercentage: Float,
     modifier: Modifier,
     onClick: () -> Unit
@@ -432,33 +414,39 @@ private fun MonthBar(
     }
     val color by barTransition.animateColor(label = stringResource(R.string.anim_label_month_bar_color)) { isSelected ->
         when {
-            expenditurePercentage > Constants.ONE_F -> MaterialTheme.colorScheme.errorContainer
+            expenditurePercentage >= Constants.ONE_F -> MaterialTheme.colorScheme.errorContainer
             isSelected -> MaterialTheme.colorScheme.primary
             else -> MaterialTheme.colorScheme.surfaceVariant
         }
     }
+
+    val coroutineScope = rememberCoroutineScope()
+    var showExpenditureAmount by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .weight(WEIGHT_1)
                 .clip(MaterialTheme.shapes.small)
-                .clickable(onClick = onClick),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = {
+                        coroutineScope.launch {
+                            showExpenditureAmount = true
+                            delay(EXPENDITURE_AMOUNT_DISPLAY_TIME)
+                            showExpenditureAmount = false
+                        }
+                    }
+                ),
+            contentAlignment = Alignment.BottomCenter
         ) {
-            Text(
-                text = "${(expenditurePercentage * 100).roundToInt()}%",
-                style = MaterialTheme.typography.labelMedium
-            )
-            Spacer(modifier = Modifier.height(SpacingExtraSmall))
             Box(
                 modifier = Modifier
-                    .width(MonthBarWidth)
+                    .widthIn(min = MonthBarMinWidth)
                     .fillMaxHeight(expenditurePercentage.coerceAtMost(Constants.ONE_F))
                     .scale(scaleY = scale, scaleX = Constants.ONE_F)
                     .background(
@@ -466,8 +454,13 @@ private fun MonthBar(
                         shape = MaterialTheme.shapes.small
                     )
             )
+            Text(
+                text = "${(expenditurePercentage * 100).roundToInt()}%",
+                style = MaterialTheme.typography.labelMedium,
+                color = contentColorFor(color)
+            )
         }
-        Spacer(modifier = Modifier.height(SpacingExtraSmall))
+        Spacer(modifier = Modifier.height(SpacingXSmall))
         Text(
             text = month,
             style = MaterialTheme.typography.labelLarge,
@@ -620,9 +613,10 @@ private fun ExpenditureLimitUpdateDialog(
     )
 }
 
-private const val MonthBarsHeightPercent = 0.32f
-private val MonthBarWidth = 40.dp
+private const val MONTHS_BARS_HEIGHT_PERCENT = 0.32f
+private val MonthBarMinWidth = 48.dp
 private val SmallIconSize = 16.dp
+private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
 
 @Preview(showBackground = true)
 @Composable
@@ -659,7 +653,8 @@ private fun PreviewScreenContent() {
                 override fun onAddFabClick() {}
                 override fun onMonthSelect(month: String) {}
                 override fun onExpenseClick(id: Long) {}
-            }
+            },
+            navigateToBottomBarDestination = {}
         )
     }
 }

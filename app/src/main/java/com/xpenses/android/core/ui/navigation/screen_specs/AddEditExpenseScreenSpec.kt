@@ -3,9 +3,12 @@ package com.xpenses.android.core.ui.navigation.screen_specs
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.*
+import com.xpenses.android.R
 import com.xpenses.android.feature_expenses.presentation.add_edit_expense.AddEditExpenseScreen
 
 object AddEditExpenseScreenSpec : ScreenSpec {
+
+    override val label: Int = R.string.destination_add_edit_expense
 
     override val navHostRoute: String = "add_edit_expense?$ARG_EXPENSE_ID={$ARG_EXPENSE_ID}"
 

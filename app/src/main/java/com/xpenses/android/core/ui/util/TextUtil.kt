@@ -17,6 +17,9 @@ object TextUtil {
     fun formatDateWithPattern(dateInMillis: Long, pattern: String): String =
         SimpleDateFormat(pattern, Locale.getDefault()).format(dateInMillis)
 
+    fun formatDateWithStyle(dateInMillis: Long, style: Int): String =
+        SimpleDateFormat.getDateInstance(style).format(dateInMillis)
+
     fun formatAmountWithCurrency(amount: Double): String =
         "$currencySymbol ${formatNumber(amount)}"
 

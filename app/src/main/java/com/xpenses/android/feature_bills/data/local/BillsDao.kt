@@ -2,12 +2,25 @@ package com.xpenses.android.feature_bills.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.xpenses.android.feature_expenses.data.local.entity.ExpenseEntity
+import androidx.room.Transaction
+import com.xpenses.android.feature_bills.data.local.entity.BillEntity
+import com.xpenses.android.feature_bills.data.local.relation.BillWithExpensesRelation
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BillsDao {
 
-    @Query("SELECT * FROM ExpenseEntity WHERE billId = :billId")
-    fun getPaymentsForBill(billId: Long): Flow<List<ExpenseEntity>>
+    @Query("SELECT * FROM BillEntity ORDER BY category ASC")
+    fun getAllBills(): Flow<List<BillEntity>>
+
+    @Transaction
+    @Query(
+        """
+        SELECT *
+        FROM BillEntity
+        WHERE strftime('%m', payByDate / 1000, 'unixepoch') = strftime('%m', date('now'))
+        ORDER BY payByDate DESC
+        """
+    )
+    fun getBillsWithExpensesForCurrentMonth(): Flow<List<BillWithExpensesRelation>>
 }

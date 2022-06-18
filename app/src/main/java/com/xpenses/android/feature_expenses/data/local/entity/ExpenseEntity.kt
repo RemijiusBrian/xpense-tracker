@@ -19,7 +19,7 @@ import com.xpenses.android.feature_bills.data.local.entity.BillEntity
             childColumns = ["billId"]
         )
     ],
-    indices = [Index("tag")]
+    indices = [Index("tag"), Index("billId")]
 )
 data class ExpenseEntity(
     @PrimaryKey(autoGenerate = true)
