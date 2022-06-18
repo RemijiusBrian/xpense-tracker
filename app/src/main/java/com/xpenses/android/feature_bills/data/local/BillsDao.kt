@@ -18,7 +18,7 @@ interface BillsDao {
         """
         SELECT *
         FROM BillEntity
-        WHERE strftime('%m', payByDate / 1000, 'unixepoch') = strftime('%m', date('now'))
+        WHERE (strftime('%m', payByDate / 1000, 'unixepoch') = strftime('%m', date('now'))) OR recurring = 1
         ORDER BY payByDate DESC
         """
     )

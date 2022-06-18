@@ -9,7 +9,8 @@ data class Expense(
     val name: String,
     val amount: String,
     val dateMillis: Long,
-    val tag: String?
+    val tag: String?,
+    val billId: Long?
 ) : Parcelable {
 
     companion object {
@@ -18,7 +19,8 @@ data class Expense(
             name = "",
             amount = "",
             dateMillis = System.currentTimeMillis(),
-            tag = null
+            tag = null,
+            billId = null
         )
     }
 }

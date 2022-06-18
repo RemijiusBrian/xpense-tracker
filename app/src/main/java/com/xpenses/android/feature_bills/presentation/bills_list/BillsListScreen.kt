@@ -2,6 +2,7 @@ package com.xpenses.android.feature_bills.presentation.bills_list
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,15 +14,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,8 +30,11 @@ import com.xpenses.android.R
 import com.xpenses.android.core.ui.components.*
 import com.xpenses.android.core.ui.navigation.screen_specs.AddBillScreenSpec
 import com.xpenses.android.core.ui.theme.*
+import com.xpenses.android.core.util.exhaustive
 import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.domain.model.BillItem
+import com.xpenses.android.feature_bills.domain.model.BillPayment
+import com.xpenses.android.feature_bills.domain.model.BillState
 
 @Composable
 fun BillsListScreen(navController: NavController) {
@@ -40,6 +43,17 @@ fun BillsListScreen(navController: NavController) {
     val state by viewModel.state.observeAsState(BillsListState.INITIAL)
 
     val snackbarController = rememberSnackbarController()
+    val context = LocalContext.current
+
+    LaunchedEffect(context) {
+        viewModel.events.collect { event ->
+            when (event) {
+                BillsListViewModel.BillsListEvent.PaymentMarkedAsPaid -> {
+                    snackbarController.showSnackbar(context.getString(R.string.bill_marked_as_paid_message))
+                }
+            }.exhaustive
+        }
+    }
 
     ScreenContent(
         state = state,
@@ -47,7 +61,8 @@ fun BillsListScreen(navController: NavController) {
         onAddBillClick = {
             navController.navigate(AddBillScreenSpec.buildRoute())
         },
-        navigateUp = navController::popBackStack
+        navigateUp = navController::popBackStack,
+        actions = viewModel
     )
 }
 
@@ -56,7 +71,8 @@ private fun ScreenContent(
     state: BillsListState,
     snackbarController: SnackbarController,
     onAddBillClick: () -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    actions: BillsListActions
 ) {
     val lazyListState = rememberLazyListState()
     val isFabExpanded by remember {
@@ -70,7 +86,10 @@ private fun ScreenContent(
                 title = { Text(stringResource(AddBillScreenSpec.label)) },
                 navigationIcon = {
                     BackArrowButton(onClick = navigateUp)
-                }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         },
         floatingActionButton = {
@@ -105,16 +124,25 @@ private fun ScreenContent(
                 ),
                 verticalArrangement = Arrangement.spacedBy(SpacingMedium)
             ) {
-                item {
-                    ListLabel(label = R.string.label_upcoming_payments)
-                }
-                items(state.upcomingPayments) { payment ->
-                    UpcomingPayment(
-                        icon = payment.category.icon,
-                        name = payment.name,
-                        amount = payment.amount,
-                        onMarkAsPaidClick = {}
-                    )
+                BillState.values().forEach { billState ->
+                    val listForState = state.billPayments.filter { it.state == billState }
+                    if (listForState.isNotEmpty()) {
+                        item {
+                            ListLabel(label = billState.label)
+                        }
+                        items(listForState, key = { it.id }) { payment ->
+                            BillPayment(
+                                category = payment.category,
+                                name = payment.name,
+                                date = payment.paymentOrPayByDate,
+                                amount = payment.amount,
+                                state = billState,
+                                onMarkAsPaidClick = { actions.onMarkAsPaidClick(payment) },
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -194,19 +222,25 @@ private fun BillCard(
 }
 
 @Composable
-private fun UpcomingPayment(
-    @DrawableRes icon: Int,
+private fun BillPayment(
+    category: BillCategory,
     name: String,
     amount: String,
+    date: String,
+    state: BillState,
     onMarkAsPaidClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var expanded by remember { mutableStateOf(false) }
+
     ElevatedCard(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .animateContentSize(),
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.background
-        )
+        ),
+        onClick = { expanded = !expanded }
     ) {
         Column(
             modifier = Modifier
@@ -214,7 +248,8 @@ private fun UpcomingPayment(
                 .padding(PaddingMedium)
         ) {
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -227,18 +262,41 @@ private fun UpcomingPayment(
                         .padding(PaddingMedium)
                 ) {
                     Icon(
-                        painter = painterResource(icon),
-                        contentDescription = null,
+                        painter = painterResource(category.icon),
+                        contentDescription = stringResource(category.label),
                         modifier = Modifier
                             .size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                Spacer(Modifier.width(SpacingSmall))
-                Text(text = name)
-                Text(text = amount)
-                TextButton(onClick = onMarkAsPaidClick) {
-                    Text(stringResource(R.string.mark_as_paid))
+                Spacer(Modifier.width(SpacingMedium))
+                Column(
+                    modifier = Modifier
+                        .weight(WEIGHT_1)
+                ) {
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        text = stringResource(state.displayMessage, date),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Text(
+                    text = amount,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            if (expanded) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                ) {
+                    TextButton(onClick = onMarkAsPaidClick) {
+                        Text(stringResource(R.string.mark_as_paid))
+                    }
                 }
             }
         }
@@ -258,11 +316,23 @@ private fun PreviewScreenContent() {
         ScreenContent(
             state = BillsListState(
                 billsList = list,
-                upcomingPayments = list
+                billPayments = (1..10).map {
+                    BillPayment(
+                        it.toLong(),
+                        "10-10",
+                        "1000",
+                        BillCategory.BROADBAND,
+                        name = "Name",
+                        state = BillState.UPCOMING
+                    )
+                }
             ),
             snackbarController = rememberSnackbarController(),
             onAddBillClick = {},
-            navigateUp = {}
+            navigateUp = {},
+            actions = object : BillsListActions {
+                override fun onMarkAsPaidClick(payment: BillPayment) {}
+            }
         )
     }
 }

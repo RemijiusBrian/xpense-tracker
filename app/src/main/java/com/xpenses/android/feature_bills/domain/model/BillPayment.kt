@@ -1,5 +1,10 @@
 package com.xpenses.android.feature_bills.domain.model
 
 data class BillPayment(
-    val dateMillis: Long
+    val id: Long,
+    val paymentOrPayByDate: String,
+    val amount: String,
+    val category: BillCategory,
+    val name: String,
+    val state: BillState
 )

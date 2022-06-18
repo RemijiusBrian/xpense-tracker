@@ -28,7 +28,8 @@ fun ExpenseEntity.toExpense(): Expense = Expense(
     name = name,
     amount = TextUtil.formatNumber(amount),
     dateMillis = dateMillis,
-    tag = tag
+    tag = tag,
+    billId = billId
 )
 
 fun Expense.toEntity(): ExpenseEntity = ExpenseEntity(
@@ -36,5 +37,6 @@ fun Expense.toEntity(): ExpenseEntity = ExpenseEntity(
     name = name,
     amount = amount.toDoubleOrZero(),
     dateMillis = dateMillis,
-    tag = tag
+    tag = tag,
+    billId = billId
 )
