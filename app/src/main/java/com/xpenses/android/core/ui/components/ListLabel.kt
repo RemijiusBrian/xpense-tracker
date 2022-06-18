@@ -13,14 +13,15 @@ import com.xpenses.android.core.ui.theme.PaddingSmall
 
 @Composable
 fun ListLabel(
-    @StringRes label: Int
+    @StringRes label: Int,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = stringResource(label),
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.SemiBold,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier
+        modifier = modifier
             .paddingFromBaseline(
                 top = PaddingMedium,
                 bottom = PaddingSmall

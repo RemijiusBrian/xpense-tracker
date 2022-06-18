@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.xpenses.android.R
 import com.xpenses.android.core.ui.components.*
 import com.xpenses.android.core.ui.navigation.screen_specs.AddBillScreenSpec
+import com.xpenses.android.core.ui.navigation.screen_specs.BillsListScreenSpec
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.util.exhaustive
 import com.xpenses.android.feature_bills.domain.model.BillCategory
@@ -38,7 +39,6 @@ import com.xpenses.android.feature_bills.domain.model.BillState
 
 @Composable
 fun BillsListScreen(navController: NavController) {
-
     val viewModel: BillsListViewModel = hiltViewModel()
     val state by viewModel.state.observeAsState(BillsListState.INITIAL)
 
@@ -83,7 +83,7 @@ private fun ScreenContent(
         snackbarHost = { XTSnackbarHost(snackbarController) },
         topBar = {
             SmallTopAppBar(
-                title = { Text(stringResource(AddBillScreenSpec.label)) },
+                title = { Text(stringResource(BillsListScreenSpec.label)) },
                 navigationIcon = {
                     BackArrowButton(onClick = navigateUp)
                 },
@@ -127,8 +127,12 @@ private fun ScreenContent(
                 BillState.values().forEach { billState ->
                     val listForState = state.billPayments.filter { it.state == billState }
                     if (listForState.isNotEmpty()) {
-                        item {
-                            ListLabel(label = billState.label)
+                        item(key = billState) {
+                            ListLabel(
+                                label = billState.label,
+                                modifier = Modifier
+                                    .animateItemPlacement()
+                            )
                         }
                         items(listForState, key = { it.id }) { payment ->
                             BillPayment(
@@ -233,11 +237,11 @@ private fun BillPayment(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    ElevatedCard(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .animateContentSize(),
-        colors = CardDefaults.elevatedCardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
         ),
         onClick = { expanded = !expanded }
@@ -245,7 +249,7 @@ private fun BillPayment(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(PaddingMedium)
+                .padding(PaddingSmall)
         ) {
             Row(
                 modifier = Modifier
@@ -289,7 +293,7 @@ private fun BillPayment(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            if (expanded) {
+            if (state != BillState.PAID && expanded) {
                 Row(
                     modifier = Modifier
                         .align(Alignment.End)

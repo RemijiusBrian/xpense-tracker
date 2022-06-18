@@ -8,7 +8,7 @@ object AddBillScreenSpec : ScreenSpec {
 
     override val label: Int = R.string.destination_add_bill
 
-    override val navHostRoute: String = "add_edit_bill?$ARG_BILL_ID={$ARG_BILL_ID}"
+    override val navHostRoute: String = "add_bill?$ARG_BILL_ID={$ARG_BILL_ID}"
 
     override val arguments: List<NamedNavArgument>
         get() = listOf(
@@ -21,10 +21,11 @@ object AddBillScreenSpec : ScreenSpec {
 
     fun isEditMode(billId: Long?): Boolean = billId != null && billId != NO_BILL_ID
 
-    fun buildRoute(billId: Long = NO_BILL_ID): String = "add_edit_bill?$ARG_BILL_ID=$billId"
+    fun buildRoute(billId: Long = NO_BILL_ID): String = "add_bill?$ARG_BILL_ID=$billId"
 
     @Composable
     override fun Content(navController: NavController, navBackStackEntry: NavBackStackEntry) {
+
     }
 }
 
