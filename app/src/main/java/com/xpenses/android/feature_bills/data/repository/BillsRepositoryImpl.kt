@@ -4,6 +4,8 @@ import com.xpenses.android.core.util.DispatcherProvider
 import com.xpenses.android.feature_bills.data.local.BillsDao
 import com.xpenses.android.feature_bills.data.mapper.toBillItem
 import com.xpenses.android.feature_bills.data.mapper.toBillPayment
+import com.xpenses.android.feature_bills.data.mapper.toEntity
+import com.xpenses.android.feature_bills.domain.model.Bill
 import com.xpenses.android.feature_bills.domain.model.BillItem
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.repository.BillsRepository
@@ -39,5 +41,9 @@ class BillsRepositoryImpl(
             )
             expenseRepo.cacheExpense(expense)
         }
+    }
+
+    override suspend fun cacheBill(bill: Bill) = withContext(dispatcherProvider.io) {
+        dao.insert(bill.toEntity())
     }
 }

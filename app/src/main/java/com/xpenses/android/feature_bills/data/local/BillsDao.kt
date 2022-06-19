@@ -1,8 +1,6 @@
 package com.xpenses.android.feature_bills.data.local
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import com.xpenses.android.feature_bills.data.local.entity.BillEntity
 import com.xpenses.android.feature_bills.data.local.relation.BillWithExpensesRelation
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +21,7 @@ interface BillsDao {
         """
     )
     fun getBillsWithExpensesForCurrentMonth(): Flow<List<BillWithExpensesRelation>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(billEntity: BillEntity)
 }

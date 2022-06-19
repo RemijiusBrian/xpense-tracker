@@ -3,6 +3,7 @@ package com.xpenses.android.core.ui.navigation.screen_specs
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import com.xpenses.android.R
+import com.xpenses.android.feature_bills.presentation.add_bill.AddBillScreen
 
 object AddBillScreenSpec : ScreenSpec {
 
@@ -25,7 +26,7 @@ object AddBillScreenSpec : ScreenSpec {
 
     @Composable
     override fun Content(navController: NavController, navBackStackEntry: NavBackStackEntry) {
-
+        AddBillScreen(navController = navController)
     }
 }
 

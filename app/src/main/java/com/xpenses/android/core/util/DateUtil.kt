@@ -4,26 +4,22 @@ import java.util.*
 
 object DateUtil {
 
-    fun isBothMillisOfSameMonth(
-        firstDateMillis: Long,
-        secondDateMillis: Long
-    ): Boolean {
-        val firstCalendar = Calendar.getInstance().also { it.timeInMillis = firstDateMillis }
-        val secondCalendar = Calendar.getInstance().also { it.timeInMillis = secondDateMillis }
-
-        return firstCalendar.month == secondCalendar.month
-    }
-
     fun getMonthFromMillis(dateMillis: Long): Int =
-        Calendar.getInstance().apply { timeInMillis = dateMillis }.get(Calendar.MONTH)
+        Calendar.getInstance().apply { timeInMillis = dateMillis }.month
 
     fun getDayFromMillis(dateMillis: Long): Int =
-        Calendar.getInstance().apply { timeInMillis = dateMillis }.get(Calendar.DAY_OF_MONTH)
+        Calendar.getInstance().apply { timeInMillis = dateMillis }.dayOfMonth
 
     fun getCurrentMonth(): Int = Calendar.getInstance().month
 
-    fun getCurrentDay(): Int = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+    fun getCurrentDay(): Int = Calendar.getInstance().dayOfMonth
 
-    private val Calendar.month
+    val Calendar.year
+        get() = get(Calendar.YEAR)
+
+    val Calendar.month
         get() = get(Calendar.MONTH)
+
+    val Calendar.dayOfMonth
+        get() = get(Calendar.DAY_OF_MONTH)
 }

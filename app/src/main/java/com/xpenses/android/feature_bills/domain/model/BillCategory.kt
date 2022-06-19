@@ -12,4 +12,6 @@ enum class BillCategory(
     WATER(R.drawable.ic_water_drops, R.string.bill_category_water),
     BROADBAND(R.drawable.ic_wifi_cloud, R.string.bill_category_broadband),
     DIGITAL_TV(R.drawable.ic_tv, R.string.bill_category_dtv),
+    SUBSCRIPTION(R.drawable.ic_subscription, R.string.bill_category_subscription),
+    OTHERS(R.drawable.ic_more, R.string.bill_category_other)
 }

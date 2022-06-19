@@ -2,12 +2,10 @@ package com.xpenses.android.feature_bills.data.mapper
 
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.DateUtil
+import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.feature_bills.data.local.entity.BillEntity
 import com.xpenses.android.feature_bills.data.local.relation.BillWithExpensesRelation
-import com.xpenses.android.feature_bills.domain.model.BillCategory
-import com.xpenses.android.feature_bills.domain.model.BillItem
-import com.xpenses.android.feature_bills.domain.model.BillPayment
-import com.xpenses.android.feature_bills.domain.model.BillState
+import com.xpenses.android.feature_bills.domain.model.*
 
 fun BillEntity.toBillItem(): BillItem = BillItem(
     id = id,
@@ -37,3 +35,11 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
         state = state
     )
 }
+
+fun Bill.toEntity(): BillEntity = BillEntity(
+    name = name,
+    category = category.name,
+    payByDate = System.currentTimeMillis(),
+    recurring = recurring,
+    amount = amount.toDoubleOrZero()
+)

@@ -40,7 +40,6 @@ class BillsListViewModel @Inject constructor(
     override fun onMarkAsPaidClick(payment: BillPayment) {
         viewModelScope.launch {
             repo.markBillAsPaid(payment)
-
         }
     }
 

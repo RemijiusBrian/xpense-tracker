@@ -12,7 +12,8 @@ sealed interface ScreenSpec {
         val allScreens = listOf<ScreenSpec>(
             ExpenseListScreenSpec,
             AddEditExpenseScreenSpec,
-            BillsListScreenSpec
+            BillsListScreenSpec,
+            AddBillScreenSpec
         ).associateBy { it.navHostRoute }
     }
 

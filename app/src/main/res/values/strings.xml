@@ -40,10 +40,13 @@
     <string name="label_upcoming_bills">Upcoming</string>
     <string name="label_paid_bills">Paid</string>
     <string name="label_unpaid_bills">Unpaid</string>
-    <string name="label_pay_by_date">Pay by %s</string>
-    <string name="label_paid_on_date">Pain on %s</string>
-    <string name="label_pending_since_date">Pending since %s</string>
+    <string name="pay_by_date_value">Pay by %s</string>
+    <string name="paid_on_date_value">Pain on %s</string>
+    <string name="pending_since_date_value">Pending since %s</string>
     <string name="bill_marked_as_paid_message">Bill marked as paid</string>
+    <string name="mark_bill_as_recurring">Mark bill as recurring</string>
+    <string name="click_to_select_category">Click to select category</string>
+    <string name="label_pay_by_date">Pay By</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
@@ -71,4 +74,6 @@
     <string name="bill_category_water">Water</string>
     <string name="bill_category_broadband">Broadband</string>
     <string name="bill_category_dtv">Digital TV</string>
+    <string name="bill_category_subscription">Subscription</string>
+    <string name="bill_category_other">Others</string>
 </resources>

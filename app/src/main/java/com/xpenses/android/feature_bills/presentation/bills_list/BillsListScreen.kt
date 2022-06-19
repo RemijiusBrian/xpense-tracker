@@ -3,7 +3,6 @@ package com.xpenses.android.feature_bills.presentation.bills_list
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,7 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.xpenses.android.R
@@ -36,6 +34,7 @@ import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.domain.model.BillItem
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.model.BillState
+import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 
 @Composable
 fun BillsListScreen(navController: NavController) {
@@ -256,23 +255,7 @@ private fun BillPayment(
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant
-                                .copy(alpha = ContentAlpha.PERCENT_16),
-                            shape = MaterialTheme.shapes.small
-                        )
-                        .padding(PaddingMedium)
-                ) {
-                    Icon(
-                        painter = painterResource(category.icon),
-                        contentDescription = stringResource(category.label),
-                        modifier = Modifier
-                            .size(24.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+                CategoryIcon(category = category)
                 Spacer(Modifier.width(SpacingMedium))
                 Column(
                     modifier = Modifier
