@@ -2,6 +2,7 @@ package com.xpenses.android.feature_expenses.data.mapper
 
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
+import com.xpenses.android.core.util.orZero
 import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.core.util.tryOrNull
 import com.xpenses.android.feature_expenses.data.local.entity.ExpenseEntity
@@ -10,11 +11,14 @@ import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.model.ExpenseListItem
 import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditure
 
-fun MonthAndExpenditureRelation.toMonthAndExpenditurePercent(limit: Long): MonthAndExpenditure =
+fun MonthAndExpenditureRelation.toMonthAndExpenditure(limit: Long): MonthAndExpenditure =
     MonthAndExpenditure(
         month = month,
         expenditureAmount = TextUtil.formatAmountWithCurrency(expenditure),
-        expenditurePercent = tryOrNull { expenditure / limit }?.toFloat() ?: 0f
+        expenditurePercent = tryOrNull {
+            val result = expenditure / limit.toDouble()
+            result.takeIf { !it.isNaN() }.orZero()
+        }?.toFloat().orZero()
     )
 
 fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(

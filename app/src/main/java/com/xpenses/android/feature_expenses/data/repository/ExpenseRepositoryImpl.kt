@@ -8,7 +8,7 @@ import com.xpenses.android.feature_expenses.data.local.entity.ExpenseTagEntity
 import com.xpenses.android.feature_expenses.data.mapper.toEntity
 import com.xpenses.android.feature_expenses.data.mapper.toExpense
 import com.xpenses.android.feature_expenses.data.mapper.toExpenseListItem
-import com.xpenses.android.feature_expenses.data.mapper.toMonthAndExpenditurePercent
+import com.xpenses.android.feature_expenses.data.mapper.toMonthAndExpenditure
 import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.model.ExpenseListItem
 import com.xpenses.android.feature_expenses.domain.model.MonthAndExpenditure
@@ -27,7 +27,7 @@ class ExpenseRepositoryImpl(
         limit: Long
     ): Flow<List<MonthAndExpenditure>> =
         expenseDao.getMonthAndExpenditureList().map { relations ->
-            relations.map { it.toMonthAndExpenditurePercent(limit) }
+            relations.map { it.toMonthAndExpenditure(limit) }
         }
 
     override fun getTagsList(): Flow<List<String>> = tagDao.getAllTags()
