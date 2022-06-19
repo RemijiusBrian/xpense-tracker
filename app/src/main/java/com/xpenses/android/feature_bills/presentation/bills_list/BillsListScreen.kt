@@ -138,7 +138,7 @@ private fun ScreenContent(
                                 category = payment.category,
                                 name = payment.name,
                                 date = payment.paymentOrPayByDate,
-                                amount = payment.amount,
+                                amount = payment.amountFormatted,
                                 state = billState,
                                 onMarkAsPaidClick = { actions.onMarkAsPaidClick(payment) },
                                 modifier = Modifier
@@ -307,7 +307,7 @@ private fun PreviewScreenContent() {
                     BillPayment(
                         it.toLong(),
                         "10-10",
-                        "1000",
+                        1000.0,
                         BillCategory.BROADBAND,
                         name = "Name",
                         state = BillState.UPCOMING

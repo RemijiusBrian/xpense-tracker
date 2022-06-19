@@ -34,7 +34,7 @@ class BillsRepositoryImpl(
         withContext(dispatcherProvider.io) {
             val expense = Expense(
                 name = payment.name,
-                amount = payment.amount,
+                amount = payment.amount.toString(),
                 dateMillis = System.currentTimeMillis(),
                 billId = payment.id,
                 tag = null

@@ -29,7 +29,7 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
         paymentOrPayByDate = TextUtil.formatDate(
             expenseForBillInCurrentMonth?.dateMillis ?: bill.payByDate
         ),
-        amount = TextUtil.formatAmountWithCurrency(bill.amount),
+        amount = bill.amount,
         category = BillCategory.valueOf(bill.category),
         name = bill.name,
         state = state

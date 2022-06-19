@@ -50,7 +50,7 @@
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
-    <string name="error_invalid_amount">Please enter an amount greater than 0</string>
+    <string name="error_invalid_amount">Please enter a valid amount</string>
     <string name="error_invalid_name">Please enter a valid name</string>
     <string name="error_invalid_tag_name">Please enter a valid tag name</string>
 
