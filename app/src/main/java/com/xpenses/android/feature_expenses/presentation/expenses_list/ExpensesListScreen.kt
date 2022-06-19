@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -448,13 +449,19 @@ private fun MonthBar(
         ) {
             Box(
                 modifier = Modifier
+                    .fillMaxHeight()
                     .widthIn(min = MonthBarMinWidth)
-                    .fillMaxHeight(expenditurePercentage.coerceAtMost(Constants.ONE_F))
                     .drawBehind {
+                        val heightPercent = size.height * expenditurePercentage
+                            .coerceAtMost(Constants.ONE_F)
                         scale(scaleX = Constants.ONE_F, scaleY = scale) {
                             drawRoundRect(
                                 color = color,
-                                cornerRadius = CornerRadius(8f, 8f)
+                                cornerRadius = CornerRadius(8f, 8f),
+                                topLeft = Offset(
+                                    x = 0f,
+                                    y = size.height - heightPercent
+                                )
                             )
                         }
                     }
