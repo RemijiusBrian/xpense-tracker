@@ -24,7 +24,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -448,11 +450,14 @@ private fun MonthBar(
                 modifier = Modifier
                     .widthIn(min = MonthBarMinWidth)
                     .fillMaxHeight(expenditurePercentage.coerceAtMost(Constants.ONE_F))
-                    .scale(scaleY = scale, scaleX = Constants.ONE_F)
-                    .background(
-                        color = color,
-                        shape = MaterialTheme.shapes.small
-                    )
+                    .drawBehind {
+                        scale(scaleX = Constants.ONE_F, scaleY = scale) {
+                            drawRoundRect(
+                                color = color,
+                                cornerRadius = CornerRadius(8f, 8f)
+                            )
+                        }
+                    }
             )
             Text(
                 text = "${(expenditurePercentage * 100).roundToInt()}%",
@@ -460,7 +465,7 @@ private fun MonthBar(
                 color = contentColorFor(color)
             )
         }
-        Spacer(modifier = Modifier.height(SpacingXSmall))
+        Spacer(Modifier.height(SpacingXSmall))
         Text(
             text = month,
             style = MaterialTheme.typography.labelLarge,

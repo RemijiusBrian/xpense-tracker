@@ -3,6 +3,7 @@ package com.xpenses.android.feature_expenses.data.mapper
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.toDoubleOrZero
+import com.xpenses.android.core.util.tryOrNull
 import com.xpenses.android.feature_expenses.data.local.entity.ExpenseEntity
 import com.xpenses.android.feature_expenses.data.local.relation.MonthAndExpenditureRelation
 import com.xpenses.android.feature_expenses.domain.model.Expense
@@ -13,7 +14,7 @@ fun MonthAndExpenditureRelation.toMonthAndExpenditurePercent(limit: Long): Month
     MonthAndExpenditure(
         month = month,
         expenditureAmount = TextUtil.formatAmountWithCurrency(expenditure),
-        expenditurePercent = (expenditure / limit).toFloat()
+        expenditurePercent = tryOrNull { expenditure / limit }?.toFloat() ?: 0f
     )
 
 fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(
