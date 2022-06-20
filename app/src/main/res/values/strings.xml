@@ -47,6 +47,7 @@
     <string name="mark_bill_as_recurring">Mark bill as recurring</string>
     <string name="click_to_select_category">Click to select category</string>
     <string name="label_pay_by_date">Pay By</string>
+    <string name="message_bill_added">Bill Added!</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>

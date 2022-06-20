@@ -6,7 +6,8 @@ data class AddEditExpenseState(
     val expense: Expense? = null,
     val tagsList: List<String> = emptyList(),
     val tagInputExpanded: Boolean = false,
-    val showDeleteConfirmation: Boolean = false
+    val showDeleteConfirmation: Boolean = false,
+    val isBillExpense: Boolean = true
 ) {
     companion object {
         val INITIAL = AddEditExpenseState()

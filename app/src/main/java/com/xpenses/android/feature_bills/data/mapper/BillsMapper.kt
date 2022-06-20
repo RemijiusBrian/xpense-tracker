@@ -39,7 +39,7 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
 fun Bill.toEntity(): BillEntity = BillEntity(
     name = name,
     category = category.name,
-    payByDate = System.currentTimeMillis(),
+    payByDate = dateMillis,
     recurring = recurring,
-    amount = amount.toDoubleOrZero()
+    amount = amount.toDoubleOrZero(),
 )

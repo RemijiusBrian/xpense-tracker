@@ -88,3 +88,6 @@ class AddBillViewModel @Inject constructor(
 }
 
 private const val KEY_BILL_LIVE_DATA = "KEY_BILL_LIVE_DATA"
+
+const val ADD_BILL_RESULT = "ADD_BILL_RESULT"
+const val RESULT_BILL_ADDED = "RESULT_BILL_ADDED"

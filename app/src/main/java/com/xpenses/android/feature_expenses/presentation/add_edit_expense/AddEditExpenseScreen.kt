@@ -166,12 +166,14 @@ private fun ScreenContent(
             verticalArrangement = Arrangement.spacedBy(SpacingMedium),
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(innerPadding)
         ) {
             item {
                 AmountInput(
                     value = amount,
                     onValueChange = actions::onAmountChange,
+                    readOnly = state.isBillExpense,
                     modifier = Modifier
                         .focusRequester(focusRequester)
                 )
@@ -200,40 +202,43 @@ private fun ScreenContent(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = { actions.onSave() }
-                    )
+                    ),
+                    readOnly = state.isBillExpense
                 )
                 Spacer(Modifier.width(SpacingMedium))
             }
-            item {
-                Text(
-                    text = stringResource(R.string.label_tag),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    mainAxisSpacing = SpacingSmall
-                ) {
-                    state.tagsList.forEach { tag ->
-                        FilterChip(selected = tag == state.expense?.tag,
-                            onClick = { actions.onTagSelect(tag) },
-                            label = { Text(tag) }
-                        )
+            if (!state.isBillExpense) {
+                item {
+                    Text(
+                        text = stringResource(R.string.label_tag),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        mainAxisSpacing = SpacingSmall
+                    ) {
+                        state.tagsList.forEach { tag ->
+                            FilterChip(selected = tag == state.expense?.tag,
+                                onClick = { actions.onTagSelect(tag) },
+                                label = { Text(tag) }
+                            )
+                        }
                     }
+                    AddNewTagChip(
+                        onNewTagClick = actions::onNewTagClick,
+                        tagInputExpanded = state.tagInputExpanded,
+                        tagInput = newTagInput,
+                        onInputChange = actions::onNewTagValueChange,
+                        onDismiss = actions::onNewTagInputDismiss,
+                        onConfirmInput = actions::onNewTagConfirm,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
                 }
-                AddNewTagChip(
-                    onNewTagClick = actions::onNewTagClick,
-                    tagInputExpanded = state.tagInputExpanded,
-                    tagInput = newTagInput,
-                    onInputChange = actions::onNewTagValueChange,
-                    onDismiss = actions::onNewTagInputDismiss,
-                    onConfirmInput = actions::onNewTagConfirm,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
             }
         }
 
@@ -254,6 +259,7 @@ private fun ScreenContent(
 private fun AmountInput(
     value: String,
     onValueChange: (String) -> Unit,
+    readOnly: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -276,6 +282,7 @@ private fun AmountInput(
                 imeAction = ImeAction.Next
             ),
             singleLine = true,
+            readOnly = readOnly,
             decorationBox = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

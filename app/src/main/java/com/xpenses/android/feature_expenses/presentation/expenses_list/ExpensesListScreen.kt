@@ -360,13 +360,13 @@ private fun MonthsBarsRow(
                 Icon(
                     painter = painterResource(R.drawable.ic_bar_data),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.error
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(SpacingSmall))
                 Text(
                     text = stringResource(R.string.error_no_data_yet),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         } else {
@@ -434,9 +434,26 @@ private fun MonthBar(
         Box(
             modifier = Modifier
                 .weight(WEIGHT_1)
+                .widthIn(min = MonthBarMinWidth)
                 .clip(MaterialTheme.shapes.small)
+                .drawBehind {
+                    val heightPercent = size.height * expenditurePercentage
+                        .coerceAtMost(Constants.ONE_F)
+                    scale(scaleX = Constants.ONE_F, scaleY = scale) {
+                        drawRoundRect(
+                            color = color,
+                            cornerRadius = CornerRadius(8f, 8f),
+                            topLeft = Offset(
+                                x = 0f,
+                                y = size.height - heightPercent
+                            )
+                        )
+                    }
+                }
                 .combinedClickable(
-                    onClick = onClick,
+                    onClick = {
+                        if (!selected) onClick()
+                    },
                     onLongClick = {
                         coroutineScope.launch {
                             showExpenditureAmount = true
@@ -447,25 +464,6 @@ private fun MonthBar(
                 ),
             contentAlignment = Alignment.BottomCenter
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .widthIn(min = MonthBarMinWidth)
-                    .drawBehind {
-                        val heightPercent = size.height * expenditurePercentage
-                            .coerceAtMost(Constants.ONE_F)
-                        scale(scaleX = Constants.ONE_F, scaleY = scale) {
-                            drawRoundRect(
-                                color = color,
-                                cornerRadius = CornerRadius(8f, 8f),
-                                topLeft = Offset(
-                                    x = 0f,
-                                    y = size.height - heightPercent
-                                )
-                            )
-                        }
-                    }
-            )
             Text(
                 text = "${(expenditurePercentage * 100).roundToInt()}%",
                 style = MaterialTheme.typography.labelMedium,

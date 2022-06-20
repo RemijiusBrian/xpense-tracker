@@ -21,7 +21,7 @@ object AddEditExpenseScreenSpec : ScreenSpec {
             }
         )
 
-    fun isEditMode(expenseId: Long?): Boolean = expenseId != null && expenseId != NO_EXPENSE_ID
+    fun isNewExpenseMode(expenseId: Long?): Boolean = expenseId != null && expenseId != NO_EXPENSE_ID
 
     fun buildRoute(expenseId: Long = NO_EXPENSE_ID): String =
         "add_edit_expense?$ARG_EXPENSE_ID=$expenseId"

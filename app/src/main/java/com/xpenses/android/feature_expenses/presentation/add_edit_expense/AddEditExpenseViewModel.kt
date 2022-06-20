@@ -23,11 +23,15 @@ class AddEditExpenseViewModel @Inject constructor(
 
     private val expenseId =
         AddEditExpenseScreenSpec.getExpenseIdFromSavedStateHandle(savedStateHandle)
-    val editMode = AddEditExpenseScreenSpec.isEditMode(expenseId)
+    val editMode = AddEditExpenseScreenSpec.isNewExpenseMode(expenseId)
 
     private val expenseInput = savedStateHandle.getLiveData<Expense>(KEY_EXPENSE_LIVE_DATA)
     val amount = expenseInput.map { it.amount }
     val name = expenseInput.map { it.name }
+
+    private val isBillExpense = expenseInput.map {
+        it.billId != null
+    }
 
     private val tagInputExpanded = savedStateHandle.getLiveData("newTagModeActive", false)
 
@@ -53,18 +57,21 @@ class AddEditExpenseViewModel @Inject constructor(
         expenseInput.asFlow(),
         tagsList,
         tagInputExpanded.asFlow(),
-        showDeleteConfirmation.asFlow()
+        showDeleteConfirmation.asFlow(),
+        isBillExpense.asFlow()
     ).map { (
                 expense,
                 tagsList,
                 tagInputExpanded,
-                showDeleteConfirmation
+                showDeleteConfirmation,
+                isBillExpense
             ) ->
         AddEditExpenseState(
             expense = expense,
             tagsList = tagsList,
             tagInputExpanded = tagInputExpanded,
-            showDeleteConfirmation = showDeleteConfirmation
+            showDeleteConfirmation = showDeleteConfirmation,
+            isBillExpense = isBillExpense
         )
     }.asLiveData()
 

@@ -2,7 +2,6 @@ package com.xpenses.android.feature_bills.presentation.bills_list
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,7 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.xpenses.android.R
@@ -34,6 +35,7 @@ import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.domain.model.BillItem
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.model.BillState
+import com.xpenses.android.feature_bills.presentation.add_bill.ADD_BILL_RESULT
 import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 
 @Composable
@@ -43,12 +45,21 @@ fun BillsListScreen(navController: NavController) {
 
     val snackbarController = rememberSnackbarController()
     val context = LocalContext.current
+    val navBackStackEntry = navController.currentBackStackEntry
+
+    val addBillResult = navBackStackEntry?.savedStateHandle
+        ?.getLiveData<String>(ADD_BILL_RESULT)?.observeAsState()
+    LaunchedEffect(addBillResult) {
+        navBackStackEntry?.savedStateHandle
+            ?.remove<String>(ADD_BILL_RESULT)
+        addBillResult?.value?.let(viewModel::onAddBillResult)
+    }
 
     LaunchedEffect(context) {
         viewModel.events.collect { event ->
             when (event) {
-                BillsListViewModel.BillsListEvent.PaymentMarkedAsPaid -> {
-                    snackbarController.showSnackbar(context.getString(R.string.bill_marked_as_paid_message))
+                is BillsListViewModel.BillsListEvent.ShowSnackbar -> {
+                    snackbarController.showSnackbar(event.message.asString(context))
                 }
             }.exhaustive
         }
@@ -75,7 +86,7 @@ private fun ScreenContent(
 ) {
     val lazyListState = rememberLazyListState()
     val isFabExpanded by remember {
-        derivedStateOf { lazyListState.firstVisibleItemIndex < 3 }
+        derivedStateOf { lazyListState.firstVisibleItemIndex < 1 }
     }
 
     Scaffold(
@@ -105,46 +116,42 @@ private fun ScreenContent(
             )
         }
     ) { innerPadding ->
-        Column(
+        LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(innerPadding),
+            contentPadding = PaddingValues(
+                top = PaddingMedium,
+                bottom = ListPaddingLarge
+            ),
+            verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
-            BillsGrid(bills = state.billsList)
-            Spacer(Modifier.height(SpacingMedium))
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier
-                    .weight(WEIGHT_1),
-                contentPadding = PaddingValues(
-                    start = PaddingMedium,
-                    end = PaddingMedium,
-                    bottom = ListPaddingLarge
-                ),
-                verticalArrangement = Arrangement.spacedBy(SpacingMedium)
-            ) {
-                BillState.values().forEach { billState ->
-                    val listForState = state.billPayments.filter { it.state == billState }
-                    if (listForState.isNotEmpty()) {
-                        item(key = billState) {
-                            ListLabel(
-                                label = billState.label,
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                            )
-                        }
-                        items(listForState, key = { it.id }) { payment ->
-                            BillPayment(
-                                category = payment.category,
-                                name = payment.name,
-                                date = payment.paymentOrPayByDate,
-                                amount = payment.amountFormatted,
-                                state = billState,
-                                onMarkAsPaidClick = { actions.onMarkAsPaidClick(payment) },
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                            )
-                        }
+            item {
+                BillsGrid(bills = state.billsList)
+            }
+            BillState.values().forEach { billState ->
+                val listForState = state.billPayments.filter { it.state == billState }
+                if (listForState.isNotEmpty()) {
+                    item(key = billState) {
+                        ListLabel(
+                            label = billState.label,
+                            modifier = Modifier
+                                .padding(horizontal = PaddingSmall)
+                                .animateItemPlacement()
+                        )
+                    }
+                    items(listForState, key = { it.id }) { payment ->
+                        BillPayment(
+                            category = payment.category,
+                            name = payment.name,
+                            date = payment.paymentOrPayByDate,
+                            amount = payment.amountFormatted,
+                            state = billState,
+                            onMarkAsPaidClick = { actions.onMarkAsPaidClick(payment) },
+                            modifier = Modifier
+                                .animateItemPlacement()
+                        )
                     }
                 }
             }
@@ -160,7 +167,7 @@ private fun BillsGrid(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .fillMaxHeight(BillsGridHeightFraction),
+            .heightIn(min = BillsGridHeight),
         contentAlignment = Alignment.Center
     ) {
         if (bills.isEmpty()) {
@@ -171,10 +178,8 @@ private fun BillsGrid(
                 modifier = Modifier
                     .matchParentSize(),
                 contentPadding = PaddingValues(
-                    top = PaddingMedium,
-                    bottom = PaddingMedium,
-                    start = PaddingMedium,
-                    end = ListPaddingLarge
+                    end = ListPaddingLarge,
+                    start = PaddingMedium
                 ),
                 horizontalArrangement = Arrangement.spacedBy(SpacingMedium),
                 verticalArrangement = Arrangement.spacedBy(SpacingSmall)
@@ -183,7 +188,6 @@ private fun BillsGrid(
                     BillCard(
                         icon = bill.category.icon,
                         name = bill.name,
-                        amount = bill.amount,
                         modifier = Modifier
                             .animateItemPlacement()
                     )
@@ -197,7 +201,6 @@ private fun BillsGrid(
 private fun BillCard(
     @DrawableRes icon: Int,
     name: String,
-    amount: String,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
@@ -206,20 +209,23 @@ private fun BillCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(PaddingMedium)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxSize()
+                .padding(PaddingSmall),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 painter = painterResource(icon),
                 contentDescription = name,
                 tint = MaterialTheme.colorScheme.primary
             )
-            Spacer(Modifier.height(SpacingMedium))
+            Spacer(Modifier.height(SpacingSmall))
             Text(
-                text = name
+                text = name,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
-            Text(text = amount)
         }
     }
 }
@@ -234,16 +240,13 @@ private fun BillPayment(
     onMarkAsPaidClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Card(
+    ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .animateContentSize(),
+            .padding(horizontal = PaddingMedium),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
-        ),
-        onClick = { expanded = !expanded }
+        )
     ) {
         Column(
             modifier = Modifier
@@ -276,7 +279,7 @@ private fun BillPayment(
                     fontWeight = FontWeight.SemiBold
                 )
             }
-            if (state != BillState.PAID && expanded) {
+            if (state != BillState.PAID) {
                 Row(
                     modifier = Modifier
                         .align(Alignment.End)
@@ -290,8 +293,8 @@ private fun BillPayment(
     }
 }
 
-private const val BillCardAspectRatio = 1 / 1.25f
-private const val BillsGridHeightFraction = 0.32f
+private const val BillCardAspectRatio = 1.25.toFloat() / 1f
+private val BillsGridHeight = 160.dp
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable

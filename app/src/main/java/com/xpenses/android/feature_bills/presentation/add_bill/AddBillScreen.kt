@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -37,6 +38,7 @@ import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.util.DateUtil.dayOfMonth
 import com.xpenses.android.core.util.DateUtil.month
 import com.xpenses.android.core.util.DateUtil.year
+import com.xpenses.android.core.util.exhaustive
 import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 import java.util.*
@@ -50,6 +52,23 @@ fun AddBillScreen(navController: NavController) {
     val payByDate by viewModel.payByDate.observeAsState("")
 
     val context = LocalContext.current
+    val snackbarController = rememberSnackbarController()
+
+    LaunchedEffect(context) {
+        @Suppress("IMPLICIT_CAST_TO_ANY")
+        viewModel.events.collect { event ->
+            when (event) {
+                AddBillViewModel.AddBillEvent.BillAdded -> {
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set(ADD_BILL_RESULT, RESULT_BILL_ADDED)
+                    navController.popBackStack()
+                }
+                is AddBillViewModel.AddBillEvent.ShowSnackbar -> {
+                    snackbarController.showSnackbar(event.message.asString(context))
+                }
+            }.exhaustive
+        }
+    }
 
     ScreenContent(
         name = description,
