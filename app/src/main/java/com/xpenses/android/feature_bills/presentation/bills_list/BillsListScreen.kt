@@ -1,5 +1,6 @@
 package com.xpenses.android.feature_bills.presentation.bills_list
 
+import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
@@ -72,7 +73,8 @@ fun BillsListScreen(navController: NavController) {
             navController.navigate(AddBillScreenSpec.buildRoute())
         },
         navigateUp = navController::popBackStack,
-        actions = viewModel
+        actions = viewModel,
+        context = context
     )
 }
 
@@ -82,7 +84,8 @@ private fun ScreenContent(
     snackbarController: SnackbarController,
     onAddBillClick: () -> Unit,
     navigateUp: () -> Unit,
-    actions: BillsListActions
+    actions: BillsListActions,
+    context: Context
 ) {
     val lazyListState = rememberLazyListState()
     val isFabExpanded by remember {
@@ -148,7 +151,13 @@ private fun ScreenContent(
                             date = payment.paymentOrPayByDate,
                             amount = payment.amountFormatted,
                             state = billState,
-                            onMarkAsPaidClick = { actions.onMarkAsPaidClick(payment) },
+                            onMarkAsPaidClick = {
+                                val category = context.getString(payment.category.label)
+                                val paymentName = context.getString(
+                                    R.string.bill_payment_name, category, payment.name
+                                )
+                                actions.onMarkAsPaidClick(payment.copy(name = paymentName))
+                            },
                             modifier = Modifier
                                 .animateItemPlacement()
                         )
@@ -322,7 +331,8 @@ private fun PreviewScreenContent() {
             navigateUp = {},
             actions = object : BillsListActions {
                 override fun onMarkAsPaidClick(payment: BillPayment) {}
-            }
+            },
+            context = LocalContext.current
         )
     }
 }
