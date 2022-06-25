@@ -458,7 +458,7 @@ private fun MonthBar(
                     onLongClick = {
                         coroutineScope.launch {
                             showExpenditureAmount = true
-                            delay(3000L)
+                            delay(EXPENDITURE_AMOUNT_DISPLAY_TIME)
                             showExpenditureAmount = false
                         }
                     }
