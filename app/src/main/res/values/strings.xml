@@ -30,7 +30,7 @@
     <string name="enter_tag">Tag</string>
     <string name="amount">Amount</string>
     <string name="delete_tagged_expenses_question">Delete tagged expenses?</string>
-    <string name="delete_tagged_expenses_message">You have some expenses linked to this tag. Deleting the tag with delete those expenses as well.\nAre you sure you want to proceed?</string>
+    <string name="delete_tagged_expenses_message">You have some expenses linked to this tag. Deleting the tag will delete those expenses as well.\nAre you sure you want to proceed?</string>
     <string name="max_chars">Max %d characters</string>
     <string name="tag_created">Tag created!</string>
     <string name="expense_list_label">Your Spending</string>
@@ -49,7 +49,7 @@
     <string name="label_pay_by_date">Pay By</string>
     <string name="message_bill_added">Bill Added!</string>
     <string name="bill_payment_name">%s Bill (%s)</string>
-    <string name="expenditure_amount">Spend\n%s</string>
+    <string name="expenditure_amount">Spent\n%s</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
