@@ -35,10 +35,10 @@ import com.xpenses.android.R
 import com.xpenses.android.core.ui.components.*
 import com.xpenses.android.core.ui.navigation.screen_specs.AddBillScreenSpec
 import com.xpenses.android.core.ui.theme.*
-import com.xpenses.android.core.util.DateUtil.dayOfMonth
-import com.xpenses.android.core.util.DateUtil.month
-import com.xpenses.android.core.util.DateUtil.year
+import com.xpenses.android.core.util.dayOfMonth
 import com.xpenses.android.core.util.exhaustive
+import com.xpenses.android.core.util.month
+import com.xpenses.android.core.util.year
 import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 import java.util.*

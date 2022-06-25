@@ -458,13 +458,33 @@ private fun MonthBar(
                     onLongClick = {
                         coroutineScope.launch {
                             showExpenditureAmount = true
-                            delay(EXPENDITURE_AMOUNT_DISPLAY_TIME)
+                            delay(3000L)
                             showExpenditureAmount = false
                         }
                     }
                 ),
             contentAlignment = Alignment.BottomCenter
         ) {
+            this@Column.AnimatedVisibility(
+                visible = showExpenditureAmount,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            ) {
+                Surface(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .width(MonthBarMinWidth),
+                    shadowElevation = Elevation4dp
+                ) {
+                    Text(
+                        text = stringResource(R.string.expenditure_amount, expenditureAmount),
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier
+                            .padding(PaddingXSmall),
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
             Text(
                 text = "${(expenditurePercentage * 100).roundToInt()}%",
                 style = MaterialTheme.typography.labelMedium,
@@ -629,7 +649,7 @@ private fun ExpenditureLimitUpdateDialog(
 }
 
 private const val MONTHS_BARS_HEIGHT_PERCENT = 0.32f
-private val MonthBarMinWidth = 48.dp
+private val MonthBarMinWidth = 56.dp
 private val SmallIconSize = 16.dp
 private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
 

@@ -49,6 +49,7 @@
     <string name="label_pay_by_date">Pay By</string>
     <string name="message_bill_added">Bill Added!</string>
     <string name="bill_payment_name">%s Bill (%s)</string>
+    <string name="expenditure_amount">Spend\n%s</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
@@ -70,6 +71,11 @@
     <string name="anim_label_month_bar">Month Bar Animation</string>
     <string name="anim_label_month_bar_scale">Month Bar Scale</string>
     <string name="anim_label_month_bar_color">Month Bar Color</string>
+
+    <!-- Notifications -->
+    <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
+    <string name="bills_reminder_notification_channel_description">Get reminders for your bills</string>
+    <string name="bill_reminder_notification_text">Coming up on %s</string>
 
     <!-- Bill Category -->
     <string name="bill_category_electricity">Electricity</string>

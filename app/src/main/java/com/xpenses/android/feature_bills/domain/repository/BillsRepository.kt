@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface BillsRepository {
 
+    suspend fun getAllBillsList(): List<Bill>
+
     fun getBills(): Flow<List<BillItem>>
 
     fun getBillPaymentsForCurrentMonth(): Flow<List<BillPayment>>

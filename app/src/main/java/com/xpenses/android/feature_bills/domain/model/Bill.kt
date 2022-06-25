@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Bill(
+    val id: Long,
     val name: String,
     val amount: String,
     val recurring: Boolean,
@@ -18,6 +19,7 @@ data class Bill(
 
     companion object {
         val DEFAULT = Bill(
+            id = -1L,
             name = "",
             amount = "",
             recurring = true,

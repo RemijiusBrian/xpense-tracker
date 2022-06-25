@@ -1,8 +1,7 @@
 package com.xpenses.android.feature_bills.data.mapper
 
 import com.xpenses.android.core.ui.util.TextUtil
-import com.xpenses.android.core.util.DateUtil
-import com.xpenses.android.core.util.toDoubleOrZero
+import com.xpenses.android.core.util.*
 import com.xpenses.android.feature_bills.data.local.entity.BillEntity
 import com.xpenses.android.feature_bills.data.local.relation.BillWithExpensesRelation
 import com.xpenses.android.feature_bills.domain.model.*
@@ -14,13 +13,22 @@ fun BillEntity.toBillItem(): BillItem = BillItem(
     amount = TextUtil.formatAmountWithCurrency(amount)
 )
 
+fun BillEntity.toBill(): Bill = Bill(
+    id = id,
+    name = name,
+    amount = amount.toString(),
+    recurring = recurring,
+    category = BillCategory.valueOf(category),
+    dateMillis = payByDate
+)
+
 fun BillWithExpensesRelation.toBillPayment(): BillPayment {
     val expenseForBillInCurrentMonth = expenses.find {
-        DateUtil.getMonthFromMillis(it.dateMillis) == DateUtil.getCurrentMonth()
+        it.dateMillis.getMonthFromMillis() == getCurrentMonth()
     }
     val state = when {
         expenseForBillInCurrentMonth != null -> BillState.PAID
-        DateUtil.getDayFromMillis(bill.payByDate) > DateUtil.getCurrentDay() -> BillState.UPCOMING
+        bill.payByDate.getDayFromMillis() > getCurrentDay() -> BillState.UPCOMING
         else -> BillState.UNPAID
     }
 

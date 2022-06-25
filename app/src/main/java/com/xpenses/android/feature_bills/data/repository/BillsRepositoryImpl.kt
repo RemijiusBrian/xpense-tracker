@@ -2,6 +2,7 @@ package com.xpenses.android.feature_bills.data.repository
 
 import com.xpenses.android.core.util.DispatcherProvider
 import com.xpenses.android.feature_bills.data.local.BillsDao
+import com.xpenses.android.feature_bills.data.mapper.toBill
 import com.xpenses.android.feature_bills.data.mapper.toBillItem
 import com.xpenses.android.feature_bills.data.mapper.toBillPayment
 import com.xpenses.android.feature_bills.data.mapper.toEntity
@@ -20,6 +21,10 @@ class BillsRepositoryImpl(
     private val dispatcherProvider: DispatcherProvider,
     private val expenseRepo: ExpenseRepository
 ) : BillsRepository {
+
+    override suspend fun getAllBillsList(): List<Bill> = withContext(dispatcherProvider.io) {
+        dao.getAllBillsList().map { it.toBill() }
+    }
 
     override fun getBills(): Flow<List<BillItem>> = dao.getAllBills().map { entities ->
         entities.map { it.toBillItem() }
