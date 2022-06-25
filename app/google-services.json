@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "65881912404",
-    "project_id": "xpense-tracker-5aab7",
-    "storage_bucket": "xpense-tracker-5aab7.appspot.com"
+    "project_number": "695704350175",
+    "project_id": "xpenses-7a669",
+    "storage_bucket": "xpenses-7a669.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:65881912404:android:19905a1a287178f1e5a9c1",
+        "mobilesdk_app_id": "1:695704350175:android:2649b71cd5657959a3e86a",
         "android_client_info": {
-          "package_name": "com.ridill.xpensetracker"
+          "package_name": "com.xpenses.android"
         }
       },
       "oauth_client": [
         {
-          "client_id": "65881912404-1gaa356ffmbpbk7hv2rr5pkd758kmc6q.apps.googleusercontent.com",
+          "client_id": "695704350175-72d37qnpuju4e5bcl2i0o1fvpi501vkj.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAiRIktV_fraHHnS-ftSG_t_HJdQ7O1_5M"
+          "current_key": "AIzaSyC-nIrc5C8sGfC2hEV8Q_JG3l48_fxOOSw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "65881912404-1gaa356ffmbpbk7hv2rr5pkd758kmc6q.apps.googleusercontent.com",
+              "client_id": "695704350175-72d37qnpuju4e5bcl2i0o1fvpi501vkj.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

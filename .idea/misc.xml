@@ -3,6 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable-v24/ic_tv.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable-v24/screen_24.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/bolt_24.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic__1.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic__2.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic__3.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_asset_4.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_bar_data.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_electricity.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_more.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_piggy_bank.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_tags.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_tv.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_water_drops.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/ic_wifi.xml" value="0.1495" />
+        <entry key="..\:/Android Projects/xpense-tracker/app/src/main/res/drawable/stats_24.xml" value="0.1495" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_budget_plans.xml" value="0.138" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_cash_flow.xml" value="0.134" />
         <entry key="..\:/AndroidProjects/XpenseTracker/app/src/main/res/drawable/ic_deselect.xml" value="0.134" />

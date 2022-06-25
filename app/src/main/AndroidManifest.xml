@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.xpenses.android">
 
     <application
         android:name=".XTApplication"
@@ -16,7 +14,7 @@
         android:theme="@style/Theme.App.Splash"
         tools:targetApi="s">
         <activity
-            android:name=".core.ui.MainActivity"
+            android:name=".core.ui.XTActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Splash"
             android:windowSoftInputMode="adjustResize">
@@ -25,16 +23,18 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <data
+                    android:host="www.xpenses.com"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".core.sms.SMSReceiver"
-            android:exported="true"
-            android:enabled="true"
-            android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".feature_bills.domain.notification.MarkBillAsPaidReceiver" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
     </application>
 </manifest>
