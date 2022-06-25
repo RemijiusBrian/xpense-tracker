@@ -1,11 +1,11 @@
 package com.xpenses.android.core.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
     primary = MoneyGreen80,
@@ -70,10 +70,10 @@ fun XpenseTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-//    val canUseDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val canUseDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colorScheme = when {
-//        canUseDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-//        canUseDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+        canUseDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        canUseDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
