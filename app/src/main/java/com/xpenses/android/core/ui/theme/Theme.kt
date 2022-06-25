@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = MoneyGreen80,
@@ -76,6 +78,14 @@ fun XpenseTrackerTheme(
         canUseDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
+    }
+
+    val systemUiController = rememberSystemUiController()
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = if (darkTheme) colorScheme.surface
+            else colorScheme.primary
+        )
     }
 
     MaterialTheme(
