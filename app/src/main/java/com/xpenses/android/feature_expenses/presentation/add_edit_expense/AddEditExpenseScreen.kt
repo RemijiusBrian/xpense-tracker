@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.DeleteForever
@@ -19,12 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -113,12 +112,6 @@ private fun ScreenContent(
     actions: AddEditExpenseActions,
     navigateUp: () -> Unit
 ) {
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        if (!isEditMode) focusRequester.requestFocus()
-    }
-
     Scaffold(
         snackbarHost = { XTSnackbarHost(snackbarController) },
         topBar = {
@@ -173,9 +166,7 @@ private fun ScreenContent(
                 AmountInput(
                     value = amount,
                     onValueChange = actions::onAmountChange,
-                    readOnly = state.isBillExpense,
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
+                    readOnly = state.isBillExpense
                 )
             }
             item {
@@ -203,9 +194,11 @@ private fun ScreenContent(
                     keyboardActions = KeyboardActions(
                         onDone = { actions.onSave() }
                     ),
-                    readOnly = state.isBillExpense
+                    readOnly = state.isBillExpense,
+                    label = {
+                        Text(stringResource(R.string.name))
+                    },
                 )
-                Spacer(Modifier.width(SpacingMedium))
             }
             if (!state.isBillExpense) {
                 item {
@@ -227,16 +220,29 @@ private fun ScreenContent(
                                 label = { Text(tag) }
                             )
                         }
+                        ElevatedAssistChip(
+                            onClick = actions::onNewTagClick,
+                            label = { Text(stringResource(R.string.new_tag)) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = if (state.tagInputExpanded) Icons.Default.Close
+                                    else Icons.Default.Add,
+                                    contentDescription = stringResource(R.string.content_description_create_new_tag)
+                                )
+                            },
+                            colors = AssistChipDefaults.elevatedAssistChipColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
                     }
-                    AddNewTagChip(
-                        onNewTagClick = actions::onNewTagClick,
-                        tagInputExpanded = state.tagInputExpanded,
+                    NewTagInput(
+                        expanded = state.tagInputExpanded,
                         tagInput = newTagInput,
                         onInputChange = actions::onNewTagValueChange,
                         onDismiss = actions::onNewTagInputDismiss,
-                        onConfirmInput = actions::onNewTagConfirm,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        onConfirmInput = actions::onNewTagConfirm
                     )
                 }
             }
@@ -275,18 +281,22 @@ private fun AmountInput(
                 selection = TextRange(value.length)
             ),
             onValueChange = { onValueChange(it.text) },
-            modifier = Modifier
-                .then(modifier),
+            modifier = modifier,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
             singleLine = true,
             readOnly = readOnly,
+            textStyle = MaterialTheme.typography.displayMedium.copy(
+                color = MaterialTheme.colorScheme.onBackground,
+                textAlign = TextAlign.Center
+            ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             decorationBox = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(
                         text = TextUtil.currencySymbol,
@@ -294,52 +304,17 @@ private fun AmountInput(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.width(SpacingXSmall))
-                    Text(
+                    it()
+                    /*Text(
                         text = value,
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = 1
-                    )
+                        maxLines = 1,
+                        modifier = Modifier
+                            .horizontalScroll(rememberScrollState())
+                    )*/
                 }
             }
-        )
-    }
-}
-
-@Composable
-private fun AddNewTagChip(
-    onNewTagClick: () -> Unit,
-    tagInputExpanded: Boolean,
-    tagInput: String,
-    onInputChange: (String) -> Unit,
-    onDismiss: () -> Unit,
-    onConfirmInput: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier,
-    ) {
-        ElevatedAssistChip(
-            onClick = onNewTagClick,
-            label = { Text(stringResource(R.string.new_tag)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.content_description_tags)
-                )
-            },
-            colors = AssistChipDefaults.assistChipColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        )
-        NewTagInput(
-            expanded = tagInputExpanded,
-            tagInput = tagInput,
-            onInputChange = onInputChange,
-            onDismiss = onDismiss,
-            onConfirmInput = onConfirmInput
         )
     }
 }
@@ -370,16 +345,14 @@ private fun NewTagInput(
             ) {
                 TextField(
                     value = tagInput,
-                    onValueChange = {
-                        if (it.length <= Constants.TAG_NAME_MAX_LENGTH) onInputChange(it)
-                    },
+                    onValueChange = onInputChange,
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent
                     ),
                     leadingIcon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_tags),
-                            contentDescription = null
+                            contentDescription = stringResource(R.string.content_description_tags)
                         )
                     },
                     trailingIcon = {
@@ -418,7 +391,7 @@ private fun NewTagInput(
     }
 }
 
-private val InputFieldMinWidth = 40.dp
+private val InputFieldMinWidth = 80.dp
 
 @Preview(showBackground = true)
 @Composable

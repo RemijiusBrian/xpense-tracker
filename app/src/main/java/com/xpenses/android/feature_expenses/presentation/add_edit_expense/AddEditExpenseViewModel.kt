@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.xpenses.android.R
 import com.xpenses.android.core.domain.model.UiText
 import com.xpenses.android.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
+import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.feature_expenses.domain.model.Expense
 import com.xpenses.android.feature_expenses.domain.repository.ExpenseRepository
@@ -82,6 +83,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNameChange(value: String) {
+        if (value.length > Constants.EXPENSE_NAME_MAX_LENGTH) return
         expenseInput.value = expenseInput.value?.copy(
             name = value
         )
@@ -95,17 +97,18 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNewTagClick() {
-        tagInputExpanded.value = true
+        tagInputExpanded.value = tagInputExpanded.value?.not()
     }
 
     private val _newTagInput = savedStateHandle.getLiveData("newTagInput", "")
     val newTagInput: LiveData<String> = _newTagInput
     override fun onNewTagValueChange(value: String) {
+        if (value.length > Constants.TAG_NAME_MAX_LENGTH) return
         _newTagInput.value = value
     }
 
     override fun onNewTagInputDismiss() {
-        tagInputExpanded.value = false
+        dismissTagInput()
     }
 
     override fun onNewTagConfirm() {
@@ -119,10 +122,14 @@ class AddEditExpenseViewModel @Inject constructor(
             expenseInput.value = expenseInput.value?.copy(
                 tag = tag
             )
-            _newTagInput.value = ""
-            tagInputExpanded.value = false
+            dismissTagInput()
             eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.tag_created)))
         }
+    }
+
+    private fun dismissTagInput() {
+        _newTagInput.value = ""
+        tagInputExpanded.value = false
     }
 
     override fun onDeleteClick() {

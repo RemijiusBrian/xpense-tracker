@@ -7,5 +7,6 @@ object Constants {
     const val MONTH_YEAR_DB_PATTERN = "MM-yyyy"
     const val ONE_F = 1f
 
+    const val EXPENSE_NAME_MAX_LENGTH = 30
     const val TAG_NAME_MAX_LENGTH = 10
 }
