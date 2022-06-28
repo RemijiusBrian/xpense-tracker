@@ -1,7 +1,7 @@
 package com.xpenses.android.feature_expenses.data.mapper
 
 import com.xpenses.android.core.ui.util.TextUtil
-import com.xpenses.android.core.util.Constants
+import com.xpenses.android.core.util.dayWithSuffix
 import com.xpenses.android.core.util.orZero
 import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.feature_expenses.data.local.entity.ExpenseEntity
@@ -23,7 +23,7 @@ fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(
     id = id,
     name = name,
     amount = TextUtil.formatAmountWithCurrency(amount),
-    date = TextUtil.formatDateWithPattern(dateMillis, Constants.XPENSE_DATE_PATTERN)
+    date = dateMillis.dayWithSuffix(longDay = true)
 )
 
 fun ExpenseEntity.toExpense(): Expense = Expense(

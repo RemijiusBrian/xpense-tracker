@@ -473,7 +473,7 @@ private fun MonthBar(
                 Surface(
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .width(MonthBarMinWidth),
+                        .widthIn(min = MonthBarMinWidth),
                     shadowElevation = ElevationSmall
                 ) {
                     Text(

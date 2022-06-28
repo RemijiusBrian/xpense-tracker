@@ -11,7 +11,7 @@ fun BillEntity.toBillItem(): BillItem = BillItem(
     name = name,
     category = BillCategory.valueOf(category),
     amount = TextUtil.formatAmountWithCurrency(amount),
-    payBy = TextUtil.formatDateWithPattern(payByDate, "EEE dd")
+    payBy = payByDate.dayWithSuffix()
 )
 
 fun BillEntity.toBill(): Bill = Bill(
@@ -29,7 +29,7 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
     }
     val state = when {
         expenseForBillInCurrentMonth != null -> BillState.PAID
-        bill.payByDate.getDayFromMillis() > getCurrentDay() -> BillState.UPCOMING
+        bill.payByDate.getDayFromMillis() >= getCurrentDay() -> BillState.UPCOMING
         else -> BillState.UNPAID
     }
 

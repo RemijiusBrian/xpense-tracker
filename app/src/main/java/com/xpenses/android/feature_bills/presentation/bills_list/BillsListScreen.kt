@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -197,13 +198,14 @@ private fun BillsGrid(
                     end = ListPaddingLarge,
                     start = PaddingMedium
                 ),
-                horizontalArrangement = Arrangement.spacedBy(SpacingMedium),
+                horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                 verticalArrangement = Arrangement.spacedBy(SpacingSmall)
             ) {
                 bills.forEach { (category, list) ->
                     item(
                         span = { GridItemSpan(maxLineSpan) },
-//                        key = { category.ordinal }
+                        key = category.name,
+                        contentType = BillCategory::class.java
                     ) {
                         BillSeparator(
                             category = category,
@@ -211,7 +213,7 @@ private fun BillsGrid(
                                 .animateItemPlacement()
                         )
                     }
-                    items(list, key = { it.id }, contentType = { it }) { bill ->
+                    items(list, key = { it.id }, contentType = { BillItem::class.java }) { bill ->
                         BillCard(
                             name = bill.name,
                             modifier = Modifier
@@ -231,18 +233,26 @@ private fun BillSeparator(
     category: BillCategory,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Row(
         modifier = modifier
-            .fillMaxHeight(),
-        contentAlignment = Alignment.Center
+            .fillMaxHeight()
+            .rotate(-90f),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
         Text(
             text = stringResource(category.label),
-            modifier = Modifier
-                .paddingFromBaseline(top = ZeroDp, bottom = ZeroDp)
-                .rotate(-90f),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelLarge
+        )
+        Spacer(Modifier.width(SpacingMedium))
+        Icon(
+            painter = painterResource(category.icon),
+            contentDescription = stringResource(category.label),
+            modifier = Modifier
+                .rotate(90f)
         )
     }
 }
@@ -254,9 +264,9 @@ private fun BillCard(
     payBy: String,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
+    OutlinedCard(
         modifier = modifier
-            .aspectRatio(1.5f / 1f),
+            .widthIn(max = 160.dp),
         onClick = onClick
     ) {
         Column(
@@ -268,12 +278,13 @@ private fun BillCard(
         ) {
             Text(
                 text = name,
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = stringResource(R.string.pay_by_date_value, payBy),
+                text = stringResource(R.string.due_date_value, payBy),
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -325,6 +336,7 @@ private fun BillPayment(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+                Spacer(Modifier.width(SpacingMedium))
                 Text(
                     text = amount,
                     style = MaterialTheme.typography.titleLarge,
@@ -345,7 +357,7 @@ private fun BillPayment(
     }
 }
 
-private val BillsGridHeight = 160.dp
+private val BillsGridHeight = 172.dp
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable

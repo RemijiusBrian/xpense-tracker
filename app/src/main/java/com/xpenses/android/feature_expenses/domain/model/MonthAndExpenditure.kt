@@ -1,7 +1,7 @@
 package com.xpenses.android.feature_expenses.domain.model
 
 import com.xpenses.android.core.ui.util.TextUtil
-import com.xpenses.android.core.util.Constants
+import com.xpenses.android.core.util.DatePatterns
 
 data class MonthAndExpenditure(
     val month: String,
@@ -10,8 +10,8 @@ data class MonthAndExpenditure(
 ) {
     val monthFormatted: String
         get() = TextUtil.run {
-            parseDate(month, Constants.MONTH_YEAR_DB_PATTERN)?.let {
-                formatDateWithPattern(it.time, Constants.MONTH_YEAR_UI_PATTERN)
+            parseDate(month, DatePatterns.MONTH_NUMBER_WITH_YEAR)?.let {
+                formatDateWithPattern(it.time, DatePatterns.SHORT_MONTH_NAME_WITH_YEAR)
             }.orEmpty()
         }
 }

@@ -6,7 +6,7 @@ data class AddEditBillState(
     val showCategorySelection: Boolean = false,
     val showDeletionConfirmation: Boolean = false,
     val payByDate: String = "",
-    val category: BillCategory = BillCategory.OTHERS,
+    val category: BillCategory = BillCategory.MISC,
     val isBillRecurring: Boolean = false
 ) {
     companion object {

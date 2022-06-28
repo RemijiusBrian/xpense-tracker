@@ -23,7 +23,7 @@ data class Bill(
             name = "",
             amount = "",
             recurring = true,
-            category = BillCategory.OTHERS,
+            category = BillCategory.MISC,
             dateMillis = System.currentTimeMillis()
         )
     }

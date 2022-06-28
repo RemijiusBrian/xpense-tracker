@@ -7,6 +7,7 @@ import com.xpenses.android.core.domain.model.UiText
 import com.xpenses.android.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
 import com.xpenses.android.core.ui.util.TextUtil
 import com.xpenses.android.core.util.Constants
+import com.xpenses.android.core.util.DatePatterns
 import com.xpenses.android.core.util.toLongOrZero
 import com.xpenses.android.feature_expenses.domain.repository.ExpenseRepository
 import com.xpenses.android.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
@@ -42,7 +43,7 @@ class ExpensesViewModel @Inject constructor(
     private val selectedMonth = savedStateHandle.getLiveData(
         key = "selectedMonth",
         initialValue = TextUtil
-            .formatDateWithPattern(System.currentTimeMillis(), Constants.MONTH_YEAR_DB_PATTERN)
+            .formatDateWithPattern(System.currentTimeMillis(), DatePatterns.MONTH_NUMBER_WITH_YEAR)
     )
 
     private val showExpenditureLimitUpdateDialog =
@@ -167,7 +168,11 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onAddFabClick() {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.NavigateToAddEditExpenseScreen(AddEditExpenseScreenSpec.buildRoute()))
+            eventsChannel.send(
+                ExpenseListEvent.NavigateToAddEditExpenseScreen(
+                    AddEditExpenseScreenSpec.buildRoute()
+                )
+            )
         }
     }
 

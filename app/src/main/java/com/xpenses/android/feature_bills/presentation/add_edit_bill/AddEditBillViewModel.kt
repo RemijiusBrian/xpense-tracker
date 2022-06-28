@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.xpenses.android.R
 import com.xpenses.android.core.domain.model.UiText
 import com.xpenses.android.core.ui.navigation.screen_specs.AddEditBillScreenSpec
+import com.xpenses.android.core.util.Constants
 import com.xpenses.android.core.util.toDoubleOrZero
 import com.xpenses.android.feature_bills.domain.model.Bill
 import com.xpenses.android.feature_bills.domain.model.BillCategory
@@ -28,8 +29,8 @@ class AddEditBillViewModel @Inject constructor(
     private val bill = savedStateHandle.getLiveData<Bill>(KEY_BILL_LIVE_DATA)
     val name = bill.map { it.name }
     val amount = bill.map { it.amount }
-    private val category = bill.map { it.category }
-    private val payByDate = bill.map { it.dateFormatted }
+    private val category = bill.map { it.category }.distinctUntilChanged()
+    private val payByDate = bill.map { it.dateFormatted }.distinctUntilChanged()
     private val isBillRecurring = bill.map { it.recurring }.distinctUntilChanged()
 
     private val showCategorySelection =
@@ -74,6 +75,7 @@ class AddEditBillViewModel @Inject constructor(
     val events get() = eventsChannel.receiveAsFlow()
 
     override fun onNameChange(value: String) {
+        if (value.length > Constants.BILL_DESCRIPTION_MAX_LENGTH) return
         bill.value = bill.value?.copy(
             name = value
         )
