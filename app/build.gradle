@@ -11,7 +11,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.xpenses.android"
+        applicationId "dev.ridill.xpensetracker"
         minSdk 29
         targetSdk 31
         versionCode 1
@@ -59,7 +59,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace "com.xpenses.android"
+    namespace "dev.ridill.xpensetracker"
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
