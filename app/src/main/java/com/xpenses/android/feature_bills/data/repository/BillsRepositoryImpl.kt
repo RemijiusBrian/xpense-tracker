@@ -7,6 +7,7 @@ import com.xpenses.android.feature_bills.data.mapper.toBillItem
 import com.xpenses.android.feature_bills.data.mapper.toBillPayment
 import com.xpenses.android.feature_bills.data.mapper.toEntity
 import com.xpenses.android.feature_bills.domain.model.Bill
+import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.domain.model.BillItem
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.repository.BillsRepository
@@ -26,14 +27,21 @@ class BillsRepositoryImpl(
         dao.getAllBillsList().map { it.toBill() }
     }
 
-    override fun getBills(): Flow<List<BillItem>> = dao.getAllBills().map { entities ->
-        entities.map { it.toBillItem() }
-    }
+    override fun getBillsGroupedByCategory(): Flow<Map<BillCategory, List<BillItem>>> =
+        dao.getAllBills().map { entities ->
+            entities.map { it.toBillItem() }
+        }.map { bills ->
+            bills.groupBy { it.category }
+        }
 
     override fun getBillPaymentsForCurrentMonth(): Flow<List<BillPayment>> =
         dao.getBillsWithExpensesForCurrentMonth().map { billsWithExpenses ->
             billsWithExpenses.map { it.toBillPayment() }
         }
+
+    override suspend fun getBillById(id: Long): Bill? = withContext(dispatcherProvider.io) {
+        dao.getBillById(id)?.toBill()
+    }
 
     override suspend fun markBillAsPaid(payment: BillPayment) {
         withContext(dispatcherProvider.io) {
@@ -50,5 +58,9 @@ class BillsRepositoryImpl(
 
     override suspend fun cacheBill(bill: Bill) = withContext(dispatcherProvider.io) {
         dao.insert(bill.toEntity())
+    }
+
+    override suspend fun deleteBill(id: Long) = withContext(dispatcherProvider.io) {
+        dao.deleteBill(id)
     }
 }

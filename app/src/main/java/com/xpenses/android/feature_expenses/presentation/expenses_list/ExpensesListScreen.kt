@@ -84,7 +84,7 @@ fun ExpensesListScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
             when (event) {
-                is ExpensesViewModel.ExpenseListEvent.NavigateToAddEditScreen -> {
+                is ExpensesViewModel.ExpenseListEvent.NavigateToAddEditExpenseScreen -> {
                     navController.navigate(event.route)
                 }
                 is ExpensesViewModel.ExpenseListEvent.ShowSnackbar -> {
@@ -474,7 +474,7 @@ private fun MonthBar(
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
                         .width(MonthBarMinWidth),
-                    shadowElevation = Elevation4dp
+                    shadowElevation = ElevationSmall
                 ) {
                     Text(
                         text = stringResource(R.string.expenditure_amount, expenditureAmount),

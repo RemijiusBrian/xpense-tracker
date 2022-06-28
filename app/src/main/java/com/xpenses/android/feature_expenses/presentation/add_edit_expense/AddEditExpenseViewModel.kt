@@ -159,7 +159,7 @@ class AddEditExpenseViewModel @Inject constructor(
             }
             val name = name.value?.trim().orEmpty()
             if (name.isEmpty()) {
-                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_name)))
+                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_note)))
                 return@launch
             }
             expenseInput.value?.let { expense ->

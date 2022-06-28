@@ -10,7 +10,8 @@ fun BillEntity.toBillItem(): BillItem = BillItem(
     id = id,
     name = name,
     category = BillCategory.valueOf(category),
-    amount = TextUtil.formatAmountWithCurrency(amount)
+    amount = TextUtil.formatAmountWithCurrency(amount),
+    payBy = TextUtil.formatDateWithPattern(payByDate, "EEE dd")
 )
 
 fun BillEntity.toBill(): Bill = Bill(
@@ -45,9 +46,10 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
 }
 
 fun Bill.toEntity(): BillEntity = BillEntity(
+    id = id,
     name = name,
     category = category.name,
     payByDate = dateMillis,
     recurring = recurring,
-    amount = amount.toDoubleOrZero(),
+    amount = amount.toDoubleOrZero()
 )

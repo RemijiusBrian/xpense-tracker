@@ -1,9 +1,10 @@
-package com.xpenses.android.feature_bills.presentation.add_bill
+package com.xpenses.android.feature_bills.presentation.add_edit_bill
 
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,18 +13,18 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -31,9 +32,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.flowlayout.FlowRow
 import com.xpenses.android.R
 import com.xpenses.android.core.ui.components.*
-import com.xpenses.android.core.ui.navigation.screen_specs.AddBillScreenSpec
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.util.dayOfMonth
 import com.xpenses.android.core.util.exhaustive
@@ -44,12 +45,11 @@ import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 import java.util.*
 
 @Composable
-fun AddBillScreen(navController: NavController) {
-    val viewModel: AddBillViewModel = hiltViewModel()
+fun AddEditBillScreen(navController: NavController) {
+    val viewModel: AddEditBillViewModel = hiltViewModel()
     val description by viewModel.name.observeAsState("")
     val amount by viewModel.amount.observeAsState("")
-    val category by viewModel.category.observeAsState(BillCategory.OTHERS)
-    val payByDate by viewModel.payByDate.observeAsState("")
+    val state by viewModel.state.observeAsState(AddEditBillState.INITIAL)
 
     val context = LocalContext.current
     val snackbarController = rememberSnackbarController()
@@ -58,12 +58,22 @@ fun AddBillScreen(navController: NavController) {
         @Suppress("IMPLICIT_CAST_TO_ANY")
         viewModel.events.collect { event ->
             when (event) {
-                AddBillViewModel.AddBillEvent.BillAdded -> {
+                AddEditBillViewModel.AddEditBillEvent.BillAdded -> {
                     navController.previousBackStackEntry?.savedStateHandle
-                        ?.set(ADD_BILL_RESULT, RESULT_BILL_ADDED)
+                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_ADDED)
                     navController.popBackStack()
                 }
-                is AddBillViewModel.AddBillEvent.ShowSnackbar -> {
+                AddEditBillViewModel.AddEditBillEvent.BillDeleted -> {
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_DELETED)
+                    navController.popBackStack()
+                }
+                AddEditBillViewModel.AddEditBillEvent.BillUpdated -> {
+                    navController.previousBackStackEntry?.savedStateHandle
+                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_UPDATED)
+                    navController.popBackStack()
+                }
+                is AddEditBillViewModel.AddEditBillEvent.ShowSnackbar -> {
                     snackbarController.showSnackbar(event.message.asString(context))
                 }
             }.exhaustive
@@ -73,13 +83,12 @@ fun AddBillScreen(navController: NavController) {
     ScreenContent(
         name = description,
         amount = amount,
-        category = category,
-        payByDate = payByDate,
+        state = state,
         context = context,
-        snackbarController = rememberSnackbarController(),
+        snackbarController = snackbarController,
         actions = viewModel,
         navigateUp = navController::popBackStack,
-        recurring = true
+        isEditMode = viewModel.isEditMode
     )
 }
 
@@ -87,18 +96,15 @@ fun AddBillScreen(navController: NavController) {
 private fun ScreenContent(
     name: String,
     amount: String,
-    recurring: Boolean,
-    category: BillCategory,
-    payByDate: String,
+    state: AddEditBillState,
     context: Context,
     snackbarController: SnackbarController,
-    actions: AddBillActions,
-    navigateUp: () -> Unit
+    actions: AddEditBillActions,
+    navigateUp: () -> Unit,
+    isEditMode: Boolean
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val currentDateCalendar = remember {
-        Calendar.getInstance()
-    }
+    val currentDateCalendar = remember { Calendar.getInstance() }
     val payByDatePicker = remember {
         DatePickerDialog(
             context,
@@ -121,8 +127,19 @@ private fun ScreenContent(
     Scaffold(
         topBar = {
             TransparentSmallTopAppBar(
-                title = AddBillScreenSpec.label,
-                navigationIcon = { BackArrowButton(onClick = navigateUp) }
+                title = if (isEditMode) R.string.edit_bill
+                else R.string.add_bill,
+                navigationIcon = { BackArrowButton(onClick = navigateUp) },
+                actions = {
+                    if (isEditMode) {
+                        IconButton(onClick = actions::onDeleteClick) {
+                            Icon(
+                                imageVector = Icons.Rounded.DeleteForever,
+                                contentDescription = stringResource(R.string.content_description_delete_expense)
+                            )
+                        }
+                    }
+                }
             )
         },
         floatingActionButton = {
@@ -143,15 +160,15 @@ private fun ScreenContent(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { payByDatePicker.show() }
+                    .clickable(onClick = actions::onCategoryClick)
                     .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CategoryIcon(category = category)
+                CategoryIcon(category = state.category)
                 Spacer(Modifier.width(SpacingMedium))
                 Column {
                     Text(
-                        text = stringResource(category.label),
+                        text = stringResource(state.category.label),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -180,14 +197,15 @@ private fun ScreenContent(
                 ) {
                     item {
                         LabelAndInput(
-                            label = R.string.name,
+                            label = R.string.description,
                             value = name,
                             onValueChange = actions::onNameChange,
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Text,
                                 capitalization = KeyboardCapitalization.Words,
                                 imeAction = ImeAction.Next
-                            )
+                            ),
+                            placeholder = R.string.bill_description_eg
                         )
                     }
                     item {
@@ -209,7 +227,7 @@ private fun ScreenContent(
                     item {
                         LabelFirstCheckbox(
                             label = R.string.mark_bill_as_recurring,
-                            isChecked = recurring,
+                            isChecked = state.isBillRecurring,
                             onCheckedChange = actions::onMarkAsRecurringCheckChange
                         )
                     }
@@ -227,7 +245,7 @@ private fun ScreenContent(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = payByDate,
+                                    text = state.payByDate,
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 IconButton(onClick = { payByDatePicker.show() }) {
@@ -242,6 +260,51 @@ private fun ScreenContent(
                 }
             }
         }
+
+        if (state.showCategorySelection) {
+            var currentSelection by remember { mutableStateOf(state.category) }
+            AlertDialog(
+                onDismissRequest = actions::onCategorySelectionDismiss,
+                confirmButton = {
+                    Button(onClick = { actions.onCategorySelect(currentSelection) }) {
+                        Text(stringResource(R.string.action_confirm))
+                    }
+                },
+                text = {
+                    FlowRow {
+                        BillCategory.values().forEach { category ->
+                            val selected = category == currentSelection
+                            val tint by animateColorAsState(
+                                targetValue = if (selected) MaterialTheme.colorScheme.primary
+                                else LocalContentColor.current
+                            )
+                            Surface(
+                                onClick = { currentSelection = category },
+                                selected = selected
+                            ) {
+                                Icon(
+                                    painter = painterResource(category.icon),
+                                    contentDescription = stringResource(category.label),
+                                    tint = tint,
+                                    modifier = Modifier
+                                        .padding(PaddingSmall)
+                                )
+                            }
+                        }
+                    }
+                }
+            )
+        }
+
+        if (state.showDeletionConfirmation) {
+            SimpleConfirmationDialog(
+                title = R.string.delete_bill_question,
+                text = R.string.delete_bill_confirmation_message,
+                onDismiss = actions::onDeleteDismiss,
+                onConfirm = actions::onDeleteConfirm,
+                icon = Icons.Outlined.DeleteForever
+            )
+        }
     }
 }
 
@@ -251,6 +314,7 @@ private fun LabelAndInput(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    @StringRes placeholder: Int? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
 ) {
@@ -273,7 +337,10 @@ private fun LabelAndInput(
                 .fillMaxWidth(),
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.Transparent
-            )
+            ),
+            placeholder = {
+                placeholder?.let { Text(stringResource(it)) }
+            }
         )
     }
 }
@@ -286,7 +353,7 @@ private fun PreviewScreenContent() {
             name = "",
             amount = "",
             snackbarController = rememberSnackbarController(),
-            actions = object : AddBillActions {
+            actions = object : AddEditBillActions {
                 override fun onNameChange(value: String) {}
                 override fun onAmountChange(value: String) {}
                 override fun onMarkAsRecurringCheckChange(isChecked: Boolean) {}
@@ -294,12 +361,15 @@ private fun PreviewScreenContent() {
                 override fun onCategorySelect(category: BillCategory) {}
                 override fun onPayByDateChange(dateMillis: Long) {}
                 override fun onSave() {}
+                override fun onDeleteClick() {}
+                override fun onDeleteDismiss() {}
+                override fun onDeleteConfirm() {}
+                override fun onCategorySelectionDismiss() {}
             },
             navigateUp = {},
-            recurring = true,
-            category = BillCategory.SUBSCRIPTION,
             context = LocalContext.current,
-            payByDate = "10th Jan"
+            state = AddEditBillState.INITIAL,
+            isEditMode = false
         )
     }
 }

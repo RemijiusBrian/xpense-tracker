@@ -196,7 +196,7 @@ private fun ScreenContent(
                     ),
                     readOnly = state.isBillExpense,
                     label = {
-                        Text(stringResource(R.string.name))
+                        Text(stringResource(R.string.add_note))
                     },
                 )
             }
@@ -333,7 +333,7 @@ private fun NewTagInput(
         exit = scaleOut(transformOrigin = TransformOrigin(0f, 0f))
     ) {
         Surface(
-            shadowElevation = Elevation4dp,
+            shadowElevation = ElevationSmall,
             color = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier

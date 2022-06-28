@@ -2,10 +2,10 @@ package com.xpenses.android.feature_bills.presentation.bills_list
 
 import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
@@ -17,8 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,7 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.xpenses.android.R
 import com.xpenses.android.core.ui.components.*
-import com.xpenses.android.core.ui.navigation.screen_specs.AddBillScreenSpec
+import com.xpenses.android.core.ui.navigation.screen_specs.AddEditBillScreenSpec
 import com.xpenses.android.core.ui.navigation.screen_specs.BillsListScreenSpec
 import com.xpenses.android.core.ui.theme.*
 import com.xpenses.android.core.util.exhaustive
@@ -36,7 +36,7 @@ import com.xpenses.android.feature_bills.domain.model.BillCategory
 import com.xpenses.android.feature_bills.domain.model.BillItem
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.model.BillState
-import com.xpenses.android.feature_bills.presentation.add_bill.ADD_BILL_RESULT
+import com.xpenses.android.feature_bills.presentation.add_edit_bill.ADD_EDIT_BILL_RESULT
 import com.xpenses.android.feature_bills.presentation.components.CategoryIcon
 
 @Composable
@@ -49,10 +49,10 @@ fun BillsListScreen(navController: NavController) {
     val navBackStackEntry = navController.currentBackStackEntry
 
     val addBillResult = navBackStackEntry?.savedStateHandle
-        ?.getLiveData<String>(ADD_BILL_RESULT)?.observeAsState()
+        ?.getLiveData<String>(ADD_EDIT_BILL_RESULT)?.observeAsState()
     LaunchedEffect(addBillResult) {
         navBackStackEntry?.savedStateHandle
-            ?.remove<String>(ADD_BILL_RESULT)
+            ?.remove<String>(ADD_EDIT_BILL_RESULT)
         addBillResult?.value?.let(viewModel::onAddBillResult)
     }
 
@@ -62,6 +62,9 @@ fun BillsListScreen(navController: NavController) {
                 is BillsListViewModel.BillsListEvent.ShowSnackbar -> {
                     snackbarController.showSnackbar(event.message.asString(context))
                 }
+                is BillsListViewModel.BillsListEvent.NavigateToAddEditBillScreen -> {
+                    navController.navigate(AddEditBillScreenSpec.buildRoute(event.id))
+                }
             }.exhaustive
         }
     }
@@ -70,7 +73,7 @@ fun BillsListScreen(navController: NavController) {
         state = state,
         snackbarController = snackbarController,
         onAddBillClick = {
-            navController.navigate(AddBillScreenSpec.buildRoute())
+            navController.navigate(AddEditBillScreenSpec.buildRoute())
         },
         navigateUp = navController::popBackStack,
         actions = viewModel,
@@ -131,7 +134,10 @@ private fun ScreenContent(
             verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
             item {
-                BillsGrid(bills = state.billsList)
+                BillsGrid(
+                    bills = state.billsList,
+                    onBillClick = actions::onBillClick
+                )
             }
             BillState.values().forEach { billState ->
                 val listForState = state.billPayments.filter { it.state == billState }
@@ -170,7 +176,8 @@ private fun ScreenContent(
 
 @Composable
 private fun BillsGrid(
-    bills: List<BillItem>,
+    bills: Map<BillCategory, List<BillItem>>,
+    onBillClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -193,13 +200,26 @@ private fun BillsGrid(
                 horizontalArrangement = Arrangement.spacedBy(SpacingMedium),
                 verticalArrangement = Arrangement.spacedBy(SpacingSmall)
             ) {
-                items(bills, key = { it.id }) { bill ->
-                    BillCard(
-                        icon = bill.category.icon,
-                        name = bill.name,
-                        modifier = Modifier
-                            .animateItemPlacement()
-                    )
+                bills.forEach { (category, list) ->
+                    item(
+                        span = { GridItemSpan(maxLineSpan) },
+//                        key = { category.ordinal }
+                    ) {
+                        BillSeparator(
+                            category = category,
+                            modifier = Modifier
+                                .animateItemPlacement()
+                        )
+                    }
+                    items(list, key = { it.id }, contentType = { it }) { bill ->
+                        BillCard(
+                            name = bill.name,
+                            modifier = Modifier
+                                .animateItemPlacement(),
+                            onClick = { onBillClick(bill.id) },
+                            payBy = bill.payBy
+                        )
+                    }
                 }
             }
         }
@@ -207,14 +227,37 @@ private fun BillsGrid(
 }
 
 @Composable
+private fun BillSeparator(
+    category: BillCategory,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = stringResource(category.label),
+            modifier = Modifier
+                .paddingFromBaseline(top = ZeroDp, bottom = ZeroDp)
+                .rotate(-90f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
 private fun BillCard(
-    @DrawableRes icon: Int,
     name: String,
+    onClick: () -> Unit,
+    payBy: String,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(
         modifier = modifier
-            .aspectRatio(BillCardAspectRatio, true)
+            .aspectRatio(1.5f / 1f),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
@@ -223,16 +266,16 @@ private fun BillCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = name,
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.height(SpacingSmall))
             Text(
                 text = name,
                 style = MaterialTheme.typography.bodyLarge,
                 maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = stringResource(R.string.pay_by_date_value, payBy),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -302,19 +345,18 @@ private fun BillPayment(
     }
 }
 
-private const val BillCardAspectRatio = 1.25.toFloat() / 1f
 private val BillsGridHeight = 160.dp
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun PreviewScreenContent() {
     val list = (1..5).map {
-        BillItem(it.toLong(), "Bill $it", BillCategory.WATER, "100")
+        BillItem(it.toLong(), "Bill $it", BillCategory.WATER, "100", "Tue 10")
     }
     XpenseTrackerTheme {
         ScreenContent(
             state = BillsListState(
-                billsList = list,
+                billsList = list.groupBy { it.category },
                 billPayments = (1..10).map {
                     BillPayment(
                         it.toLong(),
@@ -331,6 +373,7 @@ private fun PreviewScreenContent() {
             navigateUp = {},
             actions = object : BillsListActions {
                 override fun onMarkAsPaidClick(payment: BillPayment) {}
+                override fun onBillClick(id: Long) {}
             },
             context = LocalContext.current
         )

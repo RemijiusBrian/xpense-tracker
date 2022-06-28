@@ -5,7 +5,7 @@
     <string name="destination_expenses">Expenses</string>
     <string name="destination_add_edit_expense">Add/Edit Xpense</string>
     <string name="destination_bills">Bills</string>
-    <string name="destination_add_bill">Add Bill</string>
+    <string name="destination_add_edit_bill">Add/Edit Bill</string>
 
     <!-- Texts -->
     <string name="add_expense">Add Xpense</string>
@@ -27,6 +27,8 @@
     <string name="empty_bills_data_message">Bills you add will appear here</string>
     <string name="delete_expense_question">Delete Expense?</string>
     <string name="delete_expense_confirmation_message">Are you sure you want to delete this expense? This action cannot be undone.</string>
+    <string name="delete_bill_question">Delete Bill?</string>
+    <string name="delete_bill_confirmation_message">Are you sure you want to delete this bill? This action cannot be undone.</string>
     <string name="enter_tag">Tag</string>
     <string name="amount">Amount</string>
     <string name="delete_tagged_expenses_question">Delete tagged expenses?</string>
@@ -48,13 +50,22 @@
     <string name="click_to_select_category">Click to select category</string>
     <string name="label_pay_by_date">Pay By</string>
     <string name="message_bill_added">Bill Added!</string>
+    <string name="message_bill_updated">Bill Updated!</string>
+    <string name="message_bill_deleted">Bill Deleted!</string>
     <string name="bill_payment_name">%s Bill (%s)</string>
     <string name="expenditure_amount">Spent\n%s</string>
+    <string name="add_bill">Add Bill</string>
+    <string name="edit_bill">Edit Bill</string>
+    <string name="add_note">Add a note</string>
+    <string name="bill_description_eg">Eg: Home</string>
+    <string name="description">Description</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>
     <string name="error_invalid_amount">Please enter a valid amount</string>
     <string name="error_invalid_name">Please enter a valid name</string>
+    <string name="error_invalid_description">Please enter a valid description</string>
+    <string name="error_invalid_note">Please enter a valid note</string>
     <string name="error_invalid_tag_name">Please enter a valid tag name</string>
 
     <!-- Content Description -->

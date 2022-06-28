@@ -16,7 +16,7 @@ val SpacingSmall = 8.dp
 val SpacingMedium = 16.dp
 
 // -------- Elevation --------
-val Elevation4dp = 4.dp
+val ElevationSmall = 4.dp
 
 //  -------- Border Width --------
 val XTBorderWidth = 1.dp

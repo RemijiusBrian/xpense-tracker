@@ -167,7 +167,7 @@ class ExpensesViewModel @Inject constructor(
 
     override fun onAddFabClick() {
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.NavigateToAddEditScreen(AddEditExpenseScreenSpec.buildRoute()))
+            eventsChannel.send(ExpenseListEvent.NavigateToAddEditExpenseScreen(AddEditExpenseScreenSpec.buildRoute()))
         }
     }
 
@@ -178,7 +178,7 @@ class ExpensesViewModel @Inject constructor(
     override fun onExpenseClick(id: Long) {
         viewModelScope.launch {
             eventsChannel.send(
-                ExpenseListEvent.NavigateToAddEditScreen(
+                ExpenseListEvent.NavigateToAddEditExpenseScreen(
                     AddEditExpenseScreenSpec.buildRoute(id)
                 )
             )
@@ -199,6 +199,6 @@ class ExpensesViewModel @Inject constructor(
 
     sealed class ExpenseListEvent {
         data class ShowSnackbar(val message: UiText) : ExpenseListEvent()
-        data class NavigateToAddEditScreen(val route: String) : ExpenseListEvent()
+        data class NavigateToAddEditExpenseScreen(val route: String) : ExpenseListEvent()
     }
 }

@@ -7,7 +7,9 @@ import com.xpenses.android.R
 import com.xpenses.android.core.domain.model.UiText
 import com.xpenses.android.feature_bills.domain.model.BillPayment
 import com.xpenses.android.feature_bills.domain.repository.BillsRepository
-import com.xpenses.android.feature_bills.presentation.add_bill.RESULT_BILL_ADDED
+import com.xpenses.android.feature_bills.presentation.add_edit_bill.RESULT_BILL_ADDED
+import com.xpenses.android.feature_bills.presentation.add_edit_bill.RESULT_BILL_DELETED
+import com.xpenses.android.feature_bills.presentation.add_edit_bill.RESULT_BILL_UPDATED
 import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +23,7 @@ class BillsListViewModel @Inject constructor(
     private val repo: BillsRepository
 ) : ViewModel(), BillsListActions {
 
-    private val bills = repo.getBills()
+    private val bills = repo.getBillsGroupedByCategory()
     private val billPayments = repo.getBillPaymentsForCurrentMonth()
 
     private val eventsChannel = Channel<BillsListEvent>()
@@ -50,6 +52,8 @@ class BillsListViewModel @Inject constructor(
     fun onAddBillResult(result: String) {
         val message = when (result) {
             RESULT_BILL_ADDED -> R.string.message_bill_added
+            RESULT_BILL_UPDATED -> R.string.message_bill_updated
+            RESULT_BILL_DELETED -> R.string.message_bill_deleted
             else -> return
         }
         viewModelScope.launch {
@@ -57,7 +61,14 @@ class BillsListViewModel @Inject constructor(
         }
     }
 
+    override fun onBillClick(id: Long) {
+        viewModelScope.launch {
+            eventsChannel.send(BillsListEvent.NavigateToAddEditBillScreen(id))
+        }
+    }
+
     sealed class BillsListEvent {
         data class ShowSnackbar(val message: UiText) : BillsListEvent()
+        data class NavigateToAddEditBillScreen(val id: Long) : BillsListEvent()
     }
 }

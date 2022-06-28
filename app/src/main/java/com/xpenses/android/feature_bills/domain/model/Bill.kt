@@ -19,11 +19,11 @@ data class Bill(
 
     companion object {
         val DEFAULT = Bill(
-            id = -1L,
+            id = 0L,
             name = "",
             amount = "",
             recurring = true,
-            category = BillCategory.WATER,
+            category = BillCategory.OTHERS,
             dateMillis = System.currentTimeMillis()
         )
     }
