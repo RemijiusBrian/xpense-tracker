@@ -13,12 +13,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.DeleteForever
 import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,14 +28,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.google.accompanist.flowlayout.FlowRow
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.ui.components.*
 import dev.ridill.xpensetracker.core.ui.theme.*
+import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.dayOfMonth
-import dev.ridill.xpensetracker.core.util.exhaustive
 import dev.ridill.xpensetracker.core.util.month
 import dev.ridill.xpensetracker.core.util.year
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillCategory
@@ -45,55 +41,7 @@ import dev.ridill.xpensetracker.feature_bills.presentation.components.BillCatego
 import java.util.*
 
 @Composable
-fun AddEditBillScreen(navController: NavController) {
-    val viewModel: AddEditBillViewModel = hiltViewModel()
-    val description by viewModel.name.observeAsState("")
-    val amount by viewModel.amount.observeAsState("")
-    val state by viewModel.state.observeAsState(AddEditBillState.INITIAL)
-
-    val context = LocalContext.current
-    val snackbarController = rememberSnackbarController()
-
-    LaunchedEffect(context) {
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        viewModel.events.collect { event ->
-            when (event) {
-                AddEditBillViewModel.AddEditBillEvent.BillAdded -> {
-                    navController.previousBackStackEntry?.savedStateHandle
-                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_ADDED)
-                    navController.popBackStack()
-                }
-                AddEditBillViewModel.AddEditBillEvent.BillDeleted -> {
-                    navController.previousBackStackEntry?.savedStateHandle
-                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_DELETED)
-                    navController.popBackStack()
-                }
-                AddEditBillViewModel.AddEditBillEvent.BillUpdated -> {
-                    navController.previousBackStackEntry?.savedStateHandle
-                        ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_UPDATED)
-                    navController.popBackStack()
-                }
-                is AddEditBillViewModel.AddEditBillEvent.ShowSnackbar -> {
-                    snackbarController.showSnackbar(event.message.asString(context))
-                }
-            }.exhaustive
-        }
-    }
-
-    ScreenContent(
-        name = description,
-        amount = amount,
-        state = state,
-        context = context,
-        snackbarController = snackbarController,
-        actions = viewModel,
-        navigateUp = navController::popBackStack,
-        isEditMode = viewModel.isEditMode
-    )
-}
-
-@Composable
-private fun ScreenContent(
+fun AddEditBillScreenContent(
     name: String,
     amount: String,
     state: AddEditBillState,
@@ -117,11 +65,7 @@ private fun ScreenContent(
                 actions.onPayByDateChange(selectedDateCalendar.timeInMillis)
             },
             currentDateCalendar.year, currentDateCalendar.month, currentDateCalendar.dayOfMonth
-        ).also {
-            it.datePicker.apply {
-                minDate = currentDateCalendar.timeInMillis
-            }
-        }
+        )
     }
 
     Scaffold(
@@ -221,7 +165,9 @@ private fun ScreenContent(
                                 onDone = {
                                     keyboardController?.hide()
                                 }
-                            )
+                            ),
+                            placeholder = R.string.amount_placeholder,
+                            leadingIcon = { Text(text = TextUtil.currencySymbol) }
                         )
                     }
                     item {
@@ -302,7 +248,7 @@ private fun ScreenContent(
                 text = R.string.delete_bill_confirmation_message,
                 onDismiss = actions::onDeleteDismiss,
                 onConfirm = actions::onDeleteConfirm,
-                icon = Icons.Outlined.DeleteForever
+                icon = Icons.Rounded.DeleteForever
             )
         }
     }
@@ -317,6 +263,7 @@ private fun LabelAndInput(
     @StringRes placeholder: Int? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    leadingIcon: @Composable (() -> Unit)? = null
 ) {
     Column(
         modifier = modifier
@@ -340,7 +287,8 @@ private fun LabelAndInput(
             ),
             placeholder = {
                 placeholder?.let { Text(stringResource(it)) }
-            }
+            },
+            leadingIcon = leadingIcon
         )
     }
 }
@@ -349,7 +297,7 @@ private fun LabelAndInput(
 @Composable
 private fun PreviewScreenContent() {
     XpenseTrackerTheme {
-        ScreenContent(
+        AddEditBillScreenContent(
             name = "",
             amount = "",
             snackbarController = rememberSnackbarController(),

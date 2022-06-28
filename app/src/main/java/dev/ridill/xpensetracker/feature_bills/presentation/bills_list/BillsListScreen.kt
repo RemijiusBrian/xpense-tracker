@@ -13,8 +13,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Receipt
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -25,65 +27,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.ui.components.*
-import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.AddEditBillScreenSpec
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.BillsListScreenSpec
 import dev.ridill.xpensetracker.core.ui.theme.*
-import dev.ridill.xpensetracker.core.util.exhaustive
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillCategory
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillItem
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillState
-import dev.ridill.xpensetracker.feature_bills.presentation.add_edit_bill.ADD_EDIT_BILL_RESULT
 import dev.ridill.xpensetracker.feature_bills.presentation.components.BillCategoryIcon
 
 @Composable
-fun BillsListScreen(navController: NavController) {
-    val viewModel: BillsListViewModel = hiltViewModel()
-    val state by viewModel.state.observeAsState(BillsListState.INITIAL)
-
-    val snackbarController = rememberSnackbarController()
-    val context = LocalContext.current
-    val navBackStackEntry = navController.currentBackStackEntry
-
-    val addBillResult = navBackStackEntry?.savedStateHandle
-        ?.getLiveData<String>(ADD_EDIT_BILL_RESULT)?.observeAsState()
-    LaunchedEffect(addBillResult) {
-        navBackStackEntry?.savedStateHandle
-            ?.remove<String>(ADD_EDIT_BILL_RESULT)
-        addBillResult?.value?.let(viewModel::onAddBillResult)
-    }
-
-    LaunchedEffect(context) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is BillsListViewModel.BillsListEvent.ShowSnackbar -> {
-                    snackbarController.showSnackbar(event.message.asString(context))
-                }
-                is BillsListViewModel.BillsListEvent.NavigateToAddEditBillScreen -> {
-                    navController.navigate(AddEditBillScreenSpec.buildRoute(event.id))
-                }
-            }.exhaustive
-        }
-    }
-
-    ScreenContent(
-        state = state,
-        snackbarController = snackbarController,
-        onAddBillClick = {
-            navController.navigate(AddEditBillScreenSpec.buildRoute())
-        },
-        navigateUp = navController::popBackStack,
-        actions = viewModel,
-        context = context
-    )
-}
-
-@Composable
-private fun ScreenContent(
+fun BillsListScreenContent(
     state: BillsListState,
     snackbarController: SnackbarController,
     onAddBillClick: () -> Unit,
@@ -368,7 +323,7 @@ private fun PreviewScreenContent() {
         BillItem(it.toLong(), "Bill $it", BillCategory.WATER, "100", "Tue 10")
     }
     XpenseTrackerTheme {
-        ScreenContent(
+        BillsListScreenContent(
             state = BillsListState(
                 billsList = list.groupBy { it.category },
                 billPayments = (1..10).map {

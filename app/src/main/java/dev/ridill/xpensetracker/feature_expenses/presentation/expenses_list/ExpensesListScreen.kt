@@ -20,7 +20,6 @@ import androidx.compose.material.icons.rounded.DeleteForever
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +28,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -41,11 +39,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.ui.components.*
-import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.BottomBarScreenSpec
 import dev.ridill.xpensetracker.core.ui.theme.*
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
@@ -53,62 +48,14 @@ import dev.ridill.xpensetracker.core.ui.util.numberSliderTransition
 import dev.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import dev.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import dev.ridill.xpensetracker.core.util.Constants
-import dev.ridill.xpensetracker.core.util.exhaustive
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditure
-import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.ADD_EDIT_EXPENSE_RESULT
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @Composable
-fun ExpensesListScreen(
-    navController: NavController
-) {
-    val viewModel: ExpensesViewModel = hiltViewModel()
-    val state by viewModel.state.observeAsState(ExpensesState.INITIAL)
-    val context = LocalContext.current
-    val snackbarController = rememberSnackbarController()
-    val currentBackStackEntry = navController.currentBackStackEntry
-
-    // Add/Edit Expense Result
-    val addEditExpenseResult = currentBackStackEntry
-        ?.savedStateHandle?.getLiveData<String>(ADD_EDIT_EXPENSE_RESULT)?.observeAsState()
-    LaunchedEffect(addEditExpenseResult) {
-        currentBackStackEntry?.savedStateHandle
-            ?.remove<String>(ADD_EDIT_EXPENSE_RESULT)
-
-        addEditExpenseResult?.value?.let(viewModel::onAddEditResult)
-    }
-
-    // Collect Events
-    LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is ExpensesViewModel.ExpenseListEvent.NavigateToAddEditExpenseScreen -> {
-                    navController.navigate(
-                        AddEditExpenseScreenSpec.buildRoute(event.id)
-                    )
-                }
-                is ExpensesViewModel.ExpenseListEvent.ShowSnackbar -> {
-                    snackbarController.showSnackbar(event.message.asString(context))
-                }
-            }.exhaustive
-        }
-    }
-
-    ScreenContent(
-        state = state,
-        snackbarController = snackbarController,
-        actions = viewModel,
-        navigateToBottomBarDestination = {
-            navController.navigate(it.navHostRoute)
-        }
-    )
-}
-
-@Composable
-private fun ScreenContent(
+fun ExpenseListScreenContent(
     state: ExpensesState,
     snackbarController: SnackbarController,
     actions: ExpensesActions,
@@ -658,7 +605,7 @@ private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
 @Composable
 private fun PreviewScreenContent() {
     XpenseTrackerTheme {
-        ScreenContent(
+        ExpenseListScreenContent(
             state = ExpensesState(
                 tags = listOf("Bills", "Leisure"),
                 selectedTag = Constants.STRING_ALL,
