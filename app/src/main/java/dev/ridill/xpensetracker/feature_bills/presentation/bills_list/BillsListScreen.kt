@@ -149,7 +149,6 @@ private fun BillsGrid(
                     .matchParentSize(),
                 contentPadding = PaddingValues(
                     end = ListPaddingLarge,
-                    start = PaddingMedium
                 ),
                 horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                 verticalArrangement = Arrangement.spacedBy(SpacingSmall)
@@ -223,7 +222,7 @@ private fun BillCard(
 ) {
     OutlinedCard(
         modifier = modifier
-            .widthIn(max = 160.dp),
+            .widthIn(max = BillCardMaxWidth),
         onClick = onClick
     ) {
         Column(
@@ -315,6 +314,7 @@ private fun BillPayment(
 }
 
 private val BillsGridHeight = 172.dp
+private val BillCardMaxWidth = 160.dp
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable

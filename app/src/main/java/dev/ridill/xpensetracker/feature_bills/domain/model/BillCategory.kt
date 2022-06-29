@@ -13,5 +13,5 @@ enum class BillCategory(
     BROADBAND(R.drawable.ic_wifi_cloud, R.string.bill_category_broadband),
     DIGITAL_TV(R.drawable.ic_tv, R.string.bill_category_dtv),
     SUBSCRIPTION(R.drawable.ic_subscription, R.string.bill_category_subscription),
-    MISC(R.drawable.ic_more, R.string.bill_category_misc)
+    MISC(R.drawable.ic_box, R.string.bill_category_misc)
 }

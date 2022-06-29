@@ -11,7 +11,7 @@ fun BillEntity.toBillItem(): BillItem = BillItem(
     name = name,
     category = BillCategory.valueOf(category),
     amount = TextUtil.formatAmountWithCurrency(amount),
-    payBy = payByDate.dayWithSuffix()
+    payBy = TextUtil.formatDateWithPattern(payByDate, DatePatterns.DAY_SHORT_MONTH_NAME_YEAR)
 )
 
 fun BillEntity.toBill(): Bill = Bill(
