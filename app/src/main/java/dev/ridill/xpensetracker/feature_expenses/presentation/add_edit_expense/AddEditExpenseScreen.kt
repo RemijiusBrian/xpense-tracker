@@ -58,14 +58,15 @@ fun AddEditExpenseScreenContent(
                 title = {
                     Text(
                         stringResource(
-                            if (isEditMode) R.string.edit_expense
-                            else R.string.add_expense
+                            when {
+                                state.isBillExpense -> R.string.bill_payment
+                                isEditMode -> R.string.edit_expense
+                                else -> R.string.add_expense
+                            }
                         )
                     )
                 },
-                navigationIcon = {
-                    BackArrowButton(onClick = navigateUp)
-                },
+                navigationIcon = { BackArrowButton(onClick = navigateUp) },
                 actions = {
                     if (isEditMode) {
                         IconButton(onClick = actions::onDeleteClick) {
