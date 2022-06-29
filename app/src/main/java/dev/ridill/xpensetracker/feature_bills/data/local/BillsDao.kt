@@ -23,7 +23,7 @@ interface BillsDao {
         ORDER BY payByDate DESC
         """
     )
-    fun getBillsWithExpensesForCurrentMonth(): Flow<List<BillWithExpensesRelation>>
+    fun getBillsWithExpensesForCurrentMonthOrRecurring(): Flow<List<BillWithExpensesRelation>>
 
     @Query("SELECT * FROM BillEntity WHERE id = :id")
     suspend fun getBillById(id: Long): BillEntity?
@@ -31,15 +31,6 @@ interface BillsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(billEntity: BillEntity)
 
-    @Query("DELETE FROM ExpenseEntity WHERE billId = :id")
-    suspend fun deleteExpensesForBill(id: Long)
-
     @Query("DELETE FROM BillEntity WHERE id = :id")
     suspend fun deleteById(id: Long)
-
-    @Transaction
-    suspend fun deleteBill(id: Long) {
-        deleteExpensesForBill(id)
-        deleteById(id)
-    }
 }

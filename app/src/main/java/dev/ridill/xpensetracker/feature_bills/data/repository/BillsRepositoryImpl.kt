@@ -35,7 +35,7 @@ class BillsRepositoryImpl(
         }
 
     override fun getBillPaymentsForCurrentMonth(): Flow<List<BillPayment>> =
-        dao.getBillsWithExpensesForCurrentMonth().map { billsWithExpenses ->
+        dao.getBillsWithExpensesForCurrentMonthOrRecurring().map { billsWithExpenses ->
             billsWithExpenses.map { it.toBillPayment() }
         }
 
@@ -61,6 +61,6 @@ class BillsRepositoryImpl(
     }
 
     override suspend fun deleteBill(id: Long) = withContext(dispatcherProvider.io) {
-        dao.deleteBill(id)
+        dao.deleteById(id)
     }
 }

@@ -16,7 +16,9 @@ import dev.ridill.xpensetracker.feature_bills.data.local.entity.BillEntity
         ForeignKey(
             entity = BillEntity::class,
             parentColumns = ["id"],
-            childColumns = ["billId"]
+            childColumns = ["billId"],
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         )
     ],
     indices = [Index("tag"), Index("billId")]
