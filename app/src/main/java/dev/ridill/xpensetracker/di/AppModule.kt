@@ -47,7 +47,7 @@ object AppModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            produceFile = { context.preferencesDataStoreFile(XT_PREFERENCES) },
+            produceFile = { context.preferencesDataStoreFile(XTPreferencesManager.NAME) },
             migrations = listOf()
         )
 
@@ -63,8 +63,6 @@ object AppModule {
     @Provides
     fun provideApplicationScope(): CoroutineScope = CoroutineScope(SupervisorJob())
 }
-
-private const val XT_PREFERENCES = "XT_PREFERENCES"
 
 @Retention(AnnotationRetention.RUNTIME)
 @Qualifier

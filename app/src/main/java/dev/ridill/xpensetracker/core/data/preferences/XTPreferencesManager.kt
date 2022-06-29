@@ -5,6 +5,10 @@ import kotlinx.coroutines.flow.Flow
 
 interface XTPreferencesManager {
 
+    companion object {
+        const val NAME = "XT_PREFERENCES"
+    }
+
     val preferences: Flow<XTPreferences>
 
     suspend fun updateExpenditureLimit(limit: Long)

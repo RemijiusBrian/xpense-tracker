@@ -4,7 +4,7 @@ object Constants {
     const val STRING_ALL = "All"
     const val ONE_F = 1f
 
-    const val EXPENSE_NAME_MAX_LENGTH = 30
+    const val EXPENSE_NOTE_MAX_LENGTH = 30
     const val BILL_DESCRIPTION_MAX_LENGTH = 30
-    const val TAG_NAME_MAX_LENGTH = 10
+    const val TAG_NAME_MAX_LENGTH = 15
 }

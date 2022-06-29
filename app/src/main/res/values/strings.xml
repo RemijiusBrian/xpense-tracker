@@ -61,6 +61,7 @@
     <string name="add_note">Add a note</string>
     <string name="bill_description_eg">Eg: Home</string>
     <string name="description">Description</string>
+    <string name="bill_payment">Bill Payment</string>
 
     <!-- Error -->
     <string name="error_no_data_yet">No Data Yet</string>

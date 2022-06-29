@@ -84,7 +84,7 @@ class AddEditExpenseViewModel @Inject constructor(
     }
 
     override fun onNameChange(value: String) {
-        if (value.length > Constants.EXPENSE_NAME_MAX_LENGTH) return
+        if (value.length > Constants.EXPENSE_NOTE_MAX_LENGTH) return
         expenseInput.value = expenseInput.value?.copy(
             name = value
         )
