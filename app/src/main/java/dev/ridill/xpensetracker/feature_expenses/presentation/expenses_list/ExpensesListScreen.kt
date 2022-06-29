@@ -6,7 +6,6 @@ import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.rememberSplineBasedDecay
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -291,37 +290,29 @@ private fun MonthsBarsRow(
     onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(PaddingMedium)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceVariant
-                    .copy(alpha = ContentAlpha.PERCENT_16),
-                shape = MaterialTheme.shapes.medium
-            ),
-        contentAlignment = Alignment.Center
+            .padding(PaddingMedium),
+        color = MaterialTheme.colorScheme.surfaceVariant
+            .copy(alpha = ContentAlpha.PERCENT_16),
+        shape = MaterialTheme.shapes.medium
     ) {
         if (months.isEmpty()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_bar_data),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(SpacingSmall))
-                Text(
-                    text = stringResource(R.string.error_no_data_yet),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                DataEmptyIndicator(
+                    iconRes = R.drawable.ic_bar_data,
+                    message = R.string.error_no_data_yet
                 )
             }
         } else {
             LazyRow(
                 modifier = Modifier
-                    .matchParentSize(),
+                    .fillMaxSize(),
                 horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                 verticalAlignment = Alignment.Bottom,
                 contentPadding = PaddingValues(
@@ -515,7 +506,7 @@ private fun ExpenseItem(
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
-                .copy(alpha = ContentAlpha.PERCENT_40),
+            /*.copy(alpha = ContentAlpha.PERCENT_40)*/,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {

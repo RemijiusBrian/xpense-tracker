@@ -1,5 +1,6 @@
 package dev.ridill.xpensetracker.core.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animate
@@ -7,16 +8,19 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.ui.theme.PaddingXSmall
+import dev.ridill.xpensetracker.core.ui.theme.SpacingSmall
 import dev.ridill.xpensetracker.core.ui.theme.SpacingXSmall
 import kotlinx.coroutines.delay
 
@@ -56,7 +60,8 @@ fun ListEmptyIndicator(
         Spacer(modifier = Modifier.height(SpacingXSmall))
         Text(
             text = stringResource(message),
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -129,7 +134,8 @@ fun GridEmptyIndicator(
         Spacer(modifier = Modifier.height(SpacingXSmall))
         Text(
             text = stringResource(message),
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -149,6 +155,30 @@ private fun GridSquare(
                 shape = MaterialTheme.shapes.extraSmall
             )
     )
+}
+
+@Composable
+fun DataEmptyIndicator(
+    @DrawableRes iconRes: Int,
+    modifier: Modifier = Modifier,
+    @StringRes message: Int = R.string.default_no_data_message
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Spacer(modifier = Modifier.height(SpacingSmall))
+        Text(
+            text = stringResource(message),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
 }
 
 private const val DURATION = 500
