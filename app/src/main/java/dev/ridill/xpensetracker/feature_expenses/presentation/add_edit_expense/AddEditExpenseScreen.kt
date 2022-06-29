@@ -205,8 +205,7 @@ private fun AmountInput(
     readOnly: Boolean,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.displayMedium.copy(
-        color = MaterialTheme.colorScheme.onBackground,
-        textAlign = TextAlign.Center
+        color = MaterialTheme.colorScheme.onBackground
     )
 ) {
     Column(
@@ -234,7 +233,6 @@ private fun AmountInput(
             decorationBox = { innerTextField ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .width(IntrinsicSize.Min)
                 ) {
@@ -276,6 +274,7 @@ private fun NewTagInput(
     ) {
         Surface(
             shadowElevation = ElevationSmall,
+            tonalElevation = ElevationSmall,
             color = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier
