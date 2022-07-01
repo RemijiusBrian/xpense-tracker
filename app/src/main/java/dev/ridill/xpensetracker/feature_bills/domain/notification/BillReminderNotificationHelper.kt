@@ -31,10 +31,10 @@ class BillReminderNotificationHelper(
         PendingIntent.getActivity(applicationContext, 0, openBillsIntent, pendingIntentFlags)
 
     init {
-        createNotificationChannels()
+        createNotificationChannel()
     }
 
-    private fun createNotificationChannels() {
+    override fun createNotificationChannel() {
         val billReminderChannel = NotificationChannelCompat.Builder(
             BILL_REMINDER_NOTIFICATION_CHANNEL_ID,
             NotificationManagerCompat.IMPORTANCE_DEFAULT
@@ -51,6 +51,7 @@ class BillReminderNotificationHelper(
             .setSmallIcon(R.drawable.ic_receipt_long)
             .setContentIntent(openBillsPendingIntent)
             .setGroup(BILL_REMINDER_GROUP)
+            .setAutoCancel(true)
     }
 
     override fun showNotification(data: Bill) {
@@ -75,8 +76,13 @@ class BillReminderNotificationHelper(
         }
     }
 
+    override fun dismissNotification(id: Int) {
+        notificationManager.cancel(id)
+    }
+
     private fun buildSummaryNotification(): NotificationCompat.Builder {
         val inboxStyle = NotificationCompat.InboxStyle()
+            .setSummaryText(applicationContext.getString(R.string.bill_reminder_notification_summary))
         return getBaseNotification()
             .setStyle(inboxStyle)
             .setGroupSummary(true)
@@ -86,7 +92,7 @@ class BillReminderNotificationHelper(
         val actionIntent = Intent(applicationContext, MarkBillAsPaidReceiver::class.java).apply {
             putExtras(
                 bundleOf(
-                    KEY_BILL_DATA to data
+                    KEY_BILL_NOTIFICATION_DATA to data
                 )
             )
         }
@@ -99,7 +105,7 @@ class BillReminderNotificationHelper(
     }
 }
 
-const val KEY_BILL_DATA = "bill"
+const val KEY_BILL_NOTIFICATION_DATA = "bill"
 private const val BILL_REMINDER_NOTIFICATION_CHANNEL_ID = "bill_reminder_notification_channel"
 private const val BILL_REMINDER_GROUP = "bill_reminder_group"
 private const val BILL_REMINDER_SUMMARY_ID = 1

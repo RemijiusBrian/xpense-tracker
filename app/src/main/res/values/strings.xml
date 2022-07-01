@@ -90,6 +90,13 @@
     <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
     <string name="bills_reminder_notification_channel_description">Get reminders for your bills</string>
     <string name="bill_reminder_notification_text">Coming up on %s</string>
+    <string name="bill_reminder_notification_summary">Upcoming Bills</string>
+
+    <string name="expenses_notification_channel_name">Expenses</string>
+    <string name="expenses_notification_channel_description">Get notified for anything Expense related</string>
+    <string name="expenses_notification_expense_added">Expense Added</string>
+    <string name="expenses_added_notification_summary">Expenses</string>
+    <string name="expenses_notification_expense_added_for_payment">Expense added for %s</string>
 
     <!-- Bill Category -->
     <string name="bill_category_electricity">Electricity</string>

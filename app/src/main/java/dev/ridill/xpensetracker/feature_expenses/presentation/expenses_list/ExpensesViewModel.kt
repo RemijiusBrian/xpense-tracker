@@ -15,10 +15,7 @@ import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.R
 import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETED
 import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_UPDATED
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,12 +34,21 @@ class ExpensesViewModel @Inject constructor(
 
     private val months = preferences.flatMapLatest { preferences ->
         repo.getMonthAndExpenditurePercentList(preferences.expenditureLimit)
+    }.onEach {
+        selectedMonth.value = it.firstOrNull()?.month
+            ?: TextUtil.formatDateWithPattern(
+                System.currentTimeMillis(),
+                DatePatterns.SHORT_MONTH_NAME_WITH_YEAR
+            )
     }
 
     private val selectedMonth = savedStateHandle.getLiveData(
         key = "selectedMonth",
         initialValue = TextUtil
-            .formatDateWithPattern(System.currentTimeMillis(), DatePatterns.MONTH_NUMBER_WITH_YEAR)
+            .formatDateWithPattern(
+                System.currentTimeMillis(),
+                DatePatterns.SHORT_MONTH_NAME_WITH_YEAR
+            )
     )
 
     private val showExpenditureLimitUpdateDialog =

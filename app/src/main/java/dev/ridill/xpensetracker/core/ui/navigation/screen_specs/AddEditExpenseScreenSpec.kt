@@ -29,6 +29,14 @@ object AddEditExpenseScreenSpec : ScreenSpec {
             }
         )
 
+    override val deepLinks: List<NavDeepLink>
+        get() = listOf(
+            navDeepLink {
+                uriPattern =
+                    "https://www.xpensetracker.ridill.dev/add_edit_expense/{$ARG_EXPENSE_ID}"
+            }
+        )
+
     fun isNewExpenseMode(expenseId: Long?): Boolean =
         expenseId != null && expenseId != NO_EXPENSE_ID
 

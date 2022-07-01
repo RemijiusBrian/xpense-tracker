@@ -1,6 +1,7 @@
 package dev.ridill.xpensetracker.feature_expenses.domain.model
 
 import android.os.Parcelable
+import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -12,6 +13,9 @@ data class Expense(
     val tag: String?,
     val billId: Long?
 ) : Parcelable {
+
+    val dateFormatted: String
+        get() = TextUtil.formatDate(dateMillis)
 
     companion object {
         val DEFAULT = Expense(

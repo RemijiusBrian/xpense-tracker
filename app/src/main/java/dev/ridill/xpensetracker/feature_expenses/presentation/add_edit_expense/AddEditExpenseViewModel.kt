@@ -5,6 +5,7 @@ import com.zhuinden.flowcombinetuplekt.combineTuple
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.domain.model.UiText
+import dev.ridill.xpensetracker.core.notification.NotificationHelper
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.AddEditExpenseScreenSpec
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.core.util.toDoubleOrZero
@@ -19,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val repo: ExpenseRepository
+    private val repo: ExpenseRepository,
+    private val notificationHelper: NotificationHelper<Expense>
 ) : ViewModel(), AddEditExpenseActions {
 
     private val expenseId =
@@ -45,6 +47,7 @@ class AddEditExpenseViewModel @Inject constructor(
     init {
         if (!savedStateHandle.contains(KEY_EXPENSE_LIVE_DATA)) {
             if (expenseId != null && editMode) viewModelScope.launch {
+                notificationHelper.dismissNotification(expenseId.toInt())
                 expenseInput.value = repo.getExpenseById(expenseId)
             } else {
                 expenseInput.value = Expense.DEFAULT

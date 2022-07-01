@@ -24,7 +24,7 @@ class MarkBillAsPaidReceiver : BroadcastReceiver() {
     lateinit var applicationScope: CoroutineScope
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val data = tryOrNull { intent?.extras?.get(KEY_BILL_DATA) as? Bill } ?: return
+        val data = tryOrNull { intent?.extras?.get(KEY_BILL_NOTIFICATION_DATA) as? Bill } ?: return
         applicationScope.launch {
             billsRepository.markBillAsPaid(data.toPayment())
         }
