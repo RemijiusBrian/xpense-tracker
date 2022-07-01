@@ -4,7 +4,6 @@
     package="dev.ridill.xpensetracker">
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
         android:name=".application.XTApplication"
