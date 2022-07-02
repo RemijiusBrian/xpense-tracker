@@ -106,8 +106,8 @@ fun ExpenseListScreenContent(
                         }
                     }
                 },
-                containerColor = MaterialTheme.colorScheme.surface
-                    .copy(alpha = ContentAlpha.PERCENT_08)
+                containerColor = MaterialTheme.colorScheme.background,
+                tonalElevation = ZeroDp
             )
         }
     ) { paddingValues ->
