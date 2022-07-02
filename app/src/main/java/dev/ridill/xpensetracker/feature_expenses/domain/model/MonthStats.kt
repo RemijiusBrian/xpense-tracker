@@ -3,8 +3,9 @@ package dev.ridill.xpensetracker.feature_expenses.domain.model
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.DatePatterns
 
-data class MonthAndExpenditure(
+data class MonthStats(
     val month: String,
+    val balance: String,
     val expenditureAmount: String,
     val expenditurePercent: Float
 ) {

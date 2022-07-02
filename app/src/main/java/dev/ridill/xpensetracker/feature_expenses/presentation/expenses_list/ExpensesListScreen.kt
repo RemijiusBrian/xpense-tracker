@@ -48,7 +48,7 @@ import dev.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
 import dev.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
-import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditure
+import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -285,7 +285,7 @@ private fun GreetingAndLimit(
 
 @Composable
 private fun MonthsBarsRow(
-    months: List<MonthAndExpenditure>,
+    months: List<MonthStats>,
     selectedMonth: String,
     onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -326,7 +326,7 @@ private fun MonthsBarsRow(
                     MonthBar(
                         month = monthAndExpenditure.monthFormatted,
                         selected = monthAndExpenditure.month == selectedMonth,
-                        expenditureAmount = monthAndExpenditure.expenditureAmount,
+                        balance = monthAndExpenditure.balance,
                         expenditurePercentage = monthAndExpenditure.expenditurePercent,
                         onClick = { onMonthSelect(monthAndExpenditure.month) },
                         modifier = Modifier
@@ -343,7 +343,7 @@ private fun MonthsBarsRow(
 private fun MonthBar(
     month: String,
     selected: Boolean,
-    expenditureAmount: String,
+    balance: String,
     expenditurePercentage: Float,
     modifier: Modifier,
     onClick: () -> Unit
@@ -416,7 +416,7 @@ private fun MonthBar(
                     shadowElevation = ElevationSmall
                 ) {
                     Text(
-                        text = stringResource(R.string.expenditure_amount, expenditureAmount),
+                        text = stringResource(R.string.balance_amount, balance),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier
                             .padding(PaddingXSmall),

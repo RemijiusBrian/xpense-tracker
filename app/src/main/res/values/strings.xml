@@ -55,7 +55,7 @@
     <string name="message_bill_updated">Bill Updated!</string>
     <string name="message_bill_deleted">Bill Deleted!</string>
     <string name="bill_payment_name">%s Bill (%s)</string>
-    <string name="expenditure_amount">Spent\n%s</string>
+    <string name="balance_amount">Balance\n%s</string>
     <string name="add_bill">Add Bill</string>
     <string name="edit_bill">Edit Bill</string>
     <string name="add_note">Add a note</string>

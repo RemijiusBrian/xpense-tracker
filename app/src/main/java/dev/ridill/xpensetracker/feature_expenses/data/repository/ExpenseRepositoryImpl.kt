@@ -11,7 +11,7 @@ import dev.ridill.xpensetracker.feature_expenses.data.mapper.toExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.data.mapper.toMonthAndExpenditure
 import dev.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
-import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditure
+import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 import dev.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,7 +25,7 @@ class ExpenseRepositoryImpl(
 
     override fun getMonthAndExpenditurePercentList(
         limit: Long
-    ): Flow<List<MonthAndExpenditure>> =
+    ): Flow<List<MonthStats>> =
         expenseDao.getMonthAndExpenditureList().map { relations ->
             relations.map { it.toMonthAndExpenditure(limit) }
         }

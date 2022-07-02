@@ -2,14 +2,14 @@ package dev.ridill.xpensetracker.feature_expenses.domain.repository
 
 import dev.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
-import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditure
+import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 import kotlinx.coroutines.flow.Flow
 
 interface ExpenseRepository {
 
     fun getMonthAndExpenditurePercentList(
         limit: Long
-    ): Flow<List<MonthAndExpenditure>>
+    ): Flow<List<MonthStats>>
 
     fun getTagsList(): Flow<List<String>>
 

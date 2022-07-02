@@ -8,16 +8,16 @@ import dev.ridill.xpensetracker.feature_expenses.data.local.entity.ExpenseEntity
 import dev.ridill.xpensetracker.feature_expenses.data.local.relation.MonthAndExpenditureRelation
 import dev.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
-import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthAndExpenditure
+import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 
-fun MonthAndExpenditureRelation.toMonthAndExpenditure(limit: Long): MonthAndExpenditure =
-    MonthAndExpenditure(
-        month = month,
-        expenditureAmount = TextUtil.formatAmountWithCurrency(expenditure),
-        expenditurePercent = if (limit > 0) {
-            (expenditure / limit.toDouble()).takeIf { !it.isNaN() }.orZero().toFloat()
-        } else 0f
-    )
+fun MonthAndExpenditureRelation.toMonthAndExpenditure(limit: Long): MonthStats = MonthStats(
+    month = month,
+    expenditureAmount = TextUtil.formatAmountWithCurrency(expenditure),
+    expenditurePercent = if (limit > 0) {
+        (expenditure / limit.toDouble()).takeIf { !it.isNaN() }.orZero().toFloat()
+    } else 0f,
+    balance = TextUtil.formatAmountWithCurrency(limit.toDouble() - expenditure)
+)
 
 fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(
     id = id,
