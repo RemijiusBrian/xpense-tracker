@@ -50,7 +50,6 @@ class BillReminderNotificationHelper(
         return NotificationCompat.Builder(applicationContext, BILL_REMINDER_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_receipt_long)
             .setContentIntent(openBillsPendingIntent)
-            .setGroup(BILL_REMINDER_GROUP)
             .setAutoCancel(true)
     }
 
@@ -69,23 +68,11 @@ class BillReminderNotificationHelper(
                 buildActionPendingIntent(data)
             )
             .build()
-        val summary = buildSummaryNotification().build()
-        notificationManager.apply {
-            notify(data.id.toInt(), notification)
-            notify(BILL_REMINDER_SUMMARY_ID, summary)
-        }
+        notificationManager.notify(data.id.toInt(), notification)
     }
 
     override fun dismissNotification(id: Int) {
         notificationManager.cancel(id)
-    }
-
-    private fun buildSummaryNotification(): NotificationCompat.Builder {
-        val inboxStyle = NotificationCompat.InboxStyle()
-            .setSummaryText(applicationContext.getString(R.string.bill_reminder_notification_summary))
-        return getBaseNotification()
-            .setStyle(inboxStyle)
-            .setGroupSummary(true)
     }
 
     private fun buildActionPendingIntent(data: Bill): PendingIntent {
@@ -107,5 +94,3 @@ class BillReminderNotificationHelper(
 
 const val KEY_BILL_NOTIFICATION_DATA = "bill"
 private const val BILL_REMINDER_NOTIFICATION_CHANNEL_ID = "bill_reminder_notification_channel"
-private const val BILL_REMINDER_GROUP = "bill_reminder_group"
-private const val BILL_REMINDER_SUMMARY_ID = 1
