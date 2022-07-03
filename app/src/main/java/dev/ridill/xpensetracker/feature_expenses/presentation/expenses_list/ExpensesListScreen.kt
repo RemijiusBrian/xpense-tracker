@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteForever
-import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -116,12 +116,13 @@ fun ExpenseListScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            GreetingAndLimit(
+            GreetingAndGeneralStats(
                 limit = state.expenditureLimit,
-                onLimitUpdate = actions::onExpenditureLimitUpdateClick
+                onLimitUpdate = actions::onExpenditureLimitUpdateClick,
+                balance = state.balance.toString()
             )
-            MonthsBarsRow(
-                months = state.monthsToExpenditurePercents,
+            MonthStats(
+                monthStats = state.monthsToExpenditurePercents,
                 selectedMonth = state.selectedMonth,
                 onMonthSelect = actions::onMonthSelect,
                 modifier = Modifier
@@ -226,8 +227,9 @@ fun ExpenseListScreenContent(
 }
 
 @Composable
-private fun GreetingAndLimit(
+private fun GreetingAndGeneralStats(
     limit: Long,
+    balance: String,
     onLimitUpdate: () -> Unit
 ) {
     Column(
@@ -246,36 +248,47 @@ private fun GreetingAndLimit(
             }
         } else {
             Row(
-                verticalAlignment = Alignment.Bottom
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = stringResource(R.string.expenditure_limit_label),
                     style = MaterialTheme.typography.titleMedium
                 )
-                Spacer(modifier = Modifier.width(SpacingSmall))
+                TextButton(onClick = onLimitUpdate) {
+                    AnimatedContent(
+                        targetState = limit,
+                        transitionSpec = {
+                            numberSliderTransition { targetState > initialState }
+                        }
+                    ) { value ->
+                        Text(
+                            text = TextUtil.formatAmountWithCurrency(value),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                            textDecoration = TextDecoration.Underline
+                        )
+                    }
+                }
+            }
+        }
+        AnimatedVisibility(visible = limit > 0) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Your current balance from limit is",
+                    style = MaterialTheme.typography.titleMedium
+                )
                 AnimatedContent(
-                    targetState = limit,
+                    targetState = balance,
                     transitionSpec = {
                         numberSliderTransition { targetState > initialState }
                     }
-                ) { value ->
+                ) { bal ->
                     Text(
-                        text = TextUtil.formatAmountWithCurrency(value),
+                        text = bal,
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Spacer(modifier = Modifier.width(SpacingSmall))
-                IconButton(
-                    onClick = onLimitUpdate,
-                    modifier = Modifier
-                        .size(SmallIconSize)
-                        .align(Alignment.Top)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = stringResource(R.string.content_description_edit_limit),
-                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -284,8 +297,8 @@ private fun GreetingAndLimit(
 }
 
 @Composable
-private fun MonthsBarsRow(
-    months: List<MonthStats>,
+private fun MonthStats(
+    monthStats: List<MonthStats>,
     selectedMonth: String,
     onMonthSelect: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -298,7 +311,7 @@ private fun MonthsBarsRow(
             .copy(alpha = ContentAlpha.PERCENT_16),
         shape = MaterialTheme.shapes.medium
     ) {
-        if (months.isEmpty()) {
+        if (monthStats.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -322,13 +335,13 @@ private fun MonthsBarsRow(
                     bottom = PaddingSmall
                 )
             ) {
-                items(months) { monthAndExpenditure ->
+                items(items = monthStats, key = { it.month }) { monthStat ->
                     MonthBar(
-                        month = monthAndExpenditure.monthFormatted,
-                        selected = monthAndExpenditure.month == selectedMonth,
-                        balance = monthAndExpenditure.balance,
-                        expenditurePercentage = monthAndExpenditure.expenditurePercent,
-                        onClick = { onMonthSelect(monthAndExpenditure.month) },
+                        month = monthStat.monthFormatted,
+                        selected = monthStat.month == selectedMonth,
+                        spentAmount = monthStat.expenditureAmount,
+                        expenditurePercentage = monthStat.expenditurePercent,
+                        onClick = { onMonthSelect(monthStat.month) },
                         modifier = Modifier
                             .fillParentMaxHeight()
                             .animateItemPlacement()
@@ -343,7 +356,7 @@ private fun MonthsBarsRow(
 private fun MonthBar(
     month: String,
     selected: Boolean,
-    balance: String,
+    spentAmount: String,
     expenditurePercentage: Float,
     modifier: Modifier,
     onClick: () -> Unit
@@ -416,7 +429,7 @@ private fun MonthBar(
                     shadowElevation = ElevationSmall
                 ) {
                     Text(
-                        text = stringResource(R.string.balance_amount, balance),
+                        text = stringResource(R.string.spent_amount, spentAmount),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier
                             .padding(PaddingXSmall),
@@ -589,7 +602,6 @@ private fun ExpenditureLimitUpdateDialog(
 
 private const val MONTHS_BARS_HEIGHT_PERCENT = 0.32f
 private val MonthBarMinWidth = 56.dp
-private val SmallIconSize = 16.dp
 private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
 
 @Preview(showBackground = true)

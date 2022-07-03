@@ -5,7 +5,6 @@ import dev.ridill.xpensetracker.core.util.DatePatterns
 
 data class MonthStats(
     val month: String,
-    val balance: String,
     val expenditureAmount: String,
     val expenditurePercent: Float
 ) {

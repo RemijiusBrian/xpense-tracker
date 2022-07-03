@@ -10,6 +10,7 @@ data class ExpensesState(
     val selectedMonth: String = "",
     val expenses: List<ExpenseListItem> = emptyList(),
     val expenditureLimit: Long = 0L,
+    val balance: Long = expenditureLimit,
     val tagDeletableModeActive: Boolean = false,
     val showExpenditureLimitUpdateDialog: Boolean = false,
     val showTagDeleteConfirmation: Boolean = false

@@ -16,7 +16,6 @@ fun MonthAndExpenditureRelation.toMonthAndExpenditure(limit: Long): MonthStats =
     expenditurePercent = if (limit > 0) {
         (expenditure / limit.toDouble()).takeIf { !it.isNaN() }.orZero().toFloat()
     } else 0f,
-    balance = TextUtil.formatAmountWithCurrency(limit.toDouble() - expenditure)
 )
 
 fun ExpenseEntity.toExpenseListItem(): ExpenseListItem = ExpenseListItem(
