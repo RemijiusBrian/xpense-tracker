@@ -8,9 +8,6 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface BillsDao {
 
-    @Query("SELECT * FROM BillEntity")
-    suspend fun getAllBillsList(): List<BillEntity>
-
     @Query("SELECT * FROM BillEntity ORDER BY category ASC")
     fun getAllBills(): Flow<List<BillEntity>>
 

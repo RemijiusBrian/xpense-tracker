@@ -7,8 +7,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.ridill.xpensetracker.core.notification.NotificationHelper
 import dev.ridill.xpensetracker.core.util.tryOrNull
 import dev.ridill.xpensetracker.di.ApplicationScope
-import dev.ridill.xpensetracker.feature_bills.data.mapper.toPayment
 import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
+import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -29,10 +29,10 @@ class MarkBillAsPaidReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val data = tryOrNull {
-            intent?.extras?.getParcelable<Bill>(KEY_BILL_NOTIFICATION_DATA)
+            intent?.getParcelableExtra<BillPayment>(KEY_BILL_NOTIFICATION_DATA)
         } ?: return
         applicationScope.launch {
-            billsRepository.markBillAsPaid(data.toPayment())
+            billsRepository.markBillAsPaid(data)
             notificationHelper.dismissNotification(data.id.toInt())
         }
     }

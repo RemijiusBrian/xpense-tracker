@@ -35,13 +35,11 @@ fun BillWithExpensesRelation.toBillPayment(): BillPayment {
 
     return BillPayment(
         id = bill.id,
-        paymentOrPayByDate = TextUtil.formatDate(
-            expenseForBillInCurrentMonth?.dateMillis ?: bill.payByDate
-        ),
         amount = bill.amount,
         category = BillCategory.valueOf(bill.category),
         name = bill.name,
-        state = state
+        state = state,
+        payByDateMillis = expenseForBillInCurrentMonth?.dateMillis ?: bill.payByDate
     )
 }
 
@@ -56,7 +54,7 @@ fun Bill.toEntity(): BillEntity = BillEntity(
 
 fun Bill.toPayment(): BillPayment = BillPayment(
     id = id,
-    paymentOrPayByDate = dateFormatted,
+    payByDateMillis = dateMillis,
     amount = amount.toDoubleOrZero(),
     category = category,
     name = name,

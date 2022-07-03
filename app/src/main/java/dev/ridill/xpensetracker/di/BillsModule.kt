@@ -11,7 +11,7 @@ import dev.ridill.xpensetracker.core.notification.NotificationHelper
 import dev.ridill.xpensetracker.core.util.DispatcherProvider
 import dev.ridill.xpensetracker.feature_bills.data.local.BillsDao
 import dev.ridill.xpensetracker.feature_bills.data.repository.BillsRepositoryImpl
-import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
+import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
 import dev.ridill.xpensetracker.feature_bills.domain.notification.BillReminderNotificationHelper
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
 import dev.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
@@ -35,5 +35,5 @@ object BillsModule {
     @Provides
     fun provideBillReminderNotificationHelper(
         @ApplicationContext applicationContext: Context
-    ): NotificationHelper<Bill> = BillReminderNotificationHelper(applicationContext)
+    ): NotificationHelper<BillPayment> = BillReminderNotificationHelper(applicationContext)
 }

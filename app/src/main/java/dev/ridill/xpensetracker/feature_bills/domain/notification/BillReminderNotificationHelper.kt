@@ -7,15 +7,14 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.application.XTActivity
 import dev.ridill.xpensetracker.core.notification.NotificationHelper
-import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
+import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
 
 class BillReminderNotificationHelper(
     private val applicationContext: Context
-) : NotificationHelper<Bill> {
+) : NotificationHelper<BillPayment> {
 
     private val notificationManager = NotificationManagerCompat.from(applicationContext)
     private val pendingIntentFlags =
@@ -43,7 +42,7 @@ class BillReminderNotificationHelper(
             .setDescription(applicationContext.getString(R.string.bills_reminder_notification_channel_description))
             .build()
 
-        notificationManager.createNotificationChannelsCompat(listOf(billReminderChannel))
+        notificationManager.createNotificationChannel(billReminderChannel)
     }
 
     override fun getBaseNotification(): NotificationCompat.Builder {
@@ -53,7 +52,7 @@ class BillReminderNotificationHelper(
             .setAutoCancel(true)
     }
 
-    override fun showNotification(data: Bill) {
+    override fun showNotification(data: BillPayment) {
         val notification = getBaseNotification()
             .setContentTitle(data.name)
             .setContentText(
@@ -75,14 +74,9 @@ class BillReminderNotificationHelper(
         notificationManager.cancel(id)
     }
 
-    private fun buildActionPendingIntent(data: Bill): PendingIntent {
-        val actionIntent = Intent(applicationContext, MarkBillAsPaidReceiver::class.java).apply {
-            putExtras(
-                bundleOf(
-                    KEY_BILL_NOTIFICATION_DATA to data
-                )
-            )
-        }
+    private fun buildActionPendingIntent(data: BillPayment): PendingIntent {
+        val actionIntent = Intent(applicationContext, MarkBillAsPaidReceiver::class.java)
+        actionIntent.putExtra(KEY_BILL_NOTIFICATION_DATA, data)
         return PendingIntent.getBroadcast(
             applicationContext,
             data.id.toInt(),

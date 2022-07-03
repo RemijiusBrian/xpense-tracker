@@ -6,10 +6,7 @@ import dev.ridill.xpensetracker.feature_bills.data.mapper.toBill
 import dev.ridill.xpensetracker.feature_bills.data.mapper.toBillItem
 import dev.ridill.xpensetracker.feature_bills.data.mapper.toBillPayment
 import dev.ridill.xpensetracker.feature_bills.data.mapper.toEntity
-import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
-import dev.ridill.xpensetracker.feature_bills.domain.model.BillCategory
-import dev.ridill.xpensetracker.feature_bills.domain.model.BillItem
-import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
+import dev.ridill.xpensetracker.feature_bills.domain.model.*
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
 import dev.ridill.xpensetracker.feature_expenses.domain.model.Expense
 import dev.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
@@ -22,10 +19,6 @@ class BillsRepositoryImpl(
     private val dispatcherProvider: DispatcherProvider,
     private val expenseRepo: ExpenseRepository
 ) : BillsRepository {
-
-    override suspend fun getAllBillsList(): List<Bill> = withContext(dispatcherProvider.io) {
-        dao.getAllBillsList().map { it.toBill() }
-    }
 
     override fun getBillsGroupedByCategory(): Flow<Map<BillCategory, List<BillItem>>> =
         dao.getAllBills().map { entities ->
@@ -44,6 +37,7 @@ class BillsRepositoryImpl(
     }
 
     override suspend fun markBillAsPaid(payment: BillPayment) {
+        if (payment.state == BillState.PAID) return
         withContext(dispatcherProvider.io) {
             val expense = Expense(
                 name = payment.name,

@@ -8,8 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface BillsRepository {
 
-    suspend fun getAllBillsList(): List<Bill>
-
     fun getBillsGroupedByCategory(): Flow<Map<BillCategory, List<BillItem>>>
 
     fun getBillPaymentsForCurrentMonth(): Flow<List<BillPayment>>

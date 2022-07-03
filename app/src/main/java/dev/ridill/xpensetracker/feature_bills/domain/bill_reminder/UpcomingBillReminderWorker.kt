@@ -8,30 +8,32 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import dev.ridill.xpensetracker.core.notification.NotificationHelper
 import dev.ridill.xpensetracker.core.util.DispatcherProvider
-import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
+import dev.ridill.xpensetracker.core.util.getCurrentDay
+import dev.ridill.xpensetracker.core.util.getDayFromMillis
+import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
+import dev.ridill.xpensetracker.feature_bills.domain.model.BillState
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 @HiltWorker
 class UpcomingBillReminderWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
     private val billRepo: BillsRepository,
-    private val notificationHelper: NotificationHelper<Bill>,
+    private val notificationHelper: NotificationHelper<BillPayment>,
     private val dispatcherProvider: DispatcherProvider
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(dispatcherProvider.io) {
         try {
-            val currentDate = Date()
-            val bills = billRepo.getAllBillsList()
-            val upcomingBills = bills.filter {
-                val difference = it.dateMillis - currentDate.time
-                difference < TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS)
+            val unpaidBills = billRepo.getBillPaymentsForCurrentMonth().first()
+                .filter { it.state != BillState.PAID }
+            val billsUpcomingIn3Days = unpaidBills.filter { payment ->
+                val dayDifference = payment.payByDateMillis.getDayFromMillis() - getCurrentDay()
+                dayDifference in 1..3
             }
-            upcomingBills.forEach { notificationHelper.showNotification(it) }
+            billsUpcomingIn3Days.forEach { notificationHelper.showNotification(it) }
             Result.success()
         } catch (t: Throwable) {
             Result.retry()
