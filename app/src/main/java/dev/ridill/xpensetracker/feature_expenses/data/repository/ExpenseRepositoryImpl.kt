@@ -43,6 +43,9 @@ class ExpenseRepositoryImpl(
         entities.map { it.toExpenseListItem() }
     }
 
+    override fun getExpenditureForCurrentMonth(): Flow<Double> =
+        expenseDao.getExpenditureForCurrentMonth()
+
     override suspend fun doesExpensesForTagExist(tag: String): Boolean =
         withContext(dispatcherProvider.io) {
             expenseDao.getExpensesByTag(tag).isNotEmpty()

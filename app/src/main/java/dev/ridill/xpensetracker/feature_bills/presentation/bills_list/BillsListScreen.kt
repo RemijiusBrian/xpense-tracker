@@ -108,7 +108,7 @@ fun BillsListScreenContent(
                         BillPayment(
                             category = payment.category,
                             name = payment.name,
-                            date = payment.paymentOrPayByDate,
+                            date = payment.dateFormatted,
                             amount = payment.amountFormatted,
                             state = billState,
                             onMarkAsPaidClick = {
@@ -329,9 +329,9 @@ private fun PreviewScreenContent() {
                 billPayments = (1..10).map {
                     BillPayment(
                         it.toLong(),
-                        "10-10",
-                        1000.0,
-                        BillCategory.BROADBAND,
+                        payByDateMillis = System.currentTimeMillis(),
+                        amount = 1000.0,
+                        category = BillCategory.BROADBAND,
                         name = "Name",
                         state = BillState.UPCOMING
                     )

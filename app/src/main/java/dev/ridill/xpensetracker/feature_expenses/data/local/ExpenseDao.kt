@@ -33,6 +33,15 @@ interface ExpenseDao {
         month: String
     ): Flow<List<ExpenseEntity>>
 
+    @Query(
+        """
+        SELECT SUM(amount)
+        FROM ExpenseEntity
+        WHERE strftime('%m', dateMillis / 1000, 'unixepoch') = strftime('%m', date('now'))
+        """
+    )
+    fun getExpenditureForCurrentMonth(): Flow<Double>
+
     @Query("SELECT * FROM ExpenseEntity WHERE tag = :tag")
     suspend fun getExpensesByTag(tag: String): List<ExpenseEntity>
 

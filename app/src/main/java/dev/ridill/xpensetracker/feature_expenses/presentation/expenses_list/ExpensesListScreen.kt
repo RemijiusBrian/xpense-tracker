@@ -116,12 +116,12 @@ fun ExpenseListScreenContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            GreetingAndGeneralStats(
+            Greetings(
                 limit = state.expenditureLimit,
-                onLimitUpdate = actions::onExpenditureLimitUpdateClick,
-                balance = state.balance.toString()
+                onLimitUpdate = actions::onExpenditureLimitUpdateClick
             )
-            MonthStats(
+            Stats(
+                monthlyBalance = state.balance,
                 monthStats = state.monthsToExpenditurePercents,
                 selectedMonth = state.selectedMonth,
                 onMonthSelect = actions::onMonthSelect,
@@ -227,14 +227,13 @@ fun ExpenseListScreenContent(
 }
 
 @Composable
-private fun GreetingAndGeneralStats(
+private fun Greetings(
     limit: Long,
-    balance: String,
     onLimitUpdate: () -> Unit
 ) {
     Column(
         modifier = Modifier
-            .padding(PaddingMedium)
+            .padding(horizontal = PaddingMedium, vertical = PaddingSmall)
     ) {
         Text(
             text = stringResource(R.string.greeting_comma),
@@ -271,33 +270,12 @@ private fun GreetingAndGeneralStats(
                 }
             }
         }
-        AnimatedVisibility(visible = limit > 0) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Your current balance from limit is",
-                    style = MaterialTheme.typography.titleMedium
-                )
-                AnimatedContent(
-                    targetState = balance,
-                    transitionSpec = {
-                        numberSliderTransition { targetState > initialState }
-                    }
-                ) { bal ->
-                    Text(
-                        text = bal,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-        }
     }
 }
 
 @Composable
-private fun MonthStats(
+private fun Stats(
+    monthlyBalance: Double,
     monthStats: List<MonthStats>,
     selectedMonth: String,
     onMonthSelect: (String) -> Unit,
@@ -311,43 +289,79 @@ private fun MonthStats(
             .copy(alpha = ContentAlpha.PERCENT_16),
         shape = MaterialTheme.shapes.medium
     ) {
-        if (monthStats.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(PaddingSmall)
+        ) {
+            Balance(balance = monthlyBalance)
+            Spacer(Modifier.height(SpacingSmall))
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
+                    .weight(WEIGHT_1),
                 contentAlignment = Alignment.Center
             ) {
-                DataEmptyIndicator(
-                    iconRes = R.drawable.ic_bar_data,
-                    message = R.string.error_no_data_yet
-                )
-            }
-        } else {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
-                verticalAlignment = Alignment.Bottom,
-                contentPadding = PaddingValues(
-                    start = PaddingMedium,
-                    end = PaddingLarge,
-                    top = PaddingSmall,
-                    bottom = PaddingSmall
-                )
-            ) {
-                items(items = monthStats, key = { it.month }) { monthStat ->
-                    MonthBar(
-                        month = monthStat.monthFormatted,
-                        selected = monthStat.month == selectedMonth,
-                        spentAmount = monthStat.expenditureAmount,
-                        expenditurePercentage = monthStat.expenditurePercent,
-                        onClick = { onMonthSelect(monthStat.month) },
-                        modifier = Modifier
-                            .fillParentMaxHeight()
-                            .animateItemPlacement()
+                if (monthStats.isEmpty()) {
+                    DataEmptyIndicator(
+                        iconRes = R.drawable.ic_bar_data,
+                        message = R.string.error_no_data_yet
                     )
+                } else {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
+                        verticalAlignment = Alignment.Bottom,
+                        contentPadding = PaddingValues(
+                            start = PaddingMedium,
+                            end = ListPaddingLarge
+                        )
+                    ) {
+                        items(items = monthStats, key = { it.month }) { monthStat ->
+                            MonthBar(
+                                month = monthStat.monthFormatted,
+                                selected = monthStat.month == selectedMonth,
+                                spentAmount = monthStat.expenditureAmount,
+                                expenditurePercentage = monthStat.expenditurePercent,
+                                onClick = { onMonthSelect(monthStat.month) },
+                                modifier = Modifier
+                                    .fillParentMaxHeight()
+                                    .animateItemPlacement()
+                            )
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun Balance(
+    balance: Double,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = PaddingMedium)
+    ) {
+        Text(
+            text = stringResource(R.string.balance),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+                .copy(alpha = ContentAlpha.PERCENT_60)
+        )
+        AnimatedContent(
+            targetState = balance,
+            transitionSpec = {
+                numberSliderTransition { targetState > initialState }
+            }
+        ) { amount ->
+            Text(
+                text = TextUtil.formatAmountWithCurrency(amount),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -518,8 +532,7 @@ private fun ExpenseItem(
         modifier = modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-            /*.copy(alpha = ContentAlpha.PERCENT_40)*/,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         )
     ) {
@@ -600,8 +613,8 @@ private fun ExpenditureLimitUpdateDialog(
     )
 }
 
-private const val MONTHS_BARS_HEIGHT_PERCENT = 0.32f
-private val MonthBarMinWidth = 56.dp
+private const val MONTHS_BARS_HEIGHT_PERCENT = 0.36f
+private val MonthBarMinWidth = 48.dp
 private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
 
 @Preview(showBackground = true)

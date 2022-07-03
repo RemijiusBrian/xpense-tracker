@@ -105,4 +105,5 @@
     <string name="bill_category_dtv">Digital TV</string>
     <string name="bill_category_subscription">Subscription</string>
     <string name="bill_category_misc">Miscellaneous</string>
+    <string name="balance">Balance</string>
 </resources>

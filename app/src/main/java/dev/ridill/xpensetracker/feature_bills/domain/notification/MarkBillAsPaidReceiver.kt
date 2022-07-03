@@ -7,7 +7,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.ridill.xpensetracker.core.notification.NotificationHelper
 import dev.ridill.xpensetracker.core.util.tryOrNull
 import dev.ridill.xpensetracker.di.ApplicationScope
-import dev.ridill.xpensetracker.feature_bills.domain.model.Bill
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillPayment
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +24,7 @@ class MarkBillAsPaidReceiver : BroadcastReceiver() {
     lateinit var applicationScope: CoroutineScope
 
     @Inject
-    lateinit var notificationHelper: NotificationHelper<Bill>
+    lateinit var notificationHelper: NotificationHelper<BillPayment>
 
     override fun onReceive(context: Context?, intent: Intent?) {
         val data = tryOrNull {

@@ -18,6 +18,8 @@ interface ExpenseRepository {
         tag: String
     ): Flow<List<ExpenseListItem>>
 
+    fun getExpenditureForCurrentMonth(): Flow<Double>
+
     suspend fun doesExpensesForTagExist(tag: String): Boolean
 
     suspend fun getExpenseById(id: Long): Expense?

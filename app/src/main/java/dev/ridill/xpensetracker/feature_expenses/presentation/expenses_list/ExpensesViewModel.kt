@@ -64,6 +64,13 @@ class ExpensesViewModel @Inject constructor(
         repo.getExpensesListForMonthFilteredByTag(month, tag)
     }
 
+    private val balanceForCurrentMonth = combineTuple(
+        repo.getExpenditureForCurrentMonth(),
+        preferences
+    ).map { (expenditure, preference) ->
+        preference.expenditureLimit - expenditure
+    }
+
     val state = combineTuple(
         preferences,
         tags,
@@ -73,7 +80,8 @@ class ExpensesViewModel @Inject constructor(
         selectedMonth.asFlow(),
         expenseList,
         showExpenditureLimitUpdateDialog.asFlow(),
-        showTagDeleteConfirmation.asFlow()
+        showTagDeleteConfirmation.asFlow(),
+        balanceForCurrentMonth
     ).map { (
                 preferences,
                 tags,
@@ -83,7 +91,8 @@ class ExpensesViewModel @Inject constructor(
                 selectedMonth,
                 expenseList,
                 showExpenditureUpdateDialog,
-                showTagDeleteConfirmation
+                showTagDeleteConfirmation,
+                balanceForCurrentMonth
             ) ->
         ExpensesState(
             tags = tags,
@@ -94,7 +103,8 @@ class ExpensesViewModel @Inject constructor(
             expenditureLimit = preferences.expenditureLimit,
             showExpenditureLimitUpdateDialog = showExpenditureUpdateDialog,
             tagDeletableModeActive = tagDeleteModeActive,
-            showTagDeleteConfirmation = showTagDeleteConfirmation
+            showTagDeleteConfirmation = showTagDeleteConfirmation,
+            balance = balanceForCurrentMonth
         )
     }.asLiveData()
 
@@ -122,7 +132,7 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onTagFilterSelect(tag: String) {
-        selectedTag.value = tag
+        selectedTag.value = tag.takeIf { it != Constants.STRING_ALL }.orEmpty()
     }
 
     override fun onTagLongClick() {
