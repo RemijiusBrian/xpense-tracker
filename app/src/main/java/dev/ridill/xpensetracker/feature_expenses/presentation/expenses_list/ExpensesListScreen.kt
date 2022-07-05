@@ -1,11 +1,8 @@
 package dev.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColor
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -81,21 +78,27 @@ fun ExpenseListScreenContent(
             )
         },
         bottomBar = {
-            BottomAppBar(
-                icons = {
-                    BottomBarScreenSpec.screens.forEach { screen ->
-                        IconButton(onClick = {
-                            navigateToBottomBarDestination(screen)
-                        }) {
-                            Icon(
-                                imageVector = screen.icon,
-                                contentDescription = stringResource(screen.label)
-                            )
+            AnimatedVisibility(
+                visible = state.expenditureLimit > 0L,
+                enter = slideInVertically { it },
+                exit = slideOutVertically { it }
+            ) {
+                BottomAppBar(
+                    icons = {
+                        BottomBarScreenSpec.screens.forEach { screen ->
+                            IconButton(
+                                onClick = {
+                                    navigateToBottomBarDestination(screen)
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = screen.icon,
+                                    contentDescription = stringResource(screen.label)
+                                )
+                            }
                         }
-                    }
-                },
-                floatingActionButton = {
-                    AnimatedVisibility(visible = state.expenditureLimit > 0L) {
+                    },
+                    floatingActionButton = {
                         FloatingActionButton(
                             onClick = actions::onAddFabClick
                         ) {
@@ -104,11 +107,11 @@ fun ExpenseListScreenContent(
                                 contentDescription = stringResource(R.string.content_description_add_expense)
                             )
                         }
-                    }
-                },
-                containerColor = MaterialTheme.colorScheme.background,
-                tonalElevation = ZeroDp
-            )
+                    },
+                    containerColor = MaterialTheme.colorScheme.background,
+                    tonalElevation = ZeroDp
+                )
+            }
         }
     ) { paddingValues ->
         Column(
@@ -148,13 +151,13 @@ fun ExpenseListScreenContent(
                             exit = slideOutHorizontallyWithFadeOut(false)
                         ) {
                             FilterChip(
-                                selected = state.selectedTag == Constants.STRING_ALL,
+                                selected = state.selectedTag.isEmpty(),
                                 onClick = { actions.onTagFilterSelect(Constants.STRING_ALL) },
                                 label = { Text(Constants.STRING_ALL) }
                             )
                         }
                     }
-                    items(state.tags) { tag ->
+                    items(state.tags, key = { it }) { tag ->
                         TagItem(
                             selected = tag == state.selectedTag,
                             label = tag,
@@ -298,6 +301,7 @@ private fun Stats(
             Spacer(Modifier.height(SpacingSmall))
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .weight(WEIGHT_1),
                 contentAlignment = Alignment.Center
             ) {
@@ -319,7 +323,7 @@ private fun Stats(
                     ) {
                         items(items = monthStats, key = { it.month }) { monthStat ->
                             MonthBar(
-                                month = monthStat.monthFormatted,
+                                month = monthStat.monthParsed,
                                 selected = monthStat.month == selectedMonth,
                                 spentAmount = monthStat.expenditureAmount,
                                 expenditurePercentage = monthStat.expenditurePercent,
@@ -341,27 +345,28 @@ private fun Balance(
     balance: Double,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier
-            .padding(horizontal = PaddingMedium)
-    ) {
-        Text(
-            text = stringResource(R.string.balance),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-                .copy(alpha = ContentAlpha.PERCENT_60)
-        )
-        AnimatedContent(
-            targetState = balance,
-            transitionSpec = {
-                numberSliderTransition { targetState > initialState }
-            }
-        ) { amount ->
+    AnimatedVisibility(visible = balance > 0) {
+        Column(
+            modifier = modifier
+                .padding(horizontal = PaddingMedium)
+        ) {
             Text(
-                text = TextUtil.formatAmountWithCurrency(amount),
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary
+                text = stringResource(R.string.balance),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+                    .copy(alpha = ContentAlpha.PERCENT_60)
             )
+            AnimatedContent(
+                targetState = balance,
+                transitionSpec = {
+                    numberSliderTransition { targetState > initialState }
+                }
+            ) { amount ->
+                Text(
+                    text = TextUtil.formatAmountWithCurrency(amount),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
         }
     }
 }
@@ -424,7 +429,7 @@ private fun MonthBar(
                     onLongClick = {
                         coroutineScope.launch {
                             showExpenditureAmount = true
-                            delay(EXPENDITURE_AMOUNT_DISPLAY_TIME)
+                            delay(EXPENDITURE_AMOUNT_DISPLAY_DURATION)
                             showExpenditureAmount = false
                         }
                     }
@@ -439,14 +444,12 @@ private fun MonthBar(
                 Surface(
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .widthIn(min = MonthBarMinWidth),
+                        .width(MonthBarMinWidth),
                     shadowElevation = ElevationSmall
                 ) {
                     Text(
                         text = stringResource(R.string.spent_amount, spentAmount),
                         style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier
-                            .padding(PaddingXSmall),
                         overflow = TextOverflow.Ellipsis
                     )
                 }
@@ -614,8 +617,8 @@ private fun ExpenditureLimitUpdateDialog(
 }
 
 private const val MONTHS_BARS_HEIGHT_PERCENT = 0.36f
-private val MonthBarMinWidth = 48.dp
-private const val EXPENDITURE_AMOUNT_DISPLAY_TIME = 5000L
+private val MonthBarMinWidth = 40.dp
+private const val EXPENDITURE_AMOUNT_DISPLAY_DURATION = 5000L
 
 @Preview(showBackground = true)
 @Composable

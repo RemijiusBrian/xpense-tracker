@@ -29,26 +29,24 @@ class ExpensesViewModel @Inject constructor(
     private val preferences = preferencesManager.preferences
 
     private val tags = repo.getTagsList()
-    private val selectedTag = savedStateHandle.getLiveData("selectedTag", Constants.STRING_ALL)
+    private val selectedTag = savedStateHandle.getLiveData("selectedTag", "")
     private val tagDeleteModeActive = savedStateHandle.getLiveData("tagDeleteModeActive", false)
-
-    private val months = preferences.flatMapLatest { preferences ->
-        repo.getMonthAndExpenditurePercentList(preferences.expenditureLimit)
-    }.onEach {
-        selectedMonth.value = it.firstOrNull()?.month
-            ?: TextUtil.formatDateWithPattern(
-                System.currentTimeMillis(),
-                DatePatterns.SHORT_MONTH_NAME_WITH_YEAR
-            )
-    }
 
     private val selectedMonth = savedStateHandle.getLiveData(
         key = "selectedMonth",
-        initialValue = TextUtil
-            .formatDateWithPattern(
-                System.currentTimeMillis(),
-                DatePatterns.SHORT_MONTH_NAME_WITH_YEAR
-            )
+        initialValue = getCurrentMonthWithYear()
+    )
+    private val months = preferences.flatMapLatest { preferences ->
+        repo.getMonthAndExpenditurePercentList(preferences.expenditureLimit)
+    }.onEach {
+        selectedMonth.value = selectedMonth.value
+            ?: it.firstOrNull()?.month
+                    ?: getCurrentMonthWithYear()
+    }
+
+    private fun getCurrentMonthWithYear(): String = TextUtil.formatDateWithPattern(
+        System.currentTimeMillis(),
+        DatePatterns.MONTH_NUMBER_WITH_YEAR
     )
 
     private val showExpenditureLimitUpdateDialog =
@@ -122,7 +120,7 @@ class ExpensesViewModel @Inject constructor(
     override fun onExpenditureLimitUpdateDialogConfirm(limit: String) {
         viewModelScope.launch {
             val amount = limit.toLongOrZero()
-            if (amount <= 0L) {
+            if (amount < 0L) {
                 eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }

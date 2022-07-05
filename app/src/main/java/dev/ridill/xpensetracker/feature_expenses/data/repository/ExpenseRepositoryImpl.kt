@@ -1,6 +1,5 @@
 package dev.ridill.xpensetracker.feature_expenses.data.repository
 
-import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.core.util.DispatcherProvider
 import dev.ridill.xpensetracker.feature_expenses.data.local.ExpenseDao
 import dev.ridill.xpensetracker.feature_expenses.data.local.ExpenseTagDao
@@ -25,8 +24,8 @@ class ExpenseRepositoryImpl(
 
     override fun getMonthAndExpenditurePercentList(
         limit: Long
-    ): Flow<List<MonthStats>> =
-        expenseDao.getMonthAndExpenditureList().map { relations ->
+    ): Flow<List<MonthStats>> = expenseDao.getMonthAndExpenditureListForCurrentYear()
+        .map { relations ->
             relations.map { it.toMonthAndExpenditure(limit) }
         }
 
@@ -35,13 +34,10 @@ class ExpenseRepositoryImpl(
     override fun getExpensesListForMonthFilteredByTag(
         month: String,
         tag: String
-    ): Flow<List<ExpenseListItem>> = expenseDao.getExpensesForMonth(month).map { entities ->
-        if (tag != Constants.STRING_ALL)
-            entities.filter { it.tag == tag }
-        else entities
-    }.map { entities ->
-        entities.map { it.toExpenseListItem() }
-    }
+    ): Flow<List<ExpenseListItem>> = expenseDao.getExpensesForMonthFilteredByTag(month, tag)
+        .map { entities ->
+            entities.map { it.toExpenseListItem() }
+        }
 
     override fun getExpenditureForCurrentMonth(): Flow<Double> =
         expenseDao.getExpenditureForCurrentMonth()

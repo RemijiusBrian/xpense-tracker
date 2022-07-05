@@ -21,7 +21,7 @@ fun String.toLongOrZero(): Long = this.toLongOrNull() ?: 0L
 object DatePatterns {
     const val LONG_DAY_NAME_WITH_DAY_NUMBER = "EEEE dd"
     const val SHORT_DAY_NAME_WITH_DAY_NUMBER = "EEEE dd"
-    const val SHORT_MONTH_NAME_WITH_YEAR = "MMM-yy"
+    const val SHORT_MONTH_NAME = "MMM"
     const val MONTH_NUMBER_WITH_YEAR = "MM-yyyy"
     const val DAY_SHORT_MONTH_NAME_YEAR = "dd, MMM yyyy"
 }

@@ -8,10 +8,8 @@ data class MonthStats(
     val expenditureAmount: String,
     val expenditurePercent: Float
 ) {
-    val monthFormatted: String
-        get() = TextUtil.run {
-            parseDate(month, DatePatterns.MONTH_NUMBER_WITH_YEAR)?.let {
-                formatDateWithPattern(it.time, DatePatterns.SHORT_MONTH_NAME_WITH_YEAR)
-            }.orEmpty()
-        }
+    val monthParsed: String
+        get() = TextUtil.parseDate(month, DatePatterns.MONTH_NUMBER_WITH_YEAR)?.let {
+            TextUtil.formatDateWithPattern(it.time, DatePatterns.SHORT_MONTH_NAME)
+        }.orEmpty()
 }

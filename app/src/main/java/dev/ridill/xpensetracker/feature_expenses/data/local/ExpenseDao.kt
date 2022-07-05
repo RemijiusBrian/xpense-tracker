@@ -14,30 +14,32 @@ interface ExpenseDao {
     @Query(
         """
         SELECT DISTINCT(strftime('%m-%Y', dateMillis / 1000, 'unixepoch')) as month, SUM(amount) as expenditure
-        FROM ExpenseEntity 
+        FROM ExpenseEntity
+        WHERE strftime('%Y', dateMillis / 1000, 'unixepoch') = strftime('%Y', date('now'))
         GROUP BY month
         ORDER BY month DESC
         """
     )
-    fun getMonthAndExpenditureList(): Flow<List<MonthAndExpenditureRelation>>
+    fun getMonthAndExpenditureListForCurrentYear(): Flow<List<MonthAndExpenditureRelation>>
 
     @Query(
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month
+        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month AND IFNULL(tag, '') LIKE '%' || :tag || '%'
         ORDER BY dateMillis DESC
-    """
+        """
     )
-    fun getExpensesForMonth(
-        month: String
+    fun getExpensesForMonthFilteredByTag(
+        month: String,
+        tag: String
     ): Flow<List<ExpenseEntity>>
 
     @Query(
         """
-        SELECT SUM(amount)
+        SELECT IFNULL(SUM(amount), 0.0)
         FROM ExpenseEntity
-        WHERE strftime('%m', dateMillis / 1000, 'unixepoch') = strftime('%m', date('now'))
+        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = strftime('%m-%Y', date('now'))
         """
     )
     fun getExpenditureForCurrentMonth(): Flow<Double>

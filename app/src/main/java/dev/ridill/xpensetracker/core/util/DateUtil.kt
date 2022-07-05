@@ -9,9 +9,13 @@ fun Long.getMonthFromMillis(): Int =
 fun Long.getDayFromMillis(): Int =
     Calendar.getInstance().apply { timeInMillis = this@getDayFromMillis }.dayOfMonth
 
-fun getCurrentMonth(): Int = Calendar.getInstance().month
+fun getCurrentMonth(): Int = Calendar.getInstance().also {
+    it.timeInMillis = System.currentTimeMillis()
+}.month
 
-fun getCurrentDay(): Int = Calendar.getInstance().dayOfMonth
+fun getCurrentDay(): Int = Calendar.getInstance().also {
+    it.timeInMillis = System.currentTimeMillis()
+}.dayOfMonth
 
 val Calendar.year
     get() = get(Calendar.YEAR)
