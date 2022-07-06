@@ -26,7 +26,8 @@ interface ExpenseDao {
         """
         SELECT *
         FROM ExpenseEntity
-        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month AND IFNULL(tag, '') LIKE '%' || :tag || '%'
+        WHERE strftime('%m-%Y', dateMillis / 1000, 'unixepoch') = :month AND
+        (tag = :tag OR :tag = '')
         ORDER BY dateMillis DESC
         """
     )
