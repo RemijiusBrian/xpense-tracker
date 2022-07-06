@@ -1,7 +1,7 @@
 package dev.ridill.xpensetracker.core.ui.navigation.screen_specs
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,7 +23,7 @@ import dev.ridill.xpensetracker.feature_bills.presentation.bills_list.BillsListV
 
 object BillsListScreenSpec : BottomBarScreenSpec {
 
-    override val icon: ImageVector = Icons.Default.ReceiptLong
+    override val icon: ImageVector = Icons.Outlined.ReceiptLong
 
     override val label: Int = R.string.destination_bills
 
