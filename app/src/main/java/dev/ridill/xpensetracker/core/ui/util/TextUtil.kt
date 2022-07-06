@@ -8,7 +8,7 @@ import java.util.*
 object TextUtil {
     private val numberFormat = NumberFormat.getNumberInstance()
 
-    fun formatNumber(number: Double): String =
+    private fun formatNumber(number: Double): String =
         numberFormat.format(number)
 
     private fun formatNumber(number: Long): String =
@@ -21,10 +21,10 @@ object TextUtil {
         SimpleDateFormat.getDateInstance(style).format(dateInMillis)
 
     fun formatAmountWithCurrency(amount: Double): String =
-        "$currencySymbol ${formatNumber(amount)}"
+        "$currencySymbol${formatNumber(amount)}"
 
     fun formatAmountWithCurrency(amount: Long): String =
-        "$currencySymbol ${formatNumber(amount)}"
+        "$currencySymbol${formatNumber(amount)}"
 
     fun parseDate(date: String, pattern: String): Date? = tryOrNull {
         SimpleDateFormat(pattern, Locale.getDefault()).parse(date)

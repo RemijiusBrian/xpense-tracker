@@ -27,7 +27,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -249,6 +248,7 @@ private fun Greetings(
                     text = stringResource(R.string.expenditure_limit_label),
                     style = MaterialTheme.typography.titleMedium
                 )
+                Spacer(Modifier.width(SpacingXSmall))
                 AnimatedContent(
                     targetState = limit,
                     transitionSpec = {
@@ -258,8 +258,7 @@ private fun Greetings(
                     Text(
                         text = TextUtil.formatAmountWithCurrency(value),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        textDecoration = TextDecoration.Underline
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
