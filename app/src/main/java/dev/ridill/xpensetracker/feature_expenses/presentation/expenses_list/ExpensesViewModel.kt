@@ -130,7 +130,11 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onTagFilterSelect(tag: String) {
-        selectedTag.value = tag.takeIf { it != Constants.STRING_ALL }.orEmpty()
+        if (tagDeleteModeActive.value == true) {
+            tagDeleteModeActive.value = false
+        } else {
+            selectedTag.value = tag.takeIf { it != Constants.STRING_ALL }.orEmpty()
+        }
     }
 
     override fun onTagLongClick() {
