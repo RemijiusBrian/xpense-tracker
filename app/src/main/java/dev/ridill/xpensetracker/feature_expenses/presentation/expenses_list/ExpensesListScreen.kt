@@ -41,8 +41,6 @@ import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.BottomBarScreenS
 import dev.ridill.xpensetracker.core.ui.theme.*
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.ui.util.numberSliderTransition
-import dev.ridill.xpensetracker.core.ui.util.slideInHorizontallyWithFadeIn
-import dev.ridill.xpensetracker.core.ui.util.slideOutHorizontallyWithFadeOut
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
@@ -144,20 +142,18 @@ fun ExpenseListScreenContent(
                     horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    item {
-                        AnimatedVisibility(
-                            visible = !state.tagDeletableModeActive,
-                            enter = slideInHorizontallyWithFadeIn(false),
-                            exit = slideOutHorizontallyWithFadeOut(false)
-                        ) {
+                    if (!state.tagDeletableModeActive) {
+                        item(key = Constants.STRING_ALL) {
                             FilterChip(
                                 selected = state.selectedTag.isEmpty(),
                                 onClick = { actions.onTagFilterSelect(Constants.STRING_ALL) },
-                                label = { Text(Constants.STRING_ALL) }
+                                label = { Text(Constants.STRING_ALL) },
+                                modifier = Modifier
+                                    .animateItemPlacement()
                             )
                         }
                     }
-                    items(state.tags, key = { it }) { tag ->
+                    items(items = state.tags, key = { it }) { tag ->
                         TagItem(
                             selected = tag == state.selectedTag,
                             label = tag,
