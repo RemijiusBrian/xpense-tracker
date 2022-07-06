@@ -2,18 +2,13 @@ package dev.ridill.xpensetracker.core.ui.theme
 
 import androidx.compose.ui.unit.dp
 
-// -------- Padding --------
-val PaddingXSmall = 2.dp
-val PaddingSmall = 8.dp
-val PaddingMedium = 16.dp
-val PaddingLarge = 32.dp
-
-val ListPaddingLarge = 80.dp
-
 // -------- Spacing --------
+val SpacingXXSmall = 2.dp
 val SpacingXSmall = 4.dp
 val SpacingSmall = 8.dp
 val SpacingMedium = 16.dp
+
+val ListPaddingLarge = 80.dp
 
 // -------- Elevation --------
 val ElevationSmall = 4.dp

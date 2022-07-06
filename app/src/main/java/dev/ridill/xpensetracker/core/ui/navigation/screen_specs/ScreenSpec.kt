@@ -13,7 +13,8 @@ sealed interface ScreenSpec {
             ExpenseListScreenSpec,
             AddEditExpenseScreenSpec,
             BillsListScreenSpec,
-            AddEditBillScreenSpec
+            AddEditBillScreenSpec,
+            SettingsScreenSpec
         ).associateBy { it.navHostRoute }
     }
 

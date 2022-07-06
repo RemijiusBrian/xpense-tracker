@@ -82,7 +82,7 @@ fun BillsListScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding),
             contentPadding = PaddingValues(
-                top = PaddingMedium,
+                top = SpacingMedium,
                 bottom = ListPaddingLarge
             ),
             verticalArrangement = Arrangement.spacedBy(SpacingMedium)
@@ -100,7 +100,7 @@ fun BillsListScreenContent(
                         ListLabel(
                             label = billState.label,
                             modifier = Modifier
-                                .padding(horizontal = PaddingSmall)
+                                .padding(horizontal = SpacingSmall)
                                 .animateItemPlacement()
                         )
                     }
@@ -228,7 +228,7 @@ private fun BillCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(PaddingSmall),
+                .padding(SpacingSmall),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -262,7 +262,7 @@ private fun BillPayment(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = PaddingMedium),
+            .padding(horizontal = SpacingMedium),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background
         )
@@ -270,7 +270,7 @@ private fun BillPayment(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(PaddingSmall)
+                .padding(SpacingSmall)
         ) {
             Row(
                 modifier = Modifier

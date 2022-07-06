@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.ridill.xpensetracker.R
-import dev.ridill.xpensetracker.core.ui.theme.PaddingXSmall
+import dev.ridill.xpensetracker.core.ui.theme.SpacingXXSmall
 import dev.ridill.xpensetracker.core.ui.theme.SpacingSmall
 import dev.ridill.xpensetracker.core.ui.theme.SpacingXSmall
 import kotlinx.coroutines.delay
@@ -112,7 +112,7 @@ fun GridEmptyIndicator(
         }
         Box(
             modifier = Modifier
-                .padding(PaddingXSmall)
+                .padding(SpacingXXSmall)
                 .size(GridContainerSize)
         ) {
             animationValues.forEachIndexed { index, value ->

@@ -6,6 +6,64 @@
     <string name="destination_add_edit_expense">Add/Edit Xpense</string>
     <string name="destination_bills">Bills</string>
     <string name="destination_add_edit_bill">Add/Edit Bill</string>
+    <string name="destination_settings">Settings</string>
+
+    <!-- Error -->
+    <string name="error_no_data_yet">No Data Yet</string>
+    <string name="error_invalid_amount">Please enter a valid amount</string>
+    <string name="error_invalid_name">Please enter a valid name</string>
+    <string name="error_invalid_description">Please enter a valid description</string>
+    <string name="error_invalid_note">Please enter a valid note</string>
+    <string name="error_invalid_tag_name">Please enter a valid tag name</string>
+
+    <!-- Content Description -->
+    <string name="content_description_add_expense">Add Expense</string>
+    <string name="content_description_tags">Tags</string>
+    <string name="content_description_navigate_up">Navigate Up</string>
+    <string name="content_description_create_new_tag">Create New Tag</string>
+    <string name="content_description_delete_expense">Delete Expense</string>
+    <string name="content_description_save">Save</string>
+    <string name="content_description_edit_limit">Edit limit</string>
+    <string name="content_description_delete_tag">Delete Tag</string>
+
+    <!-- Misc -->
+    <string name="anim_label_month_bar">Month Bar Animation</string>
+    <string name="anim_label_month_bar_scale">Month Bar Scale</string>
+    <string name="anim_label_month_bar_color">Month Bar Color</string>
+
+    <!-- Notifications -->
+    <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
+    <string name="bills_reminder_notification_channel_description">Get reminders for your bills</string>
+    <string name="bill_reminder_notification_text">Coming up on %s</string>
+    <string name="bill_reminder_notification_summary">Upcoming Bills</string>
+
+    <string name="expenses_notification_channel_name">Expenses</string>
+    <string name="expenses_notification_channel_description">Get notified for anything Expense related</string>
+    <string name="expenses_notification_expense_added">Expense Added</string>
+    <string name="expenses_added_notification_summary">Expenses</string>
+    <string name="expenses_notification_expense_added_for_payment">Expense added for %s</string>
+
+    <!-- Bill Category -->
+    <string name="bill_category_electricity">Electricity</string>
+    <string name="bill_category_water">Water</string>
+    <string name="bill_category_broadband">Broadband</string>
+    <string name="bill_category_dtv">Digital TV</string>
+    <string name="bill_category_subscription">Subscription</string>
+    <string name="bill_category_misc">Miscellaneous</string>
+
+    <!-- Preferences -->
+    <string name="general">General</string>
+    <string name="theme">General</string>
+    <string name="dynamic_theme">Use Dynamic Theme</string>
+    <string name="dynamic_theme_summary">App theme dynamically changes with your system theme</string>
+    <string name="dynamic_theme_unsupported_message">Dynamic theming is not supported by your device</string>
+    <string name="links">Links</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="bug_report_feature_request">Report a bug or request a feature</string>
+    <string name="info">Info</string>
+    <string name="app_version">App Version</string>
+    <string name="expense">Expense</string>
+    <string name="expenditure_limit">Expenditure Limit</string>
 
     <!-- Texts -->
     <string name="add_expense">Add Xpense</string>
@@ -62,48 +120,9 @@
     <string name="bill_description_eg">Eg: Home</string>
     <string name="description">Description</string>
     <string name="bill_payment">Bill Payment</string>
-
-    <!-- Error -->
-    <string name="error_no_data_yet">No Data Yet</string>
-    <string name="error_invalid_amount">Please enter a valid amount</string>
-    <string name="error_invalid_name">Please enter a valid name</string>
-    <string name="error_invalid_description">Please enter a valid description</string>
-    <string name="error_invalid_note">Please enter a valid note</string>
-    <string name="error_invalid_tag_name">Please enter a valid tag name</string>
-
-    <!-- Content Description -->
-    <string name="content_description_add_expense">Add Expense</string>
-    <string name="content_description_tags">Tags</string>
-    <string name="content_description_navigate_up">Navigate Up</string>
-    <string name="content_description_create_new_tag">Create New Tag</string>
-    <string name="content_description_delete_expense">Delete Expense</string>
-    <string name="content_description_save">Save</string>
-    <string name="content_description_edit_limit">Edit limit</string>
-    <string name="content_description_delete_tag">Delete Tag</string>
-
-    <!-- Misc -->
-    <string name="anim_label_month_bar">Month Bar Animation</string>
-    <string name="anim_label_month_bar_scale">Month Bar Scale</string>
-    <string name="anim_label_month_bar_color">Month Bar Color</string>
-
-    <!-- Notifications -->
-    <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
-    <string name="bills_reminder_notification_channel_description">Get reminders for your bills</string>
-    <string name="bill_reminder_notification_text">Coming up on %s</string>
-    <string name="bill_reminder_notification_summary">Upcoming Bills</string>
-
-    <string name="expenses_notification_channel_name">Expenses</string>
-    <string name="expenses_notification_channel_description">Get notified for anything Expense related</string>
-    <string name="expenses_notification_expense_added">Expense Added</string>
-    <string name="expenses_added_notification_summary">Expenses</string>
-    <string name="expenses_notification_expense_added_for_payment">Expense added for %s</string>
-
-    <!-- Bill Category -->
-    <string name="bill_category_electricity">Electricity</string>
-    <string name="bill_category_water">Water</string>
-    <string name="bill_category_broadband">Broadband</string>
-    <string name="bill_category_dtv">Digital TV</string>
-    <string name="bill_category_subscription">Subscription</string>
-    <string name="bill_category_misc">Miscellaneous</string>
     <string name="balance">Balance</string>
+    <string name="theme_system_default">System Default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="select_theme">Select Theme</string>
 </resources>

@@ -12,13 +12,13 @@ import androidx.compose.ui.res.stringResource
 
 @Composable
 fun TransparentSmallTopAppBar(
-    @StringRes title: Int,
+    @StringRes title: Int?,
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     SmallTopAppBar(
-        title = { Text(stringResource(title)) },
+        title = { title?.let { Text(stringResource(it)) } },
         modifier = modifier,
         navigationIcon = navigationIcon,
         actions = actions,

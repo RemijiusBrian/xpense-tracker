@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import dev.ridill.xpensetracker.core.ui.theme.PaddingMedium
-import dev.ridill.xpensetracker.core.ui.theme.PaddingSmall
+import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import dev.ridill.xpensetracker.core.ui.theme.SpacingSmall
 
 @Composable
 fun ListLabel(
@@ -23,8 +23,8 @@ fun ListLabel(
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
             .paddingFromBaseline(
-                top = PaddingMedium,
-                bottom = PaddingSmall
+                top = SpacingMedium,
+                bottom = SpacingSmall
             )
     )
 }

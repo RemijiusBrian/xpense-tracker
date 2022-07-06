@@ -105,7 +105,7 @@ fun AddEditBillScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(onClick = actions::onCategoryClick)
-                    .padding(vertical = PaddingSmall, horizontal = PaddingMedium),
+                    .padding(vertical = SpacingSmall, horizontal = SpacingMedium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 BillCategoryIcon(category = state.category)
@@ -125,13 +125,13 @@ fun AddEditBillScreenContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(PaddingMedium)
+                    .padding(SpacingMedium)
                     .background(
                         color = MaterialTheme.colorScheme.surface
                             .copy(alpha = ContentAlpha.PERCENT_16),
                         shape = MaterialTheme.shapes.large
                     )
-                    .padding(PaddingMedium)
+                    .padding(SpacingMedium)
             ) {
                 LazyColumn(
                     contentPadding = PaddingValues(
@@ -233,7 +233,7 @@ fun AddEditBillScreenContent(
                                     contentDescription = stringResource(category.label),
                                     tint = tint,
                                     modifier = Modifier
-                                        .padding(PaddingSmall)
+                                        .padding(SpacingSmall)
                                 )
                             }
                         }

@@ -1,7 +1,12 @@
 package dev.ridill.xpensetracker.core.util
 
+import android.os.Build
+
 val <T> T.exhaustive: T
     get() = this
+
+fun isBuildVersionAndroid12OrAbove(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 inline fun <T> tryOrNull(tryBlock: () -> T): T? = try {
     tryBlock()

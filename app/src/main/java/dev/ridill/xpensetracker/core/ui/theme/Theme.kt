@@ -1,6 +1,5 @@
 package dev.ridill.xpensetracker.core.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -8,6 +7,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dev.ridill.xpensetracker.core.util.isBuildVersionAndroid12OrAbove
 
 private val DarkColorScheme = darkColorScheme(
     primary = MoneyGreen80,
@@ -70,12 +70,16 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun XpenseTrackerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    useDynamicTheming: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val canUseDynamicColors = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val dynamicThemingSupported = isBuildVersionAndroid12OrAbove()
     val colorScheme = when {
-        canUseDynamicColors && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
-        canUseDynamicColors && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+        useDynamicTheming && dynamicThemingSupported && darkTheme -> dynamicDarkColorScheme(
+            LocalContext.current
+        )
+        useDynamicTheming && dynamicThemingSupported && !darkTheme ->
+            dynamicLightColorScheme(LocalContext.current)
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
@@ -23,14 +22,11 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +40,7 @@ import dev.ridill.xpensetracker.core.ui.util.numberSliderTransition
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
+import dev.ridill.xpensetracker.feature_settings.presentation.components.ExpenditureLimitUpdateDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -134,10 +131,10 @@ fun ExpenseListScreenContent(
                     modifier = Modifier
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(
-                        top = PaddingSmall,
-                        bottom = PaddingSmall,
+                        top = SpacingSmall,
+                        bottom = SpacingSmall,
                         end = ListPaddingLarge,
-                        start = PaddingMedium
+                        start = SpacingMedium
                     ),
                     horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                     verticalAlignment = Alignment.CenterVertically
@@ -180,8 +177,8 @@ fun ExpenseListScreenContent(
                         verticalArrangement = Arrangement.spacedBy(SpacingSmall),
                         contentPadding = PaddingValues(
                             bottom = ListPaddingLarge,
-                            start = PaddingMedium,
-                            end = PaddingMedium
+                            start = SpacingMedium,
+                            end = SpacingMedium
                         ),
                         modifier = Modifier
                             .matchParentSize()
@@ -232,7 +229,7 @@ private fun Greetings(
 ) {
     Column(
         modifier = Modifier
-            .padding(horizontal = PaddingMedium, vertical = PaddingSmall)
+            .padding(horizontal = SpacingMedium, vertical = SpacingSmall)
     ) {
         Text(
             text = stringResource(R.string.greeting_comma),
@@ -252,20 +249,18 @@ private fun Greetings(
                     text = stringResource(R.string.expenditure_limit_label),
                     style = MaterialTheme.typography.titleMedium
                 )
-                TextButton(onClick = onLimitUpdate) {
-                    AnimatedContent(
-                        targetState = limit,
-                        transitionSpec = {
-                            numberSliderTransition { targetState > initialState }
-                        }
-                    ) { value ->
-                        Text(
-                            text = TextUtil.formatAmountWithCurrency(value),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.primary,
-                            textDecoration = TextDecoration.Underline
-                        )
+                AnimatedContent(
+                    targetState = limit,
+                    transitionSpec = {
+                        numberSliderTransition { targetState > initialState }
                     }
+                ) { value ->
+                    Text(
+                        text = TextUtil.formatAmountWithCurrency(value),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline
+                    )
                 }
             }
         }
@@ -283,7 +278,7 @@ private fun Stats(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .padding(PaddingMedium),
+            .padding(SpacingMedium),
         color = MaterialTheme.colorScheme.surfaceVariant
             .copy(alpha = ContentAlpha.PERCENT_16),
         shape = MaterialTheme.shapes.medium
@@ -291,7 +286,7 @@ private fun Stats(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(PaddingSmall)
+                .padding(SpacingSmall)
         ) {
             Balance(balance = monthlyBalance)
             Spacer(Modifier.height(SpacingSmall))
@@ -313,7 +308,7 @@ private fun Stats(
                         horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                         verticalAlignment = Alignment.Bottom,
                         contentPadding = PaddingValues(
-                            start = PaddingMedium,
+                            start = SpacingMedium,
                             end = ListPaddingLarge
                         )
                     ) {
@@ -344,7 +339,7 @@ private fun Balance(
     AnimatedVisibility(visible = balance > 0) {
         Column(
             modifier = modifier
-                .padding(horizontal = PaddingMedium)
+                .padding(horizontal = SpacingMedium)
         ) {
             Text(
                 text = stringResource(R.string.balance),
@@ -479,7 +474,7 @@ private fun TagItem(
         color = FilterChipDefaults.filterChipColors()
             .containerColor(enabled = true, selected = selected).value,
         modifier = modifier
-            .padding(vertical = PaddingSmall)
+            .padding(vertical = SpacingSmall)
             .semantics { role = Role.Checkbox }
             .combinedClickable(
                 onClick = onClick,
@@ -494,13 +489,13 @@ private fun TagItem(
             horizontalArrangement = Arrangement.Start,
             modifier = Modifier
                 .defaultMinSize(minHeight = FilterChipDefaults.Height)
-                .padding(horizontal = PaddingSmall)
+                .padding(horizontal = SpacingSmall)
         ) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier
-                    .padding(horizontal = PaddingSmall)
+                    .padding(horizontal = SpacingSmall)
             )
             AnimatedVisibility(visible = deleteModeActive) {
                 IconButton(
@@ -537,7 +532,7 @@ private fun ExpenseItem(
     ) {
         Row(
             modifier = Modifier
-                .padding(PaddingMedium)
+                .padding(SpacingMedium)
         ) {
             Column(
                 modifier = Modifier
@@ -563,53 +558,6 @@ private fun ExpenseItem(
             )
         }
     }
-}
-
-@Composable
-private fun ExpenditureLimitUpdateDialog(
-    previousLimit: String,
-    onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit
-) {
-    var input by remember { mutableStateOf("") }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(onClick = { onConfirm(input) }) {
-                Text(stringResource(R.string.action_confirm))
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_cancel))
-            }
-        },
-        icon = {
-            Icon(
-                painter = painterResource(R.drawable.ic_piggy_bank),
-                contentDescription = null
-            )
-        },
-        title = {
-            Text(stringResource(R.string.enter_expenditure_limit))
-        },
-        text = {
-            OutlinedTextField(
-                value = input,
-                onValueChange = { input = it },
-                singleLine = true,
-                placeholder = {
-                    Text(previousLimit)
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
-                ),
-                shape = MaterialTheme.shapes.medium
-            )
-        }
-    )
 }
 
 private const val MONTHS_BARS_HEIGHT_PERCENT = 0.36f

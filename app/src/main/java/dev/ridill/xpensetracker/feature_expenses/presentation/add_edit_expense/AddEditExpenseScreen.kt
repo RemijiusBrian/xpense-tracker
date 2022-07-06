@@ -94,7 +94,7 @@ fun AddEditExpenseScreenContent(
         LazyColumn(
             contentPadding = PaddingValues(
                 vertical = ListPaddingLarge,
-                horizontal = PaddingMedium
+                horizontal = SpacingMedium
             ),
             verticalArrangement = Arrangement.spacedBy(SpacingMedium),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -279,11 +279,11 @@ private fun NewTagInput(
             color = MaterialTheme.colorScheme.surface,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier
-                .padding(PaddingMedium)
+                .padding(SpacingMedium)
         ) {
             Box(
                 modifier = Modifier
-                    .padding(PaddingSmall)
+                    .padding(SpacingSmall)
             ) {
                 TextField(
                     value = tagInput,

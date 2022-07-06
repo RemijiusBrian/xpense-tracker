@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import dev.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ fun XTSnackbarHost(
                 }
             },
             modifier = Modifier
-                .padding(PaddingMedium),
+                .padding(SpacingMedium),
             shape = MaterialTheme.shapes.medium
         ) {
             Text(data.visuals.message)

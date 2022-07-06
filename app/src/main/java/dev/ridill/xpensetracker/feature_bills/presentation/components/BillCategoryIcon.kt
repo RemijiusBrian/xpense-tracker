@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.ridill.xpensetracker.core.ui.theme.ContentAlpha
-import dev.ridill.xpensetracker.core.ui.theme.PaddingMedium
+import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
 import dev.ridill.xpensetracker.feature_bills.domain.model.BillCategory
 
 @Composable
@@ -29,7 +29,7 @@ fun BillCategoryIcon(
                     .copy(alpha = ContentAlpha.PERCENT_16),
                 shape = MaterialTheme.shapes.small
             )
-            .padding(PaddingMedium)
+            .padding(SpacingMedium)
     ) {
         Icon(
             painter = painterResource(category.icon),
