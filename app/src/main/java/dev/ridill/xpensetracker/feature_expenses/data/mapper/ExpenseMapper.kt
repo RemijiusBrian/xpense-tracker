@@ -12,7 +12,7 @@ import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 
 fun MonthAndExpenditureRelation.toMonthAndExpenditure(limit: Long): MonthStats = MonthStats(
     month = month,
-    expenditureAmount = TextUtil.formatAmountWithCurrency(expenditure),
+    expenditureAmount = TextUtil.compactFormatAmountWithCurrency(expenditure),
     expenditurePercent = if (limit > 0) {
         (expenditure / limit.toDouble()).takeIf { !it.isNaN() }.orZero().toFloat()
     } else 0f,

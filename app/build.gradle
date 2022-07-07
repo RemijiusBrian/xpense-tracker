@@ -15,7 +15,7 @@ android {
         minSdk 29
         targetSdk 31
         versionCode 1
-        versionName "1.0.0"
+        versionName "2022.07.1"
 
         testInstrumentationRunner "com.xpenses.android.HiltTestRunner"
         vectorDrawables {
@@ -77,11 +77,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
-    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.0'
+    implementation 'androidx.activity:activity-compose:1.5.0'
 
     // Compose Material 3
-    def material_3_version = "1.0.0-alpha13"
+    def material_3_version = "1.0.0-alpha14"
     implementation("androidx.compose.material3:material3:$material_3_version")
     implementation("androidx.compose.material3:material3-window-size-class:$material_3_version")
 
@@ -97,7 +97,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 
     // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.5.0-rc02")
+    implementation("androidx.navigation:navigation-compose:2.5.0")
 
     // Accompanist
     def accompanist_version = "0.24.5-alpha"

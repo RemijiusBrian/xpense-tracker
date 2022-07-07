@@ -1,5 +1,6 @@
 package dev.ridill.xpensetracker.core.ui.util
 
+import android.icu.text.CompactDecimalFormat
 import dev.ridill.xpensetracker.core.util.tryOrNull
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -14,11 +15,25 @@ object TextUtil {
     private fun formatNumber(number: Long): String =
         numberFormat.format(number)
 
-    fun formatDateWithPattern(dateInMillis: Long, pattern: String): String =
+    fun formatDate(dateInMillis: Long, pattern: String): String =
         SimpleDateFormat(pattern, Locale.getDefault()).format(dateInMillis)
 
     fun formatDate(dateInMillis: Long, style: Int = SimpleDateFormat.MEDIUM): String =
         SimpleDateFormat.getDateInstance(style).format(dateInMillis)
+
+    fun compactFormatAmountWithCurrency(
+        amount: Double,
+        compactStyle: CompactDecimalFormat.CompactStyle = CompactDecimalFormat.CompactStyle.SHORT
+    ): String = "$currencySymbol${
+        CompactDecimalFormat.getInstance(Locale.getDefault(), compactStyle).format(amount)
+    }"
+
+    fun compactFormatAmountWithCurrency(
+        amount: Long,
+        compactStyle: CompactDecimalFormat.CompactStyle = CompactDecimalFormat.CompactStyle.LONG
+    ): String = "$currencySymbol${
+        CompactDecimalFormat.getInstance(Locale.getDefault(), compactStyle).format(amount)
+    }"
 
     fun formatAmountWithCurrency(amount: Double): String =
         "$currencySymbol${formatNumber(amount)}"

@@ -13,13 +13,14 @@ data class Expense(
     val billId: Long?
 ) : Parcelable {
     companion object {
-        val DEFAULT = Expense(
-            id = 0L,
-            name = "",
-            amount = "",
-            dateMillis = System.currentTimeMillis(),
-            tag = null,
-            billId = null
-        )
+        val DEFAULT
+            get() = Expense(
+                id = 0L,
+                name = "",
+                amount = "",
+                dateMillis = System.currentTimeMillis(),
+                tag = null,
+                billId = null
+            )
     }
 }

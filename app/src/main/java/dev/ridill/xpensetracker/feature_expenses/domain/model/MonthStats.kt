@@ -10,6 +10,6 @@ data class MonthStats(
 ) {
     val monthParsed: String
         get() = TextUtil.parseDate(month, DatePatterns.MONTH_NUMBER_WITH_YEAR)?.let {
-            TextUtil.formatDateWithPattern(it.time, DatePatterns.SHORT_MONTH_NAME)
+            TextUtil.formatDate(it.time, DatePatterns.SHORT_MONTH_NAME)
         }.orEmpty()
 }

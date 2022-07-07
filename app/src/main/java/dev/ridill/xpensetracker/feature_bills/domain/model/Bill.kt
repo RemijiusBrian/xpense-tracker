@@ -18,13 +18,14 @@ data class Bill(
         get() = TextUtil.formatDate(dateMillis)
 
     companion object {
-        val DEFAULT = Bill(
-            id = 0L,
-            name = "",
-            amount = "",
-            recurring = true,
-            category = BillCategory.MISC,
-            dateMillis = System.currentTimeMillis()
-        )
+        val DEFAULT
+            get() = Bill(
+                id = 0L,
+                name = "",
+                amount = "",
+                recurring = true,
+                category = BillCategory.MISC,
+                dateMillis = System.currentTimeMillis()
+            )
     }
 }

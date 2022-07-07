@@ -44,7 +44,7 @@ class ExpensesViewModel @Inject constructor(
                     ?: getCurrentMonthWithYear()
     }
 
-    private fun getCurrentMonthWithYear(): String = TextUtil.formatDateWithPattern(
+    private fun getCurrentMonthWithYear(): String = TextUtil.formatDate(
         System.currentTimeMillis(),
         DatePatterns.MONTH_NUMBER_WITH_YEAR
     )

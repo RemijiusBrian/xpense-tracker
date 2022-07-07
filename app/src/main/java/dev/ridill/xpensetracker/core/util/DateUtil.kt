@@ -31,7 +31,7 @@ fun Long.dayWithSuffix(
 ): String = buildString {
     val pattern = if (longDay) DatePatterns.LONG_DAY_NAME_WITH_DAY_NUMBER
     else DatePatterns.SHORT_DAY_NAME_WITH_DAY_NUMBER
-    val formatted = TextUtil.formatDateWithPattern(this@dayWithSuffix, pattern)
+    val formatted = TextUtil.formatDate(this@dayWithSuffix, pattern)
     val suffix = when (formatted.lastOrNull()) {
         null -> ""
         '1' -> "st"

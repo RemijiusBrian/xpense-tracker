@@ -1,8 +1,7 @@
 package dev.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -370,21 +368,10 @@ private fun MonthBar(
     modifier: Modifier,
     onClick: () -> Unit
 ) {
-    val barTransition = updateTransition(
-        targetState = selected,
-        label = stringResource(R.string.anim_label_month_bar)
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val barIndicatorAlpha by animateFloatAsState(
+        targetValue = if (selected) Constants.ONE_F else ContentAlpha.PERCENT_16
     )
-    val scale by barTransition.animateFloat(label = stringResource(R.string.anim_label_month_bar_scale)) { isSelected ->
-        if (isSelected) 1f else 0.80f
-    }
-    val color by barTransition.animateColor(label = stringResource(R.string.anim_label_month_bar_color)) { isSelected ->
-        when {
-            expenditurePercentage >= Constants.ONE_F -> MaterialTheme.colorScheme.errorContainer
-            isSelected -> MaterialTheme.colorScheme.primary
-            else -> MaterialTheme.colorScheme.surfaceVariant
-        }
-    }
-
     val coroutineScope = rememberCoroutineScope()
     var showExpenditureAmount by remember { mutableStateOf(false) }
 
@@ -401,21 +388,18 @@ private fun MonthBar(
                 .drawBehind {
                     val heightPercent = size.height * expenditurePercentage
                         .coerceAtMost(Constants.ONE_F)
-                    scale(scaleX = Constants.ONE_F, scaleY = scale) {
-                        drawRoundRect(
-                            color = color,
-                            cornerRadius = CornerRadius(8f, 8f),
-                            topLeft = Offset(
-                                x = 0f,
-                                y = size.height - heightPercent
-                            )
-                        )
-                    }
+                    drawRoundRect(
+                        color = primaryColor,
+                        cornerRadius = CornerRadius(8f, 8f),
+                        topLeft = Offset(
+                            x = 0f,
+                            y = size.height - heightPercent
+                        ),
+                        alpha = barIndicatorAlpha
+                    )
                 }
                 .combinedClickable(
-                    onClick = {
-                        if (!selected) onClick()
-                    },
+                    onClick = { if (!selected) onClick() },
                     onLongClick = {
                         coroutineScope.launch {
                             showExpenditureAmount = true
@@ -444,11 +428,13 @@ private fun MonthBar(
                     )
                 }
             }
-            Text(
-                text = "${(expenditurePercentage * 100).roundToInt()}%",
-                style = MaterialTheme.typography.labelMedium,
-                color = contentColorFor(color)
-            )
+            this@Column.AnimatedVisibility(visible = selected) {
+                Text(
+                    text = "${(expenditurePercentage * 100).roundToInt()}%",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
         Spacer(Modifier.height(SpacingXSmall))
         Text(
