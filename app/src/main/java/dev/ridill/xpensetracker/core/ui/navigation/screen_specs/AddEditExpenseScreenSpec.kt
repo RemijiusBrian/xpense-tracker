@@ -80,8 +80,11 @@ object AddEditExpenseScreenSpec : ScreenSpec {
                             ?.set(ADD_EDIT_EXPENSE_RESULT, RESULT_EXPENSE_UPDATED)
                         navController.popBackStack()
                     }
-                    is AddEditExpenseViewModel.AddEditEvents.ShowSnackbar -> {
-                        snackbarController.showSnackbar(event.message.asString(context))
+                    is AddEditExpenseViewModel.AddEditEvents.ShowErrorMessage -> {
+                        snackbarController.showErrorSnackbar(event.message.asString(context))
+                    }
+                    is AddEditExpenseViewModel.AddEditEvents.ShowUiMessage -> {
+                        snackbarController.showMessageSnackbar(event.message.asString(context))
                     }
                 }.exhaustive
             }

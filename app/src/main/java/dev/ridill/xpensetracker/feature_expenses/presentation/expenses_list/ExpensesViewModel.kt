@@ -121,7 +121,7 @@ class ExpensesViewModel @Inject constructor(
         viewModelScope.launch {
             val amount = limit.toLongOrZero()
             if (amount < 0L) {
-                eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
+                eventsChannel.send(ExpenseListEvent.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
             preferencesManager.updateExpenditureLimit(amount)
@@ -211,12 +211,13 @@ class ExpensesViewModel @Inject constructor(
             else -> return
         }
         viewModelScope.launch {
-            eventsChannel.send(ExpenseListEvent.ShowSnackbar(UiText.StringResource(messageRes)))
+            eventsChannel.send(ExpenseListEvent.ShowUiMessage(UiText.StringResource(messageRes)))
         }
     }
 
     sealed class ExpenseListEvent {
-        data class ShowSnackbar(val message: UiText) : ExpenseListEvent()
+        data class ShowUiMessage(val message: UiText) : ExpenseListEvent()
+        data class ShowErrorMessage(val message: UiText) : ExpenseListEvent()
         data class NavigateToAddEditExpenseScreen(val id: Long) : ExpenseListEvent()
     }
 }

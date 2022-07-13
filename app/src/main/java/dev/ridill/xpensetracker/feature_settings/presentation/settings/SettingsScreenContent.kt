@@ -21,9 +21,7 @@ import androidx.core.net.toUri
 import dev.ridill.xpensetracker.BuildConfig
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.domain.model.AppTheme
-import dev.ridill.xpensetracker.core.ui.components.BackArrowButton
-import dev.ridill.xpensetracker.core.ui.components.RadioButtonWithLabel
-import dev.ridill.xpensetracker.core.ui.components.TransparentSmallTopAppBar
+import dev.ridill.xpensetracker.core.ui.components.*
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.SettingsScreenSpec
 import dev.ridill.xpensetracker.core.ui.theme.ContentAlpha
 import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
@@ -34,6 +32,7 @@ import dev.ridill.xpensetracker.feature_settings.presentation.components.Expendi
 
 @Composable
 fun SettingsScreenContent(
+    snackbarController: SnackbarController,
     state: SettingsState,
     actions: SettingsActions,
     navigateUp: () -> Unit
@@ -47,7 +46,8 @@ fun SettingsScreenContent(
                 title = SettingsScreenSpec.label,
                 navigationIcon = { BackArrowButton(onClick = navigateUp) }
             )
-        }
+        },
+        snackbarHost = { XTSnackbarHost(snackbarController) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -118,12 +118,12 @@ class AddEditBillViewModel @Inject constructor(
         viewModelScope.launch {
             val description = name.value?.trim().orEmpty()
             if (description.isEmpty()) {
-                eventsChannel.send(AddEditBillEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_description)))
+                eventsChannel.send(AddEditBillEvent.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_description)))
                 return@launch
             }
             val amount = amount.value?.trim().orEmpty()
             if (amount.toDoubleOrZero() <= 0.0) {
-                eventsChannel.send(AddEditBillEvent.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
+                eventsChannel.send(AddEditBillEvent.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
             bill.value?.let {
@@ -155,7 +155,7 @@ class AddEditBillViewModel @Inject constructor(
     }
 
     sealed class AddEditBillEvent {
-        data class ShowSnackbar(val message: UiText) : AddEditBillEvent()
+        data class ShowErrorMessage(val message: UiText) : AddEditBillEvent()
         object BillAdded : AddEditBillEvent()
         object BillUpdated : AddEditBillEvent()
         object BillDeleted : AddEditBillEvent()

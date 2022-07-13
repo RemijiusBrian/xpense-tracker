@@ -47,8 +47,11 @@ object ExpenseListScreenSpec : ScreenSpec {
                             AddEditExpenseScreenSpec.buildRoute(event.id)
                         )
                     }
-                    is ExpensesViewModel.ExpenseListEvent.ShowSnackbar -> {
-                        snackbarController.showSnackbar(event.message.asString(context))
+                    is ExpensesViewModel.ExpenseListEvent.ShowUiMessage -> {
+                        snackbarController.showMessageSnackbar(event.message.asString(context))
+                    }
+                    is ExpensesViewModel.ExpenseListEvent.ShowErrorMessage -> {
+                        snackbarController.showErrorSnackbar(event.message.asString(context))
                     }
                 }.exhaustive
             }

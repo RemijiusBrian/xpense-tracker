@@ -119,7 +119,7 @@ class AddEditExpenseViewModel @Inject constructor(
         val tag = newTagInput.value?.trim().orEmpty()
         viewModelScope.launch {
             if (tag.isEmpty()) {
-                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_tag_name)))
+                eventsChannel.send(AddEditEvents.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_tag_name)))
                 return@launch
             }
             repo.cacheTag(tag)
@@ -127,7 +127,7 @@ class AddEditExpenseViewModel @Inject constructor(
                 tag = tag
             )
             dismissTagInput()
-            eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.tag_created)))
+            eventsChannel.send(AddEditEvents.ShowUiMessage(UiText.StringResource(R.string.tag_created)))
         }
     }
 
@@ -158,12 +158,12 @@ class AddEditExpenseViewModel @Inject constructor(
         viewModelScope.launch {
             val amount = amount.value?.trim().orEmpty()
             if (amount.isEmpty() || amount.toDoubleOrZero() <= 0.0) {
-                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_amount)))
+                eventsChannel.send(AddEditEvents.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
             val name = name.value?.trim().orEmpty()
             if (name.isEmpty()) {
-                eventsChannel.send(AddEditEvents.ShowSnackbar(UiText.StringResource(R.string.error_invalid_note)))
+                eventsChannel.send(AddEditEvents.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_note)))
                 return@launch
             }
             expenseInput.value?.let { expense ->
@@ -180,7 +180,8 @@ class AddEditExpenseViewModel @Inject constructor(
         object ExpenseCreated : AddEditEvents()
         object ExpenseUpdated : AddEditEvents()
         object ExpenseDeleted : AddEditEvents()
-        data class ShowSnackbar(val message: UiText) : AddEditEvents()
+        data class ShowErrorMessage(val message: UiText) : AddEditEvents()
+        data class ShowUiMessage(val message: UiText) : AddEditEvents()
     }
 }
 

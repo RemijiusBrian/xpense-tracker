@@ -25,11 +25,7 @@
     <string name="content_description_save">Save</string>
     <string name="content_description_edit_limit">Edit limit</string>
     <string name="content_description_delete_tag">Delete Tag</string>
-
-    <!-- Misc -->
-    <!--<string name="anim_label_month_bar">Month Bar Animation</string>
-    <string name="anim_label_month_bar_scale">Month Bar Scale</string>
-    <string name="anim_label_month_bar_color">Month Bar Color</string>-->
+    <string name="content_description_error">Error</string>
 
     <!-- Notifications -->
     <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
@@ -125,4 +121,5 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="select_theme">Select Theme</string>
+    <string name="expenditure_limit_updated">Expenditure limit updated</string>
 </resources>

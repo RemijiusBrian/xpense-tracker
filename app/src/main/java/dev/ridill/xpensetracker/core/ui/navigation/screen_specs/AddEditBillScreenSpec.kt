@@ -64,8 +64,8 @@ object AddEditBillScreenSpec : ScreenSpec {
                             ?.set(ADD_EDIT_BILL_RESULT, RESULT_BILL_UPDATED)
                         navController.popBackStack()
                     }
-                    is AddEditBillViewModel.AddEditBillEvent.ShowSnackbar -> {
-                        snackbarController.showSnackbar(event.message.asString(context))
+                    is AddEditBillViewModel.AddEditBillEvent.ShowErrorMessage -> {
+                        snackbarController.showErrorSnackbar(event.message.asString(context))
                     }
                 }.exhaustive
             }

@@ -55,8 +55,8 @@ object BillsListScreenSpec : BottomBarScreenSpec {
         LaunchedEffect(context) {
             viewModel.events.collect { event ->
                 when (event) {
-                    is BillsListViewModel.BillsListEvent.ShowSnackbar -> {
-                        snackbarController.showSnackbar(event.message.asString(context))
+                    is BillsListViewModel.BillsListEvent.ShowUiMessage -> {
+                        snackbarController.showMessageSnackbar(event.message.asString(context))
                     }
                     is BillsListViewModel.BillsListEvent.NavigateToAddEditBillScreen -> {
                         navController.navigate(AddEditBillScreenSpec.buildRoute(event.id))

@@ -45,7 +45,7 @@ class BillsListViewModel @Inject constructor(
     override fun onMarkAsPaidClick(payment: BillPayment) {
         viewModelScope.launch {
             repo.markBillAsPaid(payment)
-            eventsChannel.send(BillsListEvent.ShowSnackbar(UiText.StringResource(R.string.bill_marked_as_paid_message)))
+            eventsChannel.send(BillsListEvent.ShowUiMessage(UiText.StringResource(R.string.bill_marked_as_paid_message)))
         }
     }
 
@@ -57,7 +57,7 @@ class BillsListViewModel @Inject constructor(
             else -> return
         }
         viewModelScope.launch {
-            eventsChannel.send(BillsListEvent.ShowSnackbar(UiText.StringResource(message)))
+            eventsChannel.send(BillsListEvent.ShowUiMessage(UiText.StringResource(message)))
         }
     }
 
@@ -68,7 +68,7 @@ class BillsListViewModel @Inject constructor(
     }
 
     sealed class BillsListEvent {
-        data class ShowSnackbar(val message: UiText) : BillsListEvent()
+        data class ShowUiMessage(val message: UiText) : BillsListEvent()
         data class NavigateToAddEditBillScreen(val id: Long) : BillsListEvent()
     }
 }
