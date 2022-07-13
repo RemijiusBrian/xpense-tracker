@@ -50,12 +50,8 @@ fun ExpenseListScreenContent(
     navigateToBottomBarDestination: (BottomBarScreenSpec) -> Unit
 ) {
     val topBarScrollState = rememberTopAppBarScrollState()
-    val decayAnimation = rememberSplineBasedDecay<Float>()
     val topAppBarScrollBehavior = remember {
-        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(
-            decayAnimationSpec = decayAnimation,
-            state = topBarScrollState
-        )
+        TopAppBarDefaults.enterAlwaysScrollBehavior(topBarScrollState)
     }
 
     Scaffold(
@@ -106,95 +102,66 @@ fun ExpenseListScreenContent(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
+                .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection),
+            contentPadding = PaddingValues(
+                start = SpacingMedium,
+                end = SpacingMedium,
+                bottom = ListPaddingLarge,
+                top = SpacingMedium
+            ),
+            verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
-            Greetings(
-                limit = state.expenditureLimit,
-                onLimitUpdate = actions::onExpenditureLimitUpdateClick
-            )
-            Stats(
-                monthlyBalance = state.balance,
-                monthStats = state.monthsToExpenditurePercents,
-                selectedMonth = state.selectedMonth,
-                onMonthSelect = actions::onMonthSelect,
-                modifier = Modifier
-                    .fillMaxHeight(MONTHS_BARS_HEIGHT_PERCENT)
-            )
-            AnimatedVisibility(visible = state.tags.isNotEmpty()) {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentPadding = PaddingValues(
-                        top = SpacingSmall,
-                        bottom = SpacingSmall,
-                        end = ListPaddingLarge,
-                        start = SpacingMedium
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (!state.tagDeletableModeActive) {
-                        item(key = Constants.STRING_ALL) {
-                            FilterChip(
-                                selected = state.selectedTag.isEmpty(),
-                                onClick = { actions.onTagFilterSelect(Constants.STRING_ALL) },
-                                label = { Text(Constants.STRING_ALL) },
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                            )
-                        }
-                    }
-                    items(items = state.tags, key = { it }) { tag ->
-                        TagItem(
-                            selected = tag == state.selectedTag,
-                            label = tag,
-                            onClick = { actions.onTagFilterSelect(tag) },
-                            onLongClick = actions::onTagLongClick,
-                            deleteModeActive = state.tagDeletableModeActive,
-                            onDelete = { actions.onTagDeleteClick(tag) },
-                            modifier = Modifier
-                                .animateItemPlacement()
-                        )
-                    }
+            item(key = "Greetings") {
+                Greetings(
+                    limit = state.expenditureLimit,
+                    onLimitUpdate = actions::onExpenditureLimitUpdateClick
+                )
+            }
+            item(key = "stats") {
+                Stats(
+                    monthlyBalance = state.balance,
+                    monthStats = state.monthsToExpenditurePercents,
+                    selectedMonth = state.selectedMonth,
+                    onMonthSelect = actions::onMonthSelect
+                )
+            }
+
+            if (state.tags.isNotEmpty()) {
+                item {
+                    TagFilters(
+                        tags = state.tags,
+                        selectedTag = state.selectedTag,
+                        onTagClick = actions::onTagFilterSelect,
+                        onTagLongClick = actions::onTagLongClick,
+                        onTagDelete = actions::onTagDeleteClick,
+                        tagDeletionModeActive = state.tagDeletionModeActive
+                    )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(WEIGHT_1),
-                contentAlignment = Alignment.Center
-            ) {
-                if (state.expenses.isEmpty()) {
-                    ListEmptyIndicator(message = R.string.empty_expenses_data_message)
-                } else {
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(SpacingSmall),
-                        contentPadding = PaddingValues(
-                            bottom = ListPaddingLarge,
-                            start = SpacingMedium,
-                            end = SpacingMedium
-                        ),
+
+            if (state.expenses.isNotEmpty()) {
+                items(state.expenses, key = { it.id }) { expense ->
+                    ExpenseItem(
+                        name = expense.name,
+                        date = expense.date,
+                        amount = expense.amount,
+                        onClick = { actions.onExpenseClick(expense.id) },
                         modifier = Modifier
-                            .matchParentSize()
-                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                    ) {
-                        item {
-                            ListLabel(label = R.string.label_expense_list)
-                        }
-                        items(state.expenses, key = { it.id }) { expense ->
-                            ExpenseItem(
-                                name = expense.name,
-                                date = expense.date,
-                                amount = expense.amount,
-                                onClick = { actions.onExpenseClick(expense.id) },
-                                modifier = Modifier
-                                    .animateItemPlacement()
-                            )
-                        }
-                    }
+                            .animateItemPlacement()
+                    )
+                }
+            } else {
+                item(key = "Expenses Empty") {
+                    Spacer(Modifier.height(SpacingLarge))
+                    ListEmptyIndicator(
+                        message = R.string.empty_expenses_data_message,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItemPlacement()
+                    )
                 }
             }
         }
@@ -222,11 +189,11 @@ fun ExpenseListScreenContent(
 @Composable
 private fun Greetings(
     limit: Long,
-    onLimitUpdate: () -> Unit
+    onLimitUpdate: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .padding(horizontal = SpacingMedium, vertical = SpacingSmall)
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.greeting_comma),
@@ -274,15 +241,14 @@ private fun Stats(
 ) {
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(SpacingMedium),
+            .padding(horizontal = SpacingSmall),
         color = MaterialTheme.colorScheme.surfaceVariant
             .copy(alpha = ContentAlpha.PERCENT_16),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(SpacingSmall)
         ) {
             Balance(balance = monthlyBalance)
@@ -290,7 +256,7 @@ private fun Stats(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(WEIGHT_1),
+                    .heightIn(min = MonthStatsMinHeight),
                 contentAlignment = Alignment.Center
             ) {
                 if (monthStats.isEmpty()) {
@@ -301,7 +267,7 @@ private fun Stats(
                 } else {
                     LazyRow(
                         modifier = Modifier
-                            .fillMaxSize(),
+                            .matchParentSize(),
                         horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
                         verticalAlignment = Alignment.Bottom,
                         contentPadding = PaddingValues(
@@ -446,6 +412,53 @@ private fun MonthBar(
 }
 
 @Composable
+private fun TagFilters(
+    tags: List<String>,
+    selectedTag: String,
+    onTagClick: (String) -> Unit,
+    onTagLongClick: () -> Unit,
+    onTagDelete: (String) -> Unit,
+    tagDeletionModeActive: Boolean
+) {
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(
+            top = SpacingSmall,
+            bottom = SpacingSmall,
+            end = ListPaddingLarge,
+            start = SpacingMedium
+        ),
+        horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (!tagDeletionModeActive) {
+            item(key = Constants.STRING_ALL) {
+                FilterChip(
+                    selected = selectedTag.isEmpty(),
+                    onClick = { onTagClick(Constants.STRING_ALL) },
+                    label = { Text(Constants.STRING_ALL) },
+                    modifier = Modifier
+                        .animateItemPlacement()
+                )
+            }
+        }
+        items(items = tags, key = { it }) { tag ->
+            TagItem(
+                selected = tag == selectedTag,
+                label = tag,
+                onClick = { onTagClick(tag) },
+                onLongClick = onTagLongClick,
+                deleteModeActive = tagDeletionModeActive,
+                onDelete = { onTagDelete(tag) },
+                modifier = Modifier
+                    .animateItemPlacement()
+            )
+        }
+    }
+}
+
+@Composable
 private fun TagItem(
     selected: Boolean,
     label: String,
@@ -545,7 +558,7 @@ private fun ExpenseItem(
     }
 }
 
-private const val MONTHS_BARS_HEIGHT_PERCENT = 0.36f
+private val MonthStatsMinHeight = 120.dp
 private val MonthBarMinWidth = 40.dp
 private const val EXPENDITURE_AMOUNT_DISPLAY_DURATION = 5000L
 

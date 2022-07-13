@@ -7,6 +7,7 @@ val SpacingXXSmall = 2.dp
 val SpacingXSmall = 4.dp
 val SpacingSmall = 8.dp
 val SpacingMedium = 16.dp
+val SpacingLarge = 32.dp
 
 val ListPaddingLarge = 80.dp
 

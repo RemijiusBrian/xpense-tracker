@@ -100,7 +100,7 @@ class ExpensesViewModel @Inject constructor(
             expenses = expenseList,
             expenditureLimit = preferences.expenditureLimit,
             showExpenditureLimitUpdateDialog = showExpenditureUpdateDialog,
-            tagDeletableModeActive = tagDeleteModeActive,
+            tagDeletionModeActive = tagDeleteModeActive,
             showTagDeleteConfirmation = showTagDeleteConfirmation,
             balance = balanceForCurrentMonth
         )

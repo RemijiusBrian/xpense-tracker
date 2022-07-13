@@ -11,7 +11,7 @@ data class ExpensesState(
     val expenses: List<ExpenseListItem> = emptyList(),
     val expenditureLimit: Long = 0L,
     val balance: Double = 0.0,
-    val tagDeletableModeActive: Boolean = false,
+    val tagDeletionModeActive: Boolean = false,
     val showExpenditureLimitUpdateDialog: Boolean = false,
     val showTagDeleteConfirmation: Boolean = false
 ) {
