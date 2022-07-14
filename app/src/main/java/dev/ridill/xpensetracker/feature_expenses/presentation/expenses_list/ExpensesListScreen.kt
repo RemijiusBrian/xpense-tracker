@@ -1,7 +1,12 @@
 package dev.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.VectorConverter
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TargetBasedAnimation
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -33,21 +40,22 @@ import dev.ridill.xpensetracker.core.ui.components.*
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.BottomBarScreenSpec
 import dev.ridill.xpensetracker.core.ui.theme.*
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
-import dev.ridill.xpensetracker.core.ui.util.numberSliderTransition
+import dev.ridill.xpensetracker.core.ui.util.verticalSpinnerAnimation
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
-import dev.ridill.xpensetracker.feature_settings.presentation.components.ExpenditureLimitUpdateDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @Composable
 fun ExpenseListScreenContent(
     state: ExpensesState,
     snackbarController: SnackbarController,
     actions: ExpensesActions,
-    navigateToBottomBarDestination: (BottomBarScreenSpec) -> Unit
+    navigateToBottomBarDestination: (BottomBarScreenSpec) -> Unit,
+    navigateToSettingsScreen: () -> Unit
 ) {
     val topBarScrollState = rememberTopAppBarScrollState()
     val topAppBarScrollBehavior = remember {
@@ -66,11 +74,7 @@ fun ExpenseListScreenContent(
             )
         },
         bottomBar = {
-            AnimatedVisibility(
-                visible = state.expenditureLimit > 0L,
-                enter = slideInVertically { it },
-                exit = slideOutVertically { it }
-            ) {
+            AnimatedVisibility(visible = state.isLimitSet) {
                 BottomAppBar(
                     icons = {
                         BottomBarScreenSpec.screens.forEach { screen ->
@@ -114,15 +118,16 @@ fun ExpenseListScreenContent(
             ),
             verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
-            item(key = "Greetings") {
-                Greetings(
-                    limit = state.expenditureLimit,
-                    onLimitUpdate = actions::onExpenditureLimitUpdateClick
+            item(key = "Monthly Balance") {
+                MonthlyBalance(
+                    balance = state.balance,
+                    balancePercent = state.balancePercent,
+                    isLimitSet = state.isLimitSet,
+                    onSetLimitClick = navigateToSettingsScreen
                 )
             }
             item(key = "stats") {
-                Stats(
-                    monthlyBalance = state.balance,
+                MonthlyStats(
                     monthStats = state.monthsToExpenditurePercents,
                     selectedMonth = state.selectedMonth,
                     onMonthSelect = actions::onMonthSelect
@@ -166,14 +171,6 @@ fun ExpenseListScreenContent(
             }
         }
 
-        if (state.showExpenditureLimitUpdateDialog) {
-            ExpenditureLimitUpdateDialog(
-                previousLimit = TextUtil.formatAmountWithCurrency(state.expenditureLimit),
-                onDismiss = actions::onExpenditureLimitUpdateDialogDismiss,
-                onConfirm = actions::onExpenditureLimitUpdateDialogConfirm
-            )
-        }
-
         if (state.showTagDeleteConfirmation) {
             SimpleConfirmationDialog(
                 title = R.string.delete_tagged_expenses_question,
@@ -187,11 +184,25 @@ fun ExpenseListScreenContent(
 }
 
 @Composable
-private fun Greetings(
-    limit: Long,
-    onLimitUpdate: () -> Unit,
+private fun MonthlyBalance(
+    balance: Double,
+    balancePercent: Float,
+    isLimitSet: Boolean,
+    onSetLimitClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val errorColor = MaterialTheme.colorScheme.error
+    val vectorConverter = remember { Color.VectorConverter(ColorSpaces.Srgb) }
+    val colorAnimation = remember {
+        TargetBasedAnimation(
+            animationSpec = tween(),
+            typeConverter = vectorConverter,
+            initialValue = errorColor,
+            targetValue = primaryColor,
+            initialVelocity = primaryColor
+        )
+    }
     Column(
         modifier = modifier
     ) {
@@ -201,39 +212,40 @@ private fun Greetings(
             color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.SemiBold
         )
-        if (limit <= 0) {
-            TextButton(onClick = onLimitUpdate) {
-                Text(stringResource(R.string.click_here_to_set_limit))
-            }
-        } else {
+        if (isLimitSet) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.expenditure_limit_label),
+                    text = stringResource(R.string.monthly_balance_is),
                     style = MaterialTheme.typography.titleMedium
                 )
-                Spacer(Modifier.width(SpacingXSmall))
+                Spacer(Modifier.width(SpacingSmall))
                 AnimatedContent(
-                    targetState = limit,
-                    transitionSpec = {
-                        numberSliderTransition { targetState > initialState }
-                    }
+                    targetState = balance,
+                    transitionSpec = { verticalSpinnerAnimation { targetState > initialState } }
                 ) { value ->
                     Text(
                         text = TextUtil.formatAmountWithCurrency(value),
                         style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
+                        color = colorAnimation.getValueFromNanos(
+                            (balancePercent * colorAnimation.durationNanos).toLong()
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+        } else {
+            TextButton(onClick = onSetLimitClick) {
+                Text(stringResource(R.string.click_here_to_set_limit))
             }
         }
     }
 }
 
 @Composable
-private fun Stats(
-    monthlyBalance: Double,
+private fun MonthlyStats(
     monthStats: List<MonthStats>,
     selectedMonth: String,
     onMonthSelect: (String) -> Unit,
@@ -246,80 +258,42 @@ private fun Stats(
             .copy(alpha = ContentAlpha.PERCENT_16),
         shape = MaterialTheme.shapes.medium
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(SpacingSmall)
+                .heightIn(min = MonthStatsMinHeight)
+                .padding(vertical = SpacingSmall),
+            contentAlignment = Alignment.Center
         ) {
-            Balance(balance = monthlyBalance)
-            Spacer(Modifier.height(SpacingSmall))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = MonthStatsMinHeight),
-                contentAlignment = Alignment.Center
-            ) {
-                if (monthStats.isEmpty()) {
-                    DataEmptyIndicator(
-                        iconRes = R.drawable.ic_bar_data,
-                        message = R.string.error_no_data_yet
+            if (monthStats.isEmpty()) {
+                DataEmptyIndicator(
+                    iconRes = R.drawable.ic_bar_data,
+                    message = R.string.error_no_data_yet
+                )
+            } else {
+                LazyRow(
+                    modifier = Modifier
+                        .matchParentSize(),
+                    horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
+                    verticalAlignment = Alignment.Bottom,
+                    contentPadding = PaddingValues(
+                        start = SpacingMedium,
+                        end = ListPaddingLarge
                     )
-                } else {
-                    LazyRow(
-                        modifier = Modifier
-                            .matchParentSize(),
-                        horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
-                        verticalAlignment = Alignment.Bottom,
-                        contentPadding = PaddingValues(
-                            start = SpacingMedium,
-                            end = ListPaddingLarge
+                ) {
+                    items(items = monthStats, key = { it.month }) { monthStat ->
+                        MonthBar(
+                            month = monthStat.monthParsed,
+                            selected = monthStat.month == selectedMonth,
+                            spentAmount = monthStat.expenditureAmount,
+                            expenditurePercentage = monthStat.expenditurePercent,
+                            onClick = { onMonthSelect(monthStat.month) },
+                            modifier = Modifier
+                                .fillParentMaxHeight()
+                                .animateItemPlacement()
                         )
-                    ) {
-                        items(items = monthStats, key = { it.month }) { monthStat ->
-                            MonthBar(
-                                month = monthStat.monthParsed,
-                                selected = monthStat.month == selectedMonth,
-                                spentAmount = monthStat.expenditureAmount,
-                                expenditurePercentage = monthStat.expenditurePercent,
-                                onClick = { onMonthSelect(monthStat.month) },
-                                modifier = Modifier
-                                    .fillParentMaxHeight()
-                                    .animateItemPlacement()
-                            )
-                        }
                     }
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun Balance(
-    balance: Double,
-    modifier: Modifier = Modifier
-) {
-    AnimatedVisibility(visible = balance > 0) {
-        Column(
-            modifier = modifier
-                .padding(horizontal = SpacingMedium)
-        ) {
-            Text(
-                text = stringResource(R.string.balance),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-                    .copy(alpha = ContentAlpha.PERCENT_60)
-            )
-            AnimatedContent(
-                targetState = balance,
-                transitionSpec = {
-                    numberSliderTransition { targetState > initialState }
-                }
-            ) { amount ->
-                Text(
-                    text = TextUtil.formatAmountWithCurrency(amount),
-                    style = MaterialTheme.typography.titleLarge
-                )
             }
         }
     }
@@ -334,12 +308,20 @@ private fun MonthBar(
     modifier: Modifier,
     onClick: () -> Unit
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val barIndicatorAlpha by animateFloatAsState(
-        targetValue = if (selected) Constants.ONE_F else ContentAlpha.PERCENT_16
-    )
     val coroutineScope = rememberCoroutineScope()
     var showExpenditureAmount by remember { mutableStateOf(false) }
+
+    val barColor by animateColorAsState(
+        targetValue = if (expenditurePercentage >= Constants.ONE_F) MaterialTheme.colorScheme.errorContainer
+        else MaterialTheme.colorScheme.primary
+    )
+    val barIndicatorAlpha by animateFloatAsState(
+        targetValue = when {
+            showExpenditureAmount -> ContentAlpha.PERCENT_08
+            selected -> Constants.ONE_F
+            else -> ContentAlpha.PERCENT_16
+        }
+    )
 
     Column(
         modifier = modifier,
@@ -351,19 +333,6 @@ private fun MonthBar(
                 .weight(WEIGHT_1)
                 .widthIn(min = MonthBarMinWidth)
                 .clip(MaterialTheme.shapes.small)
-                .drawBehind {
-                    val heightPercent = size.height * expenditurePercentage
-                        .coerceAtMost(Constants.ONE_F)
-                    drawRoundRect(
-                        color = primaryColor,
-                        cornerRadius = CornerRadius(8f, 8f),
-                        topLeft = Offset(
-                            x = 0f,
-                            y = size.height - heightPercent
-                        ),
-                        alpha = barIndicatorAlpha
-                    )
-                }
                 .combinedClickable(
                     onClick = { if (!selected) onClick() },
                     onLongClick = {
@@ -373,7 +342,20 @@ private fun MonthBar(
                             showExpenditureAmount = false
                         }
                     }
-                ),
+                )
+                .drawBehind {
+                    val heightPercent = size.height * expenditurePercentage
+                        .coerceAtMost(Constants.ONE_F)
+                    drawRoundRect(
+                        color = barColor,
+                        cornerRadius = CornerRadius(STAT_BAR_CORNER_RADIUS),
+                        topLeft = Offset(
+                            x = 0f,
+                            y = size.height - heightPercent
+                        ),
+                        alpha = barIndicatorAlpha
+                    )
+                },
             contentAlignment = Alignment.BottomCenter
         ) {
             this@Column.AnimatedVisibility(
@@ -384,13 +366,14 @@ private fun MonthBar(
                 Surface(
                     color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .width(MonthBarMinWidth),
-                    shadowElevation = ElevationSmall
+                        .widthIn(min = MonthBarMinWidth)
                 ) {
                     Text(
-                        text = stringResource(R.string.spent_amount, spentAmount),
+                        text = spentAmount,
                         style = MaterialTheme.typography.labelSmall,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .padding(horizontal = SpacingXSmall, vertical = SpacingSmall)
                     )
                 }
             }
@@ -398,7 +381,7 @@ private fun MonthBar(
                 Text(
                     text = "${(expenditurePercentage * 100).roundToInt()}%",
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = contentColorFor(backgroundColor = barColor)
                 )
             }
         }
@@ -560,6 +543,7 @@ private fun ExpenseItem(
 
 private val MonthStatsMinHeight = 120.dp
 private val MonthBarMinWidth = 40.dp
+private const val STAT_BAR_CORNER_RADIUS = 16f
 private const val EXPENDITURE_AMOUNT_DISPLAY_DURATION = 5000L
 
 @Preview(showBackground = true)
@@ -570,9 +554,9 @@ private fun PreviewScreenContent() {
             state = ExpensesState(
                 tags = listOf("Bills", "Leisure"),
                 selectedTag = Constants.STRING_ALL,
-                monthsToExpenditurePercents = emptyList() /*(1..5).map {
+                monthsToExpenditurePercents = emptyList(), /*(1..5).map {
                     MonthAndExpenditurePercent("Month $it", it * 0.1f)
-                }*/,
+                }*/
                 selectedMonth = "Month 1",
                 expenses = (1..20).map {
                     ExpenseListItem(
@@ -582,13 +566,9 @@ private fun PreviewScreenContent() {
                         date = "Monday, 10th"
                     )
                 },
-                expenditureLimit = 1000L
             ),
             snackbarController = rememberSnackbarController(),
             actions = object : ExpensesActions {
-                override fun onExpenditureLimitUpdateClick() {}
-                override fun onExpenditureLimitUpdateDialogDismiss() {}
-                override fun onExpenditureLimitUpdateDialogConfirm(limit: String) {}
                 override fun onTagFilterSelect(tag: String) {}
                 override fun onTagLongClick() {}
                 override fun onTagDeleteClick(tag: String) {}
@@ -598,7 +578,8 @@ private fun PreviewScreenContent() {
                 override fun onMonthSelect(month: String) {}
                 override fun onExpenseClick(id: Long) {}
             },
-            navigateToBottomBarDestination = {}
+            navigateToBottomBarDestination = {},
+            navigateToSettingsScreen = {}
         )
     }
 }

@@ -1,9 +1,6 @@
 package dev.ridill.xpensetracker.feature_expenses.presentation.expenses_list
 
 interface ExpensesActions {
-    fun onExpenditureLimitUpdateClick()
-    fun onExpenditureLimitUpdateDialogDismiss()
-    fun onExpenditureLimitUpdateDialogConfirm(limit: String)
     fun onTagFilterSelect(tag: String)
     fun onTagLongClick()
     fun onTagDeleteClick(tag: String)

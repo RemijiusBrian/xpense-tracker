@@ -9,11 +9,11 @@ data class ExpensesState(
     val monthsToExpenditurePercents: List<MonthStats> = emptyList(),
     val selectedMonth: String = "",
     val expenses: List<ExpenseListItem> = emptyList(),
-    val expenditureLimit: Long = 0L,
     val balance: Double = 0.0,
+    val balancePercent: Float = 0f,
     val tagDeletionModeActive: Boolean = false,
-    val showExpenditureLimitUpdateDialog: Boolean = false,
-    val showTagDeleteConfirmation: Boolean = false
+    val showTagDeleteConfirmation: Boolean = false,
+    val isLimitSet: Boolean = false
 ) {
     companion object {
         val INITIAL: ExpensesState = ExpensesState()

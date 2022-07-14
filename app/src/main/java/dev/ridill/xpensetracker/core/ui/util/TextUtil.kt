@@ -5,6 +5,7 @@ import dev.ridill.xpensetracker.core.util.tryOrNull
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.abs
 
 object TextUtil {
     private val numberFormat = NumberFormat.getNumberInstance()
@@ -24,22 +25,27 @@ object TextUtil {
     fun compactFormatAmountWithCurrency(
         amount: Double,
         compactStyle: CompactDecimalFormat.CompactStyle = CompactDecimalFormat.CompactStyle.SHORT
-    ): String = "$currencySymbol${
-        CompactDecimalFormat.getInstance(Locale.getDefault(), compactStyle).format(amount)
-    }"
+    ): String = buildString {
+        if (amount < 0) append("-")
+        append(currencySymbol)
+        append(
+            CompactDecimalFormat
+                .getInstance(Locale.getDefault(), compactStyle)
+                .format(abs(amount))
+        )
+    }
 
-    fun compactFormatAmountWithCurrency(
-        amount: Long,
-        compactStyle: CompactDecimalFormat.CompactStyle = CompactDecimalFormat.CompactStyle.LONG
-    ): String = "$currencySymbol${
-        CompactDecimalFormat.getInstance(Locale.getDefault(), compactStyle).format(amount)
-    }"
+    fun formatAmountWithCurrency(amount: Double): String = buildString {
+        if (amount < 0) append("-")
+        append(currencySymbol)
+        append(formatNumber(abs(amount)))
+    }
 
-    fun formatAmountWithCurrency(amount: Double): String =
-        "$currencySymbol${formatNumber(amount)}"
-
-    fun formatAmountWithCurrency(amount: Long): String =
-        "$currencySymbol${formatNumber(amount)}"
+    fun formatAmountWithCurrency(amount: Long): String = buildString {
+        if (amount < 0) append("-")
+        append(currencySymbol)
+        append(formatNumber(abs(amount)))
+    }
 
     fun parseDate(date: String, pattern: String): Date? = tryOrNull {
         SimpleDateFormat(pattern, Locale.getDefault()).parse(date)

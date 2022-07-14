@@ -65,7 +65,7 @@
     <string name="add_expense">Add Xpense</string>
     <string name="edit_expense">Edit Xpense</string>
     <string name="greeting_comma">Hello,</string>
-    <string name="expenditure_limit_label">Your limit is set to</string>
+    <string name="monthly_balance_is">Your monthly balance is</string>
     <string name="name">Name</string>
     <string name="new_tag">New</string>
     <string name="label_tag">Tag</string>
@@ -122,4 +122,5 @@
     <string name="theme_dark">Dark</string>
     <string name="select_theme">Select Theme</string>
     <string name="expenditure_limit_updated">Expenditure limit updated</string>
+    <string name="exhausted">Exhausted!</string>
 </resources>

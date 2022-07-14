@@ -9,7 +9,7 @@ import dev.ridill.xpensetracker.core.domain.model.UiText
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.core.util.DatePatterns
-import dev.ridill.xpensetracker.core.util.toLongOrZero
+import dev.ridill.xpensetracker.core.util.orZero
 import dev.ridill.xpensetracker.feature_expenses.domain.repository.ExpenseRepository
 import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_ADDED
 import dev.ridill.xpensetracker.feature_expenses.presentation.add_edit_expense.RESULT_EXPENSE_DELETED
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class ExpensesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repo: ExpenseRepository,
-    private val preferencesManager: XTPreferencesManager
+    preferencesManager: XTPreferencesManager
 ) : ViewModel(), ExpensesActions {
 
     private val preferences = preferencesManager.preferences
@@ -49,9 +49,6 @@ class ExpensesViewModel @Inject constructor(
         DatePatterns.MONTH_NUMBER_WITH_YEAR
     )
 
-    private val showExpenditureLimitUpdateDialog =
-        savedStateHandle.getLiveData("showExpenditureLimitUpdateDialog", false)
-
     private val showTagDeleteConfirmation =
         savedStateHandle.getLiveData("showTagDeleteConfirmation", false)
 
@@ -69,28 +66,35 @@ class ExpensesViewModel @Inject constructor(
         preference.expenditureLimit - expenditure
     }
 
+    private val balancePercentageForCurrentMonth = combineTuple(
+        balanceForCurrentMonth,
+        preferences
+    ).map { (balance, preference) ->
+        (balance / preference.expenditureLimit).toFloat().takeIf { !it.isNaN() }.orZero()
+    }.map { it.coerceIn(0f..1f) }
+
     val state = combineTuple(
-        preferences,
         tags,
         selectedTag.asFlow(),
         tagDeleteModeActive.asFlow(),
         months,
         selectedMonth.asFlow(),
         expenseList,
-        showExpenditureLimitUpdateDialog.asFlow(),
         showTagDeleteConfirmation.asFlow(),
-        balanceForCurrentMonth
+        balanceForCurrentMonth,
+        balancePercentageForCurrentMonth,
+        preferences
     ).map { (
-                preferences,
                 tags,
                 selectedTag,
                 tagDeleteModeActive,
                 months,
                 selectedMonth,
                 expenseList,
-                showExpenditureUpdateDialog,
                 showTagDeleteConfirmation,
-                balanceForCurrentMonth
+                balanceForCurrentMonth,
+                balancePercentageForCurrentMonth,
+                preferences
             ) ->
         ExpensesState(
             tags = tags,
@@ -98,36 +102,16 @@ class ExpensesViewModel @Inject constructor(
             monthsToExpenditurePercents = months,
             selectedMonth = selectedMonth,
             expenses = expenseList,
-            expenditureLimit = preferences.expenditureLimit,
-            showExpenditureLimitUpdateDialog = showExpenditureUpdateDialog,
             tagDeletionModeActive = tagDeleteModeActive,
             showTagDeleteConfirmation = showTagDeleteConfirmation,
-            balance = balanceForCurrentMonth
+            balance = balanceForCurrentMonth,
+            balancePercent = balancePercentageForCurrentMonth,
+            isLimitSet = preferences.expenditureLimit > 0L
         )
     }.asLiveData()
 
     private val eventsChannel = Channel<ExpenseListEvent>()
     val events get() = eventsChannel.receiveAsFlow()
-
-    override fun onExpenditureLimitUpdateClick() {
-        showExpenditureLimitUpdateDialog.value = true
-    }
-
-    override fun onExpenditureLimitUpdateDialogDismiss() {
-        showExpenditureLimitUpdateDialog.value = false
-    }
-
-    override fun onExpenditureLimitUpdateDialogConfirm(limit: String) {
-        viewModelScope.launch {
-            val amount = limit.toLongOrZero()
-            if (amount < 0L) {
-                eventsChannel.send(ExpenseListEvent.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_amount)))
-                return@launch
-            }
-            preferencesManager.updateExpenditureLimit(amount)
-            showExpenditureLimitUpdateDialog.value = false
-        }
-    }
 
     override fun onTagFilterSelect(tag: String) {
         if (tagDeleteModeActive.value == true) {

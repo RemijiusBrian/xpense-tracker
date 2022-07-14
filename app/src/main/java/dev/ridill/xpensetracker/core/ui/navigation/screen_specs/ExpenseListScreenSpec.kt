@@ -63,6 +63,9 @@ object ExpenseListScreenSpec : ScreenSpec {
             actions = viewModel,
             navigateToBottomBarDestination = {
                 navController.navigate(it.navHostRoute)
+            },
+            navigateToSettingsScreen = {
+                navController.navigate(SettingsScreenSpec.navHostRoute)
             }
         )
     }
