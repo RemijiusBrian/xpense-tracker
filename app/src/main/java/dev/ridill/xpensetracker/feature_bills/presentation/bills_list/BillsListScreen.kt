@@ -284,7 +284,7 @@ private fun BillPayment(
                         .weight(WEIGHT_1)
                 ) {
                     Text(
-                        text = name,
+                        text = "${stringResource(category.label)} ($name)",
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
