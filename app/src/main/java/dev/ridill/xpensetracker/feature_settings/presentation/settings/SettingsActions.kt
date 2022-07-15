@@ -10,4 +10,7 @@ interface SettingsActions {
     fun onExpenditureLimitPreferenceClick()
     fun onExpenditureLimitUpdateDismiss()
     fun onExpenditureLimitUpdateConfirm(amount: String)
+    fun onShowLowBalanceUnderPercentPreferenceClick()
+    fun onShowLowBalanceUnderPercentUpdateDismiss()
+    fun onShowLowBalanceUnderPercentUpdateConfirm(value: Float)
 }

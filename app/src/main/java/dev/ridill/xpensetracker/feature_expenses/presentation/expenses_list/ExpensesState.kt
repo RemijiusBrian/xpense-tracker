@@ -11,6 +11,7 @@ data class ExpensesState(
     val expenses: List<ExpenseListItem> = emptyList(),
     val balance: Double = 0.0,
     val balancePercent: Float = 0f,
+    val showLowBalanceWarning: Boolean = false,
     val tagDeletionModeActive: Boolean = false,
     val showTagDeleteConfirmation: Boolean = false,
     val isLimitSet: Boolean = false

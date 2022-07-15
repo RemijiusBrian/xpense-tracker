@@ -26,6 +26,7 @@
     <string name="content_description_edit_limit">Edit limit</string>
     <string name="content_description_delete_tag">Delete Tag</string>
     <string name="content_description_error">Error</string>
+    <string name="content_description_balance_low_warning">Balance Low</string>
 
     <!-- Notifications -->
     <string name="bills_reminder_notification_channel_name">Bill Reminders</string>
@@ -123,4 +124,11 @@
     <string name="select_theme">Select Theme</string>
     <string name="expenditure_limit_updated">Expenditure limit updated</string>
     <string name="exhausted">Exhausted!</string>
+    <string name="value_updated">Value Updated!</string>
+    <string name="show_warning_when_balance_under">Show warning when balance under</string>
+    <string name="set_value_to_zero_to_disable">*Set value to 0% to disable</string>
+    <string name="show_warning_below_percentage_selection_title">Select percentage</string>
+    <string name="warning_will_show_when_balance_drops_below">Show warning when balance drops below\n%s%%</string>
+    <string name="disabled_low_warning_balance">Don\'t show warning</string>
+    <string name="disabled">Disabled</string>
 </resources>

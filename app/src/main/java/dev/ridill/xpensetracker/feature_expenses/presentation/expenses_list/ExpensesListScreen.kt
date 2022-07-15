@@ -4,15 +4,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.VectorConverter
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.TargetBasedAnimation
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteForever
@@ -47,7 +46,6 @@ import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 @Composable
 fun ExpenseListScreenContent(
@@ -122,6 +120,7 @@ fun ExpenseListScreenContent(
                 MonthlyBalance(
                     balance = state.balance,
                     balancePercent = state.balancePercent,
+                    showBalanceWarning = state.showLowBalanceWarning,
                     isLimitSet = state.isLimitSet,
                     onSetLimitClick = navigateToSettingsScreen
                 )
@@ -187,6 +186,7 @@ fun ExpenseListScreenContent(
 private fun MonthlyBalance(
     balance: Double,
     balancePercent: Float,
+    showBalanceWarning: Boolean,
     isLimitSet: Boolean,
     onSetLimitClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -235,6 +235,12 @@ private fun MonthlyBalance(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+                Spacer(Modifier.width(SpacingSmall))
+                BalanceLowWarning(
+                    show = showBalanceWarning,
+                    modifier = Modifier
+                        .align(Alignment.Top)
+                )
             }
         } else {
             TextButton(onClick = onSetLimitClick) {
@@ -243,6 +249,37 @@ private fun MonthlyBalance(
         }
     }
 }
+
+@Composable
+private fun BalanceLowWarning(
+    show: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val flashingAnim = rememberInfiniteTransition()
+    val alpha = flashingAnim.animateFloat(
+        initialValue = Constants.ONE_F,
+        targetValue = ContentAlpha.PERCENT_32,
+        animationSpec = infiniteRepeatable(
+            animation = tween(delayMillis = WARNING_FLASH_DELAY),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    AnimatedVisibility(
+        visible = show,
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Default.Warning,
+            contentDescription = stringResource(R.string.content_description_balance_low_warning),
+            tint = Color.Yellow.copy(alpha = alpha.value),
+            modifier = Modifier
+                .size(SmallIconSize)
+        )
+    }
+}
+
+private const val WARNING_FLASH_DELAY = 1000
 
 @Composable
 private fun MonthlyStats(

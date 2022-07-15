@@ -25,11 +25,14 @@ class XTPreferencesManagerImpl(
                 preferences[Keys.APP_THEME] ?: AppTheme.SYSTEM_DEFAULT.name
             )
             val useDynamicTheming = preferences[Keys.USE_DYNAMIC_THEMING] ?: true
+            val showBalanceWarningUnderPercent =
+                preferences[Keys.SHOW_BALANCE_WARNING_UNDER_PERCENT] ?: 0.25f
 
             XTPreferences(
                 expenditureLimit = expenditureLimit,
                 theme = theme,
-                useDynamicTheming = useDynamicTheming
+                useDynamicTheming = useDynamicTheming,
+                showWarningUnderBalancePercent = showBalanceWarningUnderPercent
             )
         }
 
@@ -57,9 +60,19 @@ class XTPreferencesManagerImpl(
         }
     }
 
+    override suspend fun updateShowBalanceWarningBelowPercent(value: Float) {
+        withContext(dispatcherProvider.io) {
+            dataStore.edit { preferences ->
+                preferences[Keys.SHOW_BALANCE_WARNING_UNDER_PERCENT] = value
+            }
+        }
+    }
+
     private object Keys {
         val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
         val APP_THEME = stringPreferencesKey("APP_THEME")
         val USE_DYNAMIC_THEMING = booleanPreferencesKey("USE_DYNAMIC_THEMING")
+        val SHOW_BALANCE_WARNING_UNDER_PERCENT =
+            floatPreferencesKey("SHOW_BALANCE_WARNING_UNDER_PERCENT")
     }
 }

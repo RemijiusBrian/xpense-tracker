@@ -6,6 +6,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 object TextUtil {
     private val numberFormat = NumberFormat.getNumberInstance()
@@ -14,6 +15,9 @@ object TextUtil {
         numberFormat.format(number)
 
     private fun formatNumber(number: Long): String =
+        numberFormat.format(number)
+
+    private fun formatNumber(number: Int): String =
         numberFormat.format(number)
 
     fun formatDate(dateInMillis: Long, pattern: String): String =
@@ -45,6 +49,12 @@ object TextUtil {
         if (amount < 0) append("-")
         append(currencySymbol)
         append(formatNumber(abs(amount)))
+    }
+
+    fun formatPercent(percent: Float): String = buildString {
+        if (percent < 0) append("-")
+        append(formatNumber((abs(percent) * 100).roundToInt()))
+        append("%")
     }
 
     fun parseDate(date: String, pattern: String): Date? = tryOrNull {

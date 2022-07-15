@@ -9,10 +9,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.outlined.BrightnessMedium
+import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,9 +28,11 @@ import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.SettingsScreenSp
 import dev.ridill.xpensetracker.core.ui.theme.ContentAlpha
 import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
 import dev.ridill.xpensetracker.core.ui.theme.WEIGHT_1
+import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.Constants
 import dev.ridill.xpensetracker.core.util.isBuildVersionAndroid12OrAbove
 import dev.ridill.xpensetracker.feature_settings.presentation.components.ExpenditureLimitUpdateDialog
+import kotlin.math.roundToInt
 
 @Composable
 fun SettingsScreenContent(
@@ -80,6 +84,13 @@ fun SettingsScreenContent(
                 summary = state.expenditureLimit,
                 onClick = actions::onExpenditureLimitPreferenceClick
             )
+            BasicPreference(
+                title = R.string.show_warning_when_balance_under,
+                summary = if (state.showWarningUnderBalancePercent > 0)
+                    TextUtil.formatPercent(state.showWarningUnderBalancePercent)
+                else stringResource(R.string.disabled),
+                onClick = actions::onShowLowBalanceUnderPercentPreferenceClick
+            )
 
             // Links Section
             val context = LocalContext.current
@@ -118,6 +129,14 @@ fun SettingsScreenContent(
                 previousLimit = state.expenditureLimit,
                 onDismiss = actions::onExpenditureLimitUpdateDismiss,
                 onConfirm = actions::onExpenditureLimitUpdateConfirm
+            )
+        }
+
+        if (state.showWarningUnderBalancePercentPicker) {
+            SliderDialog(
+                currentValue = state.showWarningUnderBalancePercent,
+                onDismiss = actions::onShowLowBalanceUnderPercentUpdateDismiss,
+                onConfirm = actions::onShowLowBalanceUnderPercentUpdateConfirm
             )
         }
     }
@@ -265,5 +284,58 @@ private fun ThemeSelectionDialog(
         icon = {
             Icon(imageVector = Icons.Outlined.BrightnessMedium, contentDescription = null)
         }
+    )
+}
+
+@Composable
+private fun SliderDialog(
+    currentValue: Float,
+    onDismiss: () -> Unit,
+    onConfirm: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var selection by remember { mutableStateOf(currentValue) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.show_warning_below_percentage_selection_title)) },
+        confirmButton = {
+            Button(onClick = { onConfirm(selection) }) {
+                Text(stringResource(R.string.action_confirm))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+        text = {
+            Column {
+                Text(
+                    text = if (selection > Constants.ZERO_F)
+                        stringResource(
+                            R.string.warning_will_show_when_balance_drops_below,
+                            (selection * 100).roundToInt()
+                        )
+                    else stringResource(R.string.disabled_low_warning_balance)
+                )
+                Slider(
+                    value = selection,
+                    onValueChange = { selection = it },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    steps = 100,
+                    colors = SliderDefaults.colors(
+                        activeTickColor = Color.Transparent
+                    )
+                )
+            }
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Warning,
+                contentDescription = stringResource(R.string.content_description_balance_low_warning)
+            )
+        },
+        modifier = modifier
     )
 }

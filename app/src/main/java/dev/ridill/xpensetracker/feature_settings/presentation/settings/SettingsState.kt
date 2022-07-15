@@ -7,7 +7,9 @@ data class SettingsState(
     val useDynamicTheme: Boolean = false,
     val expenditureLimit: String = "",
     val showThemeSelection: Boolean = false,
-    val showExpenditureUpdate: Boolean = false
+    val showExpenditureUpdate: Boolean = false,
+    val showWarningUnderBalancePercent: Float = 0f,
+    val showWarningUnderBalancePercentPicker: Boolean = false
 ) {
     companion object {
         val INITIAL = SettingsState()

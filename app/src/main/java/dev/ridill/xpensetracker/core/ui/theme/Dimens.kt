@@ -22,3 +22,6 @@ val ZeroDp = 0.dp
 
 // -------- Weights --------
 const val WEIGHT_1 = 1f
+
+// -------- Size --------
+val SmallIconSize = 12.dp

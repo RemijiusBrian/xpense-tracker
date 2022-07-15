@@ -25,6 +25,8 @@ class SettingsViewModel @Inject constructor(
 
     private val showThemeSelection = savedStateHandle.getLiveData("showThemeSelection", false)
     private val showExpenditureUpdate = savedStateHandle.getLiveData("showExpenditureUpdate", false)
+    private val showLowBalanceWarningUnderPercentPicker =
+        savedStateHandle.getLiveData("showLowBalanceWarningUnderPercentPicker", false)
 
     private val eventsChannel = Channel<SettingsEvent>()
     val events get() = eventsChannel.receiveAsFlow()
@@ -32,18 +34,22 @@ class SettingsViewModel @Inject constructor(
     val state = combineTuple(
         preferences,
         showThemeSelection.asFlow(),
-        showExpenditureUpdate.asFlow()
+        showExpenditureUpdate.asFlow(),
+        showLowBalanceWarningUnderPercentPicker.asFlow()
     ).map { (
                 preferences,
                 showThemeSelection,
-                showExpenditureUpdate
+                showExpenditureUpdate,
+                showLowBalanceWarningUnderPercentPicker
             ) ->
         SettingsState(
             appTheme = preferences.theme,
             useDynamicTheme = preferences.useDynamicTheming,
             expenditureLimit = TextUtil.formatAmountWithCurrency(preferences.expenditureLimit),
             showThemeSelection = showThemeSelection,
-            showExpenditureUpdate = showExpenditureUpdate
+            showExpenditureUpdate = showExpenditureUpdate,
+            showWarningUnderBalancePercentPicker = showLowBalanceWarningUnderPercentPicker,
+            showWarningUnderBalancePercent = preferences.showWarningUnderBalancePercent
         )
     }.asLiveData()
 
@@ -86,6 +92,22 @@ class SettingsViewModel @Inject constructor(
             preferencesManager.updateExpenditureLimit(parsedAmount)
             eventsChannel.send(SettingsEvent.ShowUiMessage(UiText.StringResource(R.string.expenditure_limit_updated)))
             showExpenditureUpdate.value = false
+        }
+    }
+
+    override fun onShowLowBalanceUnderPercentPreferenceClick() {
+        showLowBalanceWarningUnderPercentPicker.value = true
+    }
+
+    override fun onShowLowBalanceUnderPercentUpdateDismiss() {
+        showLowBalanceWarningUnderPercentPicker.value = false
+    }
+
+    override fun onShowLowBalanceUnderPercentUpdateConfirm(value: Float) {
+        viewModelScope.launch {
+            preferencesManager.updateShowBalanceWarningBelowPercent(value)
+            showLowBalanceWarningUnderPercentPicker.value = false
+            eventsChannel.send(SettingsEvent.ShowUiMessage(UiText.StringResource(R.string.value_updated)))
         }
     }
 
