@@ -10,4 +10,7 @@ data class XTPreferences(
 ) {
     val balanceWarningEnabled: Boolean
         get() = balanceWarningPercent > Constants.ZERO_F
+
+    val isExpenditureLimitSet: Boolean
+        get() = expenditureLimit > 0
 }

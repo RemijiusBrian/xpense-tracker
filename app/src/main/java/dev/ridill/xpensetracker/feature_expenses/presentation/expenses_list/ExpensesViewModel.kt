@@ -106,7 +106,7 @@ class ExpensesViewModel @Inject constructor(
             showTagDeleteConfirmation = showTagDeleteConfirmation,
             balance = balanceForCurrentMonth,
             balancePercent = balancePercentageForCurrentMonth,
-            isLimitSet = preferences.expenditureLimit > 0L,
+            isLimitSet = preferences.isExpenditureLimitSet,
             showLowBalanceWarning = preferences.balanceWarningEnabled &&
                     balancePercentageForCurrentMonth <= preferences.balanceWarningPercent
         )
