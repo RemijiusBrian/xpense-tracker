@@ -19,32 +19,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val preferencesManager: XTPreferencesManager
 ) : ViewModel(), SettingsActions {
-
-    private val action = SettingsScreenSpec.getActionFromSavedStateHandle(savedStateHandle)
 
     private val preferences = preferencesManager.preferences
 
     private val showThemeSelection = savedStateHandle.getLiveData("showThemeSelection", false)
     private val showExpenditureLimitUpdate =
         savedStateHandle.getLiveData("showExpenditureLimitUpdate", false)
-    private val showLowBalanceWarningUnderPercentPicker =
-        savedStateHandle.getLiveData("showLowBalanceWarningUnderPercentPicker", false)
+    private val showBalanceWarningPercentPicker =
+        savedStateHandle.getLiveData("showBalanceWarningPercentPicker", false)
 
     private val eventsChannel = Channel<SettingsEvent>()
     val events get() = eventsChannel.receiveAsFlow()
 
     init {
-        action?.let(this::checkSettingsAction)
+        checkSettingsAction()
     }
 
     val state = combineTuple(
         preferences,
         showThemeSelection.asFlow(),
         showExpenditureLimitUpdate.asFlow(),
-        showLowBalanceWarningUnderPercentPicker.asFlow()
+        showBalanceWarningPercentPicker.asFlow()
     ).map { (
                 preferences,
                 showThemeSelection,
@@ -62,13 +60,16 @@ class SettingsViewModel @Inject constructor(
         )
     }.asLiveData()
 
-    private fun checkSettingsAction(action: String) {
-        when (action) {
-            SETTINGS_ACTION_EXPENDITURE_LIMIT_UPDATE -> {
-                showExpenditureLimitUpdate.value = true
+    private fun checkSettingsAction() {
+        SettingsScreenSpec.getActionFromSavedStateHandle(savedStateHandle)
+            ?.let { action ->
+                when (action) {
+                    SETTINGS_ACTION_EXPENDITURE_LIMIT_UPDATE -> {
+                        showExpenditureLimitUpdate.value = true
+                    }
+                    else -> Unit
+                }.exhaustive
             }
-            else -> return
-        }.exhaustive
     }
 
     override fun onThemePreferenceClick() {
@@ -114,17 +115,17 @@ class SettingsViewModel @Inject constructor(
     }
 
     override fun onShowLowBalanceUnderPercentPreferenceClick() {
-        showLowBalanceWarningUnderPercentPicker.value = true
+        showBalanceWarningPercentPicker.value = true
     }
 
     override fun onShowLowBalanceUnderPercentUpdateDismiss() {
-        showLowBalanceWarningUnderPercentPicker.value = false
+        showBalanceWarningPercentPicker.value = false
     }
 
     override fun onShowLowBalanceUnderPercentUpdateConfirm(value: Float) {
         viewModelScope.launch {
             preferencesManager.updateBalanceWarningPercent(value)
-            showLowBalanceWarningUnderPercentPicker.value = false
+            showBalanceWarningPercentPicker.value = false
             eventsChannel.send(SettingsEvent.ShowUiMessage(UiText.StringResource(R.string.value_updated)))
         }
     }
