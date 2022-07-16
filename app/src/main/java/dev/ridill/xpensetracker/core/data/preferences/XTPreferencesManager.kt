@@ -15,5 +15,5 @@ interface XTPreferencesManager {
     suspend fun updateExpenditureLimit(limit: Long)
     suspend fun updateAppTheme(theme: AppTheme)
     suspend fun updateUseDynamicTheming(use: Boolean)
-    suspend fun updateShowBalanceWarningBelowPercent(value: Float)
+    suspend fun updateBalanceWarningPercent(value: Float)
 }

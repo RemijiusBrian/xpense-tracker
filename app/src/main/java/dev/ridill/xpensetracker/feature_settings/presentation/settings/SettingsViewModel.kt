@@ -7,8 +7,10 @@ import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.data.preferences.XTPreferencesManager
 import dev.ridill.xpensetracker.core.domain.model.AppTheme
 import dev.ridill.xpensetracker.core.domain.model.UiText
+import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.SETTINGS_ACTION_EXPENDITURE_LIMIT_UPDATE
+import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.SettingsScreenSpec
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
-import dev.ridill.xpensetracker.core.util.toLongOrZero
+import dev.ridill.xpensetracker.core.util.exhaustive
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -21,20 +23,27 @@ class SettingsViewModel @Inject constructor(
     private val preferencesManager: XTPreferencesManager
 ) : ViewModel(), SettingsActions {
 
+    private val action = SettingsScreenSpec.getActionFromSavedStateHandle(savedStateHandle)
+
     private val preferences = preferencesManager.preferences
 
     private val showThemeSelection = savedStateHandle.getLiveData("showThemeSelection", false)
-    private val showExpenditureUpdate = savedStateHandle.getLiveData("showExpenditureUpdate", false)
+    private val showExpenditureLimitUpdate =
+        savedStateHandle.getLiveData("showExpenditureLimitUpdate", false)
     private val showLowBalanceWarningUnderPercentPicker =
         savedStateHandle.getLiveData("showLowBalanceWarningUnderPercentPicker", false)
 
     private val eventsChannel = Channel<SettingsEvent>()
     val events get() = eventsChannel.receiveAsFlow()
 
+    init {
+        action?.let(this::checkSettingsAction)
+    }
+
     val state = combineTuple(
         preferences,
         showThemeSelection.asFlow(),
-        showExpenditureUpdate.asFlow(),
+        showExpenditureLimitUpdate.asFlow(),
         showLowBalanceWarningUnderPercentPicker.asFlow()
     ).map { (
                 preferences,
@@ -49,9 +58,18 @@ class SettingsViewModel @Inject constructor(
             showThemeSelection = showThemeSelection,
             showExpenditureUpdate = showExpenditureUpdate,
             showWarningUnderBalancePercentPicker = showLowBalanceWarningUnderPercentPicker,
-            showWarningUnderBalancePercent = preferences.showWarningUnderBalancePercent
+            balanceWarningPercent = preferences.balanceWarningPercent
         )
     }.asLiveData()
+
+    private fun checkSettingsAction(action: String) {
+        when (action) {
+            SETTINGS_ACTION_EXPENDITURE_LIMIT_UPDATE -> {
+                showExpenditureLimitUpdate.value = true
+            }
+            else -> return
+        }.exhaustive
+    }
 
     override fun onThemePreferenceClick() {
         showThemeSelection.value = true
@@ -75,23 +93,23 @@ class SettingsViewModel @Inject constructor(
     }
 
     override fun onExpenditureLimitPreferenceClick() {
-        showExpenditureUpdate.value = true
+        showExpenditureLimitUpdate.value = true
     }
 
     override fun onExpenditureLimitUpdateDismiss() {
-        showExpenditureUpdate.value = false
+        showExpenditureLimitUpdate.value = false
     }
 
     override fun onExpenditureLimitUpdateConfirm(amount: String) {
+        val parsedAmount = amount.toLongOrNull() ?: return
         viewModelScope.launch {
-            val parsedAmount = amount.toLongOrZero()
             if (parsedAmount < 0L) {
                 eventsChannel.send(SettingsEvent.ShowErrorMessage(UiText.StringResource(R.string.error_invalid_amount)))
                 return@launch
             }
             preferencesManager.updateExpenditureLimit(parsedAmount)
             eventsChannel.send(SettingsEvent.ShowUiMessage(UiText.StringResource(R.string.expenditure_limit_updated)))
-            showExpenditureUpdate.value = false
+            showExpenditureLimitUpdate.value = false
         }
     }
 
@@ -105,7 +123,7 @@ class SettingsViewModel @Inject constructor(
 
     override fun onShowLowBalanceUnderPercentUpdateConfirm(value: Float) {
         viewModelScope.launch {
-            preferencesManager.updateShowBalanceWarningBelowPercent(value)
+            preferencesManager.updateBalanceWarningPercent(value)
             showLowBalanceWarningUnderPercentPicker.value = false
             eventsChannel.send(SettingsEvent.ShowUiMessage(UiText.StringResource(R.string.value_updated)))
         }

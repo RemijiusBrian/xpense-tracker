@@ -53,7 +53,7 @@ fun ExpenseListScreenContent(
     snackbarController: SnackbarController,
     actions: ExpensesActions,
     navigateToBottomBarDestination: (BottomBarScreenSpec) -> Unit,
-    navigateToSettingsScreen: () -> Unit
+    navigateToLimitUpdate: () -> Unit
 ) {
     val topBarScrollState = rememberTopAppBarScrollState()
     val topAppBarScrollBehavior = remember {
@@ -122,7 +122,7 @@ fun ExpenseListScreenContent(
                     balancePercent = state.balancePercent,
                     showBalanceWarning = state.showLowBalanceWarning,
                     isLimitSet = state.isLimitSet,
-                    onSetLimitClick = navigateToSettingsScreen
+                    onSetLimitClick = navigateToLimitUpdate
                 )
             }
             item(key = "stats") {
@@ -616,7 +616,7 @@ private fun PreviewScreenContent() {
                 override fun onExpenseClick(id: Long) {}
             },
             navigateToBottomBarDestination = {},
-            navigateToSettingsScreen = {}
+            navigateToLimitUpdate = {}
         )
     }
 }

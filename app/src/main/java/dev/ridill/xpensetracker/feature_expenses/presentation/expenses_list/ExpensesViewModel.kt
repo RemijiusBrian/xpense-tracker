@@ -107,8 +107,8 @@ class ExpensesViewModel @Inject constructor(
             balance = balanceForCurrentMonth,
             balancePercent = balancePercentageForCurrentMonth,
             isLimitSet = preferences.expenditureLimit > 0L,
-            showLowBalanceWarning = preferences.showWarningUnderBalancePercent > Constants.ZERO_F &&
-                    balancePercentageForCurrentMonth <= preferences.showWarningUnderBalancePercent
+            showLowBalanceWarning = preferences.balanceWarningEnabled &&
+                    balancePercentageForCurrentMonth <= preferences.balanceWarningPercent
         )
     }.asLiveData()
 

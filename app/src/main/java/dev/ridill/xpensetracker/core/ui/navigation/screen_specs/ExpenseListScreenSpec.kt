@@ -64,8 +64,11 @@ object ExpenseListScreenSpec : ScreenSpec {
             navigateToBottomBarDestination = {
                 navController.navigate(it.navHostRoute)
             },
-            navigateToSettingsScreen = {
-                navController.navigate(SettingsScreenSpec.navHostRoute)
+            navigateToLimitUpdate = {
+                navController.navigate(
+                    SettingsScreenSpec
+                        .buildRoute(SETTINGS_ACTION_EXPENDITURE_LIMIT_UPDATE)
+                )
             }
         )
     }

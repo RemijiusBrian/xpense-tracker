@@ -8,7 +8,7 @@ data class SettingsState(
     val expenditureLimit: String = "",
     val showThemeSelection: Boolean = false,
     val showExpenditureUpdate: Boolean = false,
-    val showWarningUnderBalancePercent: Float = 0f,
+    val balanceWarningPercent: Float = 0f,
     val showWarningUnderBalancePercentPicker: Boolean = false
 ) {
     companion object {

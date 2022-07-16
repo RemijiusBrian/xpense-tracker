@@ -86,8 +86,8 @@ fun SettingsScreenContent(
             )
             BasicPreference(
                 title = R.string.show_warning_when_balance_under,
-                summary = if (state.showWarningUnderBalancePercent > 0)
-                    TextUtil.formatPercent(state.showWarningUnderBalancePercent)
+                summary = if (state.balanceWarningPercent > 0)
+                    TextUtil.formatPercent(state.balanceWarningPercent)
                 else stringResource(R.string.disabled),
                 onClick = actions::onShowLowBalanceUnderPercentPreferenceClick
             )
@@ -134,7 +134,7 @@ fun SettingsScreenContent(
 
         if (state.showWarningUnderBalancePercentPicker) {
             SliderDialog(
-                currentValue = state.showWarningUnderBalancePercent,
+                currentValue = state.balanceWarningPercent,
                 onDismiss = actions::onShowLowBalanceUnderPercentUpdateDismiss,
                 onConfirm = actions::onShowLowBalanceUnderPercentUpdateConfirm
             )
