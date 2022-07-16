@@ -132,7 +132,7 @@ fun SettingsScreenContent(
             )
         }
 
-        if (state.showWarningUnderBalancePercentPicker) {
+        if (state.showBalanceWarningPercentPicker) {
             SliderDialog(
                 currentValue = state.balanceWarningPercent,
                 onDismiss = actions::onShowLowBalanceUnderPercentUpdateDismiss,

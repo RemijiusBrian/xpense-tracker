@@ -47,7 +47,7 @@ class SettingsViewModel @Inject constructor(
                 preferences,
                 showThemeSelection,
                 showExpenditureUpdate,
-                showLowBalanceWarningUnderPercentPicker
+                showBalanceWarningPercentPicker
             ) ->
         SettingsState(
             appTheme = preferences.theme,
@@ -55,7 +55,7 @@ class SettingsViewModel @Inject constructor(
             expenditureLimit = TextUtil.formatAmountWithCurrency(preferences.expenditureLimit),
             showThemeSelection = showThemeSelection,
             showExpenditureUpdate = showExpenditureUpdate,
-            showWarningUnderBalancePercentPicker = showLowBalanceWarningUnderPercentPicker,
+            showBalanceWarningPercentPicker = showBalanceWarningPercentPicker,
             balanceWarningPercent = preferences.balanceWarningPercent
         )
     }.asLiveData()
