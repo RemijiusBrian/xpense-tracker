@@ -141,11 +141,11 @@ class ExpensesViewModel @Inject constructor(
 
     private suspend fun deleteTag(tag: String, hasExpensesLinked: Boolean) {
         if (hasExpensesLinked) {
-            repo.deleteTag(tag)
-        } else {
             repo.deleteTagWithExpenses(tag)
             tagDeletion = null
             showTagDeleteConfirmation.value = false
+        } else {
+            repo.deleteTag(tag)
         }
         resetSelectedTagIfDeleted(tag)
         tagDeleteModeActive.value = tags.first().isNotEmpty()

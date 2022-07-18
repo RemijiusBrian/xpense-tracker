@@ -91,7 +91,7 @@
     <string name="delete_tagged_expenses_message">You have some expenses linked to this tag. Deleting the tag will delete those expenses as well.\nAre you sure you want to proceed?</string>
     <string name="max_chars">Max %d characters</string>
     <string name="tag_created">Tag created!</string>
-    <string name="expense_list_label">Your Spending</string>
+    <string name="expense_list_label">Expenses</string>
     <string name="new_bill">New Bill</string>
     <string name="label_expense_list">Expenses</string>
     <string name="mark_as_paid">Mark as paid</string>

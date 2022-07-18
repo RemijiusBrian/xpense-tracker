@@ -133,20 +133,21 @@ fun ExpenseListScreenContent(
                 )
             }
 
-            if (state.tags.isNotEmpty()) {
-                item {
-                    TagFilters(
-                        tags = state.tags,
-                        selectedTag = state.selectedTag,
-                        onTagClick = actions::onTagFilterSelect,
-                        onTagLongClick = actions::onTagLongClick,
-                        onTagDelete = actions::onTagDeleteClick,
-                        tagDeletionModeActive = state.tagDeletionModeActive
-                    )
-                }
+            item(key = "Expense Filters") {
+                TagFilters(
+                    tags = state.tags,
+                    selectedTag = state.selectedTag,
+                    onTagClick = actions::onTagFilterSelect,
+                    onTagLongClick = actions::onTagLongClick,
+                    onTagDelete = actions::onTagDeleteClick,
+                    tagDeletionModeActive = state.tagDeletionModeActive
+                )
             }
 
             if (state.expenses.isNotEmpty()) {
+                item(key = "Expense List Label") {
+                    ListLabel(label = R.string.expense_list_label)
+                }
                 items(state.expenses, key = { it.id }) { expense ->
                     ExpenseItem(
                         name = expense.name,
@@ -452,7 +453,7 @@ private fun TagFilters(
         horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (!tagDeletionModeActive) {
+        if (tags.isNotEmpty() && !tagDeletionModeActive) {
             item(key = Constants.STRING_ALL) {
                 FilterChip(
                     selected = selectedTag.isEmpty(),
