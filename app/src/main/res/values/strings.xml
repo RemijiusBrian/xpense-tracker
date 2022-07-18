@@ -99,7 +99,7 @@
     <string name="label_paid_bills">Paid</string>
     <string name="label_unpaid_bills">Unpaid</string>
     <string name="pay_by_date_value">Pay by %s</string>
-    <string name="paid_on_date_value">Pain on %s</string>
+    <string name="paid_on_date_value">Paid on %s</string>
     <string name="pending_since_date_value">Pending since %s</string>
     <string name="due_date_value">Due: %s</string>
     <string name="bill_marked_as_paid_message">Bill marked as paid</string>

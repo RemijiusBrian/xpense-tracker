@@ -5,5 +5,5 @@ data class BillItem(
     val name: String,
     val category: BillCategory,
     val amount: String,
-    val payBy: String
+    val dueDate: String
 )

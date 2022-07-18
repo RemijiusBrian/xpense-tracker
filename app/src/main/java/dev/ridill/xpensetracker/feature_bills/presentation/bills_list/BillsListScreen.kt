@@ -175,7 +175,7 @@ private fun BillsGrid(
                             modifier = Modifier
                                 .animateItemPlacement(),
                             onClick = { onBillClick(bill.id) },
-                            payBy = bill.payBy
+                            payBy = bill.dueDate
                         )
                     }
                 }

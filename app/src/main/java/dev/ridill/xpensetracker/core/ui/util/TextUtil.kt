@@ -17,9 +17,6 @@ object TextUtil {
     private fun formatNumber(number: Long): String =
         numberFormat.format(number)
 
-    private fun formatNumber(number: Int): String =
-        numberFormat.format(number)
-
     fun formatDate(dateInMillis: Long, pattern: String): String =
         SimpleDateFormat(pattern, Locale.getDefault()).format(dateInMillis)
 
@@ -53,7 +50,7 @@ object TextUtil {
 
     fun formatPercent(percent: Float): String = buildString {
         if (percent < 0) append("-")
-        append(formatNumber((abs(percent) * 100).roundToInt()))
+        append((abs(percent) * 100).roundToInt())
         append("%")
     }
 

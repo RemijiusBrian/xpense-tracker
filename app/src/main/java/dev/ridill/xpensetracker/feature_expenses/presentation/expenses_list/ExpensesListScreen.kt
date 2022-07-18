@@ -45,7 +45,6 @@ import dev.ridill.xpensetracker.feature_expenses.domain.model.ExpenseListItem
 import dev.ridill.xpensetracker.feature_expenses.domain.model.MonthStats
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 @Composable
 fun ExpenseListScreenContent(
@@ -417,7 +416,7 @@ private fun MonthBar(
             }
             this@Column.AnimatedVisibility(visible = selected) {
                 Text(
-                    text = "${(expenditurePercentage * 100).roundToInt()}%",
+                    text = TextUtil.formatPercent(expenditurePercentage),
                     style = MaterialTheme.typography.labelMedium,
                     color = contentColorFor(backgroundColor = barColor)
                 )

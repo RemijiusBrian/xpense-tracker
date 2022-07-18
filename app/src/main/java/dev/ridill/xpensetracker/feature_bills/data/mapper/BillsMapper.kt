@@ -11,7 +11,11 @@ fun BillEntity.toBillItem(): BillItem = BillItem(
     name = name,
     category = BillCategory.valueOf(category),
     amount = TextUtil.formatAmountWithCurrency(amount),
-    payBy = TextUtil.formatDate(payByDate, DatePatterns.DAY_SHORT_MONTH_NAME_YEAR)
+    dueDate = TextUtil.formatDate(
+        payByDate,
+        if (recurring) DatePatterns.DAY_WITH_SHORT_MONTH_NAME
+        else DatePatterns.DAY_SHORT_MONTH_NAME_YEAR
+    )
 )
 
 fun BillEntity.toBill(): Bill = Bill(
@@ -50,13 +54,4 @@ fun Bill.toEntity(): BillEntity = BillEntity(
     payByDate = dateMillis,
     recurring = recurring,
     amount = amount.toDoubleOrZero()
-)
-
-fun Bill.toPayment(): BillPayment = BillPayment(
-    id = id,
-    payByDateMillis = dateMillis,
-    amount = amount.toDoubleOrZero(),
-    category = category,
-    name = name,
-    state = BillState.PAID
 )
