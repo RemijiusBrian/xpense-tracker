@@ -90,7 +90,7 @@ fun AddEditExpenseScreenContent(
                 )
             }
         }
-    ) { innerPadding ->
+    ) { paddingValues ->
         LazyColumn(
             contentPadding = PaddingValues(
                 vertical = ListPaddingLarge,
@@ -100,7 +100,7 @@ fun AddEditExpenseScreenContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
+                .padding(paddingValues)
         ) {
             item {
                 AmountInput(

@@ -15,6 +15,7 @@ import dev.ridill.xpensetracker.feature_bills.domain.model.BillState
 import dev.ridill.xpensetracker.feature_bills.domain.repository.BillsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
 @HiltWorker
 class UpcomingBillReminderWorker @AssistedInject constructor(
@@ -27,11 +28,12 @@ class UpcomingBillReminderWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = withContext(dispatcherProvider.io) {
         try {
-            val unpaidBills = billRepo.getBillPaymentsForCurrentMonth().first()
-                .filter { it.state != BillState.PAID }
-            val billsUpcomingIn3Days = unpaidBills.filter { payment ->
-                val dayDifference = payment.payByDateMillis.getDayFromMillis() - getCurrentDay()
-                dayDifference in 1..3
+            val payments = billRepo.getBillPaymentsForCurrentMonth().first()
+            val upcoming = payments[BillState.UPCOMING] ?: return@withContext Result.failure()
+
+            val billsUpcomingIn3Days = upcoming.filter { entry ->
+                val dayDifference = entry.payByDateMillis.getDayFromMillis() - getCurrentDay()
+                abs(dayDifference) in 1..3
             }
             billsUpcomingIn3Days.forEach { notificationHelper.showNotification(it) }
             Result.success()

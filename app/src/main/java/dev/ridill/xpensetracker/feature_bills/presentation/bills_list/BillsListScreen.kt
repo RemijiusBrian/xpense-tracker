@@ -75,53 +75,50 @@ fun BillsListScreenContent(
                 expanded = isFabExpanded
             )
         }
-    ) { innerPadding ->
+    ) { paddingValues ->
         LazyColumn(
             state = lazyListState,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(paddingValues),
             contentPadding = PaddingValues(
                 top = SpacingMedium,
                 bottom = ListPaddingLarge
             ),
             verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
-            item {
+            item(key = "Bills Grid") {
                 BillsGrid(
                     bills = state.billsList,
                     onBillClick = actions::onBillClick
                 )
             }
-            BillState.values().forEach { billState ->
-                val listForState = state.billPayments.filter { it.state == billState }
-                if (listForState.isNotEmpty()) {
-                    item(key = billState) {
-                        ListLabel(
-                            label = billState.label,
-                            modifier = Modifier
-                                .padding(horizontal = SpacingSmall)
-                                .animateItemPlacement()
-                        )
-                    }
-                    items(items = listForState, key = { it.id }) { payment ->
-                        BillPayment(
-                            category = payment.category,
-                            name = payment.name,
-                            date = payment.dateFormatted,
-                            amount = payment.amountFormatted,
-                            state = billState,
-                            onMarkAsPaidClick = {
-                                val category = context.getString(payment.category.label)
-                                val paymentName = context.getString(
-                                    R.string.bill_payment_name, category, payment.name
-                                )
-                                actions.onMarkAsPaidClick(payment.copy(name = paymentName))
-                            },
-                            modifier = Modifier
-                                .animateItemPlacement()
-                        )
-                    }
+            state.billPayments.forEach { (state, payments) ->
+                item(key = state) {
+                    ListLabel(
+                        label = state.label,
+                        modifier = Modifier
+                            .padding(horizontal = SpacingSmall)
+                            .animateItemPlacement()
+                    )
+                }
+                items(items = payments, key = { it.id }) { payment ->
+                    BillPayment(
+                        category = payment.category,
+                        name = payment.name,
+                        date = payment.dateFormatted,
+                        amount = payment.amountFormatted,
+                        state = state,
+                        onMarkAsPaidClick = {
+                            val category = context.getString(payment.category.label)
+                            val paymentName = context.getString(
+                                R.string.bill_payment_name, category, payment.name
+                            )
+                            actions.onMarkAsPaidClick(payment.copy(name = paymentName))
+                        },
+                        modifier = Modifier
+                            .animateItemPlacement()
+                    )
                 }
             }
         }
@@ -335,7 +332,7 @@ private fun PreviewScreenContent() {
                         name = "Name",
                         state = BillState.UPCOMING
                     )
-                }
+                }.groupBy { it.state }
             ),
             snackbarController = rememberSnackbarController(),
             onAddBillClick = {},

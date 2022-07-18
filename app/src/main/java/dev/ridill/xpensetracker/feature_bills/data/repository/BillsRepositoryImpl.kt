@@ -27,9 +27,9 @@ class BillsRepositoryImpl(
             bills.groupBy { it.category }
         }
 
-    override fun getBillPaymentsForCurrentMonth(): Flow<List<BillPayment>> =
+    override fun getBillPaymentsForCurrentMonth(): Flow<Map<BillState, List<BillPayment>>> =
         dao.getBillsWithExpensesForCurrentMonthOrRecurring().map { billsWithExpenses ->
-            billsWithExpenses.map { it.toBillPayment() }
+            billsWithExpenses.map { it.toBillPayment() }.groupBy { it.state }
         }
 
     override suspend fun getBillById(id: Long): Bill? = withContext(dispatcherProvider.io) {

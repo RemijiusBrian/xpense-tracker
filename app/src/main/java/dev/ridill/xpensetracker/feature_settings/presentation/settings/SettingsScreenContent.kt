@@ -52,11 +52,11 @@ fun SettingsScreenContent(
             )
         },
         snackbarHost = { XTSnackbarHost(snackbarController) }
-    ) { innerPadding ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(innerPadding)
+                .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
             // General Section

@@ -21,8 +21,6 @@ fun Float?.orZero(): Float = this ?: 0f
 
 fun String.toDoubleOrZero(): Double = this.toDoubleOrNull().orZero()
 
-fun String.toLongOrZero(): Long = this.toLongOrNull() ?: 0L
-
 object DatePatterns {
     const val LONG_DAY_NAME_WITH_DAY_NUMBER = "EEEE, dd"
     const val SHORT_DAY_NAME_WITH_DAY_NUMBER = "EEE, dd"

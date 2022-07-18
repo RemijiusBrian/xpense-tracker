@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +30,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.flowlayout.FlowRow
 import dev.ridill.xpensetracker.R
 import dev.ridill.xpensetracker.core.ui.components.*
-import dev.ridill.xpensetracker.core.ui.theme.*
+import dev.ridill.xpensetracker.core.ui.theme.ListPaddingLarge
+import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
+import dev.ridill.xpensetracker.core.ui.theme.SpacingSmall
+import dev.ridill.xpensetracker.core.ui.theme.XpenseTrackerTheme
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.dayOfMonth
 import dev.ridill.xpensetracker.core.util.month
@@ -95,112 +97,101 @@ fun AddEditBillScreenContent(
             }
         },
         snackbarHost = { XTSnackbarHost(snackbarController) }
-    ) { innerPadding ->
-        Column(
+    ) { paddingValues ->
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(
+                bottom = ListPaddingLarge,
+                start = SpacingMedium,
+                end = SpacingMedium,
+                top = SpacingMedium
+            ),
+            verticalArrangement = Arrangement.spacedBy(SpacingMedium)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = actions::onCategoryClick)
-                    .padding(vertical = SpacingSmall, horizontal = SpacingMedium),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BillCategoryIcon(category = state.category)
-                Spacer(Modifier.width(SpacingMedium))
-                Column {
-                    Text(
-                        text = stringResource(state.category.label),
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = stringResource(R.string.click_to_select_category),
-                        style = MaterialTheme.typography.labelMedium
-                    )
+            item(key = "Category Selection") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = actions::onCategoryClick)
+                        .padding(vertical = SpacingSmall, horizontal = SpacingMedium),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BillCategoryIcon(category = state.category)
+                    Spacer(Modifier.width(SpacingMedium))
+                    Column {
+                        Text(
+                            text = stringResource(state.category.label),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = stringResource(R.string.click_to_select_category),
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(SpacingMedium)
-                    .background(
-                        color = MaterialTheme.colorScheme.surface
-                            .copy(alpha = ContentAlpha.PERCENT_16),
-                        shape = MaterialTheme.shapes.large
-                    )
-                    .padding(SpacingMedium)
-            ) {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        bottom = ListPaddingLarge
+            item(key = "Description Input") {
+                LabelAndInput(
+                    label = R.string.description,
+                    value = name,
+                    onValueChange = actions::onNameChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text,
+                        capitalization = KeyboardCapitalization.Words,
+                        imeAction = ImeAction.Next
                     ),
-                    verticalArrangement = Arrangement.spacedBy(SpacingMedium)
+                    placeholder = R.string.bill_description_eg
+                )
+            }
+            item(key = "Amount Input") {
+                LabelAndInput(
+                    label = R.string.amount,
+                    value = amount,
+                    onValueChange = actions::onAmountChange,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                        }
+                    ),
+                    placeholder = R.string.amount_placeholder,
+                    leadingIcon = { Text(text = TextUtil.currencySymbol) }
+                )
+            }
+            item(key = "Mark Bill As Recurring") {
+                LabelFirstCheckbox(
+                    label = R.string.mark_bill_as_recurring,
+                    isChecked = state.isBillRecurring,
+                    onCheckedChange = actions::onMarkAsRecurringCheckChange
+                )
+            }
+            item(key = "Pay By Date Selection") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
                 ) {
-                    item {
-                        LabelAndInput(
-                            label = R.string.description,
-                            value = name,
-                            onValueChange = actions::onNameChange,
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text,
-                                capitalization = KeyboardCapitalization.Words,
-                                imeAction = ImeAction.Next
-                            ),
-                            placeholder = R.string.bill_description_eg
+                    Text(
+                        text = stringResource(R.string.label_pay_by_date),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = state.payByDate,
+                            style = MaterialTheme.typography.bodyLarge
                         )
-                    }
-                    item {
-                        LabelAndInput(
-                            label = R.string.amount,
-                            value = amount,
-                            onValueChange = actions::onAmountChange,
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    keyboardController?.hide()
-                                }
-                            ),
-                            placeholder = R.string.amount_placeholder,
-                            leadingIcon = { Text(text = TextUtil.currencySymbol) }
-                        )
-                    }
-                    item {
-                        LabelFirstCheckbox(
-                            label = R.string.mark_bill_as_recurring,
-                            isChecked = state.isBillRecurring,
-                            onCheckedChange = actions::onMarkAsRecurringCheckChange
-                        )
-                    }
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.End
-                        ) {
-                            Text(
-                                text = stringResource(R.string.label_pay_by_date),
-                                style = MaterialTheme.typography.labelMedium
+                        IconButton(onClick = { payByDatePicker.show() }) {
+                            Icon(
+                                imageVector = Icons.Outlined.CalendarToday,
+                                contentDescription = null
                             )
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = state.payByDate,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                                IconButton(onClick = { payByDatePicker.show() }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.CalendarToday,
-                                        contentDescription = null
-                                    )
-                                }
-                            }
                         }
                     }
                 }
@@ -208,37 +199,10 @@ fun AddEditBillScreenContent(
         }
 
         if (state.showCategorySelection) {
-            var currentSelection by remember { mutableStateOf(state.category) }
-            AlertDialog(
-                onDismissRequest = actions::onCategorySelectionDismiss,
-                confirmButton = {
-                    Button(onClick = { actions.onCategorySelect(currentSelection) }) {
-                        Text(stringResource(R.string.action_confirm))
-                    }
-                },
-                text = {
-                    FlowRow {
-                        BillCategory.values().forEach { category ->
-                            val selected = category == currentSelection
-                            val tint by animateColorAsState(
-                                targetValue = if (selected) MaterialTheme.colorScheme.primary
-                                else LocalContentColor.current
-                            )
-                            Surface(
-                                onClick = { currentSelection = category },
-                                selected = selected
-                            ) {
-                                Icon(
-                                    painter = painterResource(category.icon),
-                                    contentDescription = stringResource(category.label),
-                                    tint = tint,
-                                    modifier = Modifier
-                                        .padding(SpacingSmall)
-                                )
-                            }
-                        }
-                    }
-                }
+            BillCategorySelection(
+                currentCategory = state.category,
+                onDismiss = actions::onCategorySelectionDismiss,
+                onConfirm = actions::onCategorySelect
             )
         }
 
@@ -291,6 +255,46 @@ private fun LabelAndInput(
             leadingIcon = leadingIcon
         )
     }
+}
+
+@Composable
+private fun BillCategorySelection(
+    currentCategory: BillCategory,
+    onDismiss: () -> Unit,
+    onConfirm: (BillCategory) -> Unit
+) {
+    var currentSelection by remember { mutableStateOf(currentCategory) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = { onConfirm(currentSelection) }) {
+                Text(stringResource(R.string.action_confirm))
+            }
+        },
+        text = {
+            FlowRow {
+                BillCategory.values().forEach { category ->
+                    val selected = category == currentSelection
+                    val tint by animateColorAsState(
+                        targetValue = if (selected) MaterialTheme.colorScheme.primary
+                        else LocalContentColor.current
+                    )
+                    Surface(
+                        onClick = { currentSelection = category },
+                        selected = selected
+                    ) {
+                        Icon(
+                            painter = painterResource(category.icon),
+                            contentDescription = stringResource(category.label),
+                            tint = tint,
+                            modifier = Modifier
+                                .padding(SpacingSmall)
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
