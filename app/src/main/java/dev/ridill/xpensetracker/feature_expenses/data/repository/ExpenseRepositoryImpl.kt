@@ -59,6 +59,10 @@ class ExpenseRepositoryImpl(
         expenseDao.deleteById(id)
     }
 
+    override suspend fun deleteMultipleExpenses(ids: List<Long>) {
+        expenseDao.deleteMultipleByIds(ids)
+    }
+
     override suspend fun cacheTag(tag: String) = withContext(dispatcherProvider.io) {
         tagDao.insert(ExpenseTagEntity(tag))
     }

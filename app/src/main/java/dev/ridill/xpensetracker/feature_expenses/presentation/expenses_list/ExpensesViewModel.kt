@@ -59,6 +59,15 @@ class ExpensesViewModel @Inject constructor(
         repo.getExpensesListForMonthFilteredByTag(month, tag)
     }
 
+    private val multiSelectionModeActive =
+        savedStateHandle.getLiveData("multiSelectionModeActive", false)
+
+    private val selectedExpenseIds =
+        savedStateHandle.getLiveData<List<Long>>("selectedExpenseIds", emptyList())
+
+    private val showDeleteSelectedExpenseConfirmation =
+        savedStateHandle.getLiveData("showDeleteSelectedExpenseConfirmation", false)
+
     private val balanceForCurrentMonth = combineTuple(
         repo.getExpenditureForCurrentMonth(),
         preferences
@@ -83,7 +92,10 @@ class ExpensesViewModel @Inject constructor(
         showTagDeleteConfirmation.asFlow(),
         balanceForCurrentMonth,
         balancePercentageForCurrentMonth,
-        preferences
+        preferences,
+        multiSelectionModeActive.asFlow(),
+        selectedExpenseIds.asFlow(),
+        showDeleteSelectedExpenseConfirmation.asFlow()
     ).map { (
                 tags,
                 selectedTag,
@@ -94,7 +106,10 @@ class ExpensesViewModel @Inject constructor(
                 showTagDeleteConfirmation,
                 balanceForCurrentMonth,
                 balancePercentageForCurrentMonth,
-                preferences
+                preferences,
+                multiSelectionModeActive,
+                selectedExpenseIds,
+                showDeleteSelectedExpenseConfirmation
             ) ->
         ExpensesState(
             tags = tags,
@@ -108,12 +123,29 @@ class ExpensesViewModel @Inject constructor(
             balancePercent = balancePercentageForCurrentMonth,
             isLimitSet = preferences.isExpenditureLimitSet,
             showLowBalanceWarning = preferences.balanceWarningEnabled &&
-                    balancePercentageForCurrentMonth <= preferences.balanceWarningPercent
+                    balancePercentageForCurrentMonth <= preferences.balanceWarningPercent,
+            multiSelectionModeActive = multiSelectionModeActive,
+            selectedExpenseIds = selectedExpenseIds,
+            showDeleteExpensesConfirmation = showDeleteSelectedExpenseConfirmation
         )
     }.asLiveData()
 
     private val eventsChannel = Channel<ExpenseListEvent>()
     val events get() = eventsChannel.receiveAsFlow()
+
+    init {
+        collectExpensesList()
+    }
+
+    private fun collectExpensesList() = viewModelScope.launch {
+        expenseList.collectLatest { expenses ->
+            val ids = expenses.map { it.id }
+            selectedExpenseIds.value = selectedExpenseIds.value?.filter { it in ids }
+            if (selectedExpenseIds.value.isNullOrEmpty()) {
+                cancelMultiSelectionMode()
+            }
+        }
+    }
 
     override fun onTagFilterSelect(tag: String) {
         if (tagDeleteModeActive.value == true) {
@@ -182,7 +214,9 @@ class ExpensesViewModel @Inject constructor(
     }
 
     override fun onExpenseClick(id: Long) {
-        viewModelScope.launch {
+        if (multiSelectionModeActive.value == true) {
+            addOrRemoveSelectedExpense(id)
+        } else viewModelScope.launch {
             eventsChannel.send(
                 ExpenseListEvent.NavigateToAddEditExpenseScreen(id)
             )
@@ -198,6 +232,60 @@ class ExpensesViewModel @Inject constructor(
         }
         viewModelScope.launch {
             eventsChannel.send(ExpenseListEvent.ShowUiMessage(UiText.StringResource(messageRes)))
+        }
+    }
+
+    override fun onExpenseLongClick(id: Long) {
+        if (multiSelectionModeActive.value == true) {
+            cancelMultiSelectionMode()
+        } else {
+            multiSelectionModeActive.value = true
+            addOrRemoveSelectedExpense(id)
+        }
+    }
+
+    private fun addOrRemoveSelectedExpense(id: Long) {
+        val selectedIds = selectedExpenseIds.value ?: return
+        if (id in selectedIds) {
+            val updatedSelectedIds = selectedIds.toMutableList().apply {
+                remove(id)
+                if (isEmpty()) {
+                    multiSelectionModeActive.value = false
+                }
+            }
+            selectedExpenseIds.value = updatedSelectedIds
+        } else {
+            val updatedSelectedIds = selectedIds.toMutableList().apply {
+                add(id)
+            }
+            selectedExpenseIds.value = updatedSelectedIds
+        }
+    }
+
+    override fun onCancelMultiSelectionMode() {
+        cancelMultiSelectionMode()
+    }
+
+    private fun cancelMultiSelectionMode() {
+        if (multiSelectionModeActive.value == false) return
+        selectedExpenseIds.value = emptyList()
+        multiSelectionModeActive.value = false
+    }
+
+    override fun onDeleteOptionClick() {
+        showDeleteSelectedExpenseConfirmation.value = true
+    }
+
+    override fun onDeleteExpensesDismiss() {
+        showDeleteSelectedExpenseConfirmation.value = false
+    }
+
+    override fun onDeleteExpensesConfirm() {
+        val selectedIds = selectedExpenseIds.value ?: return
+        viewModelScope.launch {
+            repo.deleteMultipleExpenses(selectedIds)
+            cancelMultiSelectionMode()
+            showDeleteSelectedExpenseConfirmation.value = false
         }
     }
 

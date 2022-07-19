@@ -55,5 +55,8 @@ interface ExpenseDao {
     suspend fun insert(expenseEntity: ExpenseEntity): Long
 
     @Query("DELETE FROM ExpenseEntity WHERE id = :id")
-    fun deleteById(id: Long)
+    suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM ExpenseEntity WHERE id in (:ids)")
+    suspend fun deleteMultipleByIds(ids: List<Long>)
 }

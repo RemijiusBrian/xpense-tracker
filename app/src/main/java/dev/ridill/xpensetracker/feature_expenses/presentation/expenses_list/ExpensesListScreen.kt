@@ -11,7 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.DeleteForever
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.DeleteForever
@@ -62,13 +65,59 @@ fun ExpenseListScreenContent(
     Scaffold(
         snackbarHost = { XTSnackbarHost(snackbarController) },
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                ),
-                scrollBehavior = topAppBarScrollBehavior
-            )
+            AnimatedContent(targetState = state.multiSelectionModeActive) { multiSelectionModeActive ->
+                if (multiSelectionModeActive) {
+                    SmallTopAppBar(
+                        title = {
+                            Text(
+                                stringResource(
+                                    R.string.count_selected,
+                                    state.selectedExpenseIds.size
+                                )
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = actions::onCancelMultiSelectionMode) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = stringResource(R.string.content_description_cancel_multi_selection_mode)
+                                )
+                            }
+                        },
+                        actions = {
+                            var expanded by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { expanded = true }) {
+                                    Icon(
+                                        imageVector = Icons.Default.MoreVert,
+                                        contentDescription = stringResource(R.string.content_description_toggle_menu)
+                                    )
+                                }
+
+                                DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false }) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.option_delete)) },
+                                        onClick = actions::onDeleteOptionClick
+                                    )
+                                }
+                            }
+                        },
+                        colors = TopAppBarDefaults.smallTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background
+                        )
+                    )
+                } else {
+                    CenterAlignedTopAppBar(
+                        title = { Text(stringResource(R.string.app_name)) },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                        ),
+                        scrollBehavior = topAppBarScrollBehavior
+                    )
+                }
+            }
         },
         bottomBar = {
             AnimatedVisibility(visible = state.isLimitSet) {
@@ -88,9 +137,7 @@ fun ExpenseListScreenContent(
                         }
                     },
                     floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = actions::onAddFabClick
-                        ) {
+                        FloatingActionButton(onClick = actions::onAddFabClick) {
                             Icon(
                                 imageVector = Icons.Rounded.Add,
                                 contentDescription = stringResource(R.string.content_description_add_expense)
@@ -153,8 +200,10 @@ fun ExpenseListScreenContent(
                         date = expense.date,
                         amount = expense.amount,
                         onClick = { actions.onExpenseClick(expense.id) },
+                        onLongClick = { actions.onExpenseLongClick(expense.id) },
                         modifier = Modifier
-                            .animateItemPlacement()
+                            .animateItemPlacement(),
+                        selected = expense.id in state.selectedExpenseIds
                     )
                 }
             } else {
@@ -172,11 +221,21 @@ fun ExpenseListScreenContent(
 
         if (state.showTagDeleteConfirmation) {
             SimpleConfirmationDialog(
-                title = R.string.delete_tagged_expenses_question,
+                title = R.string.delete_tagged_expenses_title,
                 text = R.string.delete_tagged_expenses_message,
                 onDismiss = actions::onDeleteExpensesWithTagDismiss,
                 onConfirm = actions::onDeleteExpensesWithTagConfirm,
                 icon = Icons.Rounded.DeleteForever
+            )
+        }
+
+        if (state.showDeleteExpensesConfirmation) {
+            SimpleConfirmationDialog(
+                title = R.string.delete_selected_expenses_title,
+                text = R.string.delete_selected_expenses_message,
+                onDismiss = actions::onDeleteExpensesDismiss,
+                onConfirm = actions::onDeleteExpensesConfirm,
+                icon = Icons.Outlined.DeleteForever
             )
         }
     }
@@ -443,12 +502,7 @@ private fun TagFilters(
     LazyRow(
         modifier = Modifier
             .fillMaxWidth(),
-        contentPadding = PaddingValues(
-            top = SpacingSmall,
-            bottom = SpacingSmall,
-            end = ListPaddingLarge,
-            start = SpacingMedium
-        ),
+        contentPadding = PaddingValues(end = ListPaddingLarge),
         horizontalArrangement = Arrangement.spacedBy(SpacingSmall),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -537,15 +591,23 @@ private fun ExpenseItem(
     date: String,
     amount: String,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
+    selected: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val backgroundColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.surfaceVariant
+        else MaterialTheme.colorScheme.primaryContainer.copy(alpha = ContentAlpha.PERCENT_16)
+    )
     Card(
-        onClick = onClick,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            containerColor = backgroundColor,
         )
     ) {
         Row(
@@ -614,6 +676,11 @@ private fun PreviewScreenContent() {
                 override fun onAddFabClick() {}
                 override fun onMonthSelect(month: String) {}
                 override fun onExpenseClick(id: Long) {}
+                override fun onExpenseLongClick(id: Long) {}
+                override fun onCancelMultiSelectionMode() {}
+                override fun onDeleteOptionClick() {}
+                override fun onDeleteExpensesDismiss() {}
+                override fun onDeleteExpensesConfirm() {}
             },
             navigateToBottomBarDestination = {},
             navigateToLimitUpdate = {}

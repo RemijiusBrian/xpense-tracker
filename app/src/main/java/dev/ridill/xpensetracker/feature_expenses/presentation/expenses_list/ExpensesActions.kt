@@ -9,4 +9,9 @@ interface ExpensesActions {
     fun onAddFabClick()
     fun onMonthSelect(month: String)
     fun onExpenseClick(id: Long)
+    fun onExpenseLongClick(id: Long)
+    fun onCancelMultiSelectionMode()
+    fun onDeleteOptionClick()
+    fun onDeleteExpensesDismiss()
+    fun onDeleteExpensesConfirm()
 }

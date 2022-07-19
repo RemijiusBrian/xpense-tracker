@@ -14,7 +14,10 @@ data class ExpensesState(
     val showLowBalanceWarning: Boolean = false,
     val tagDeletionModeActive: Boolean = false,
     val showTagDeleteConfirmation: Boolean = false,
-    val isLimitSet: Boolean = false
+    val isLimitSet: Boolean = false,
+    val multiSelectionModeActive: Boolean = false,
+    val selectedExpenseIds: List<Long> = emptyList(),
+    val showDeleteExpensesConfirmation: Boolean = false
 ) {
     companion object {
         val INITIAL: ExpensesState = ExpensesState()

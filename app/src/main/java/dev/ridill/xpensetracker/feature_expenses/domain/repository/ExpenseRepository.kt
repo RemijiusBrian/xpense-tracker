@@ -28,6 +28,8 @@ interface ExpenseRepository {
 
     suspend fun deleteExpenseById(id: Long)
 
+    suspend fun deleteMultipleExpenses(ids: List<Long>)
+
     suspend fun cacheTag(tag: String)
 
     suspend fun deleteTag(tag: String)
