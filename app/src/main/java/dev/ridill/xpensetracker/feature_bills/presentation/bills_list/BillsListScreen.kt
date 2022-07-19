@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -220,7 +221,10 @@ private fun BillCard(
     OutlinedCard(
         modifier = modifier
             .widthIn(max = BillCardMaxWidth),
-        onClick = onClick
+        onClick = onClick,
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = Color.Transparent
+        )
     ) {
         Column(
             modifier = Modifier
@@ -259,10 +263,7 @@ private fun BillPayment(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = SpacingMedium),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
-        )
+            .padding(horizontal = SpacingMedium)
     ) {
         Column(
             modifier = Modifier
