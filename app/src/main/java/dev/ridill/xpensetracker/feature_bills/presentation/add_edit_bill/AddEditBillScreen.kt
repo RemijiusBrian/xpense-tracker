@@ -208,7 +208,7 @@ fun AddEditBillScreenContent(
 
         if (state.showDeletionConfirmation) {
             SimpleConfirmationDialog(
-                title = R.string.delete_bill_question,
+                title = R.string.delete_bill_title,
                 text = R.string.delete_bill_confirmation_message,
                 onDismiss = actions::onDeleteDismiss,
                 onConfirm = actions::onDeleteConfirm,

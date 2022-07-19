@@ -188,7 +188,7 @@ fun AddEditExpenseScreenContent(
 
         if (state.showDeleteConfirmation) {
             SimpleConfirmationDialog(
-                title = R.string.delete_expense_question,
+                title = R.string.delete_expense_title,
                 text = R.string.delete_expense_confirmation_message,
                 onDismiss = actions::onDeleteDismiss,
                 onConfirm = actions::onDeleteConfirm,

@@ -31,6 +31,7 @@ class XTActivity : ComponentActivity() {
             val viewModel: XTViewModel = hiltViewModel()
             val preferences by viewModel.preferences.observeAsState()
 
+            @Suppress("NAME_SHADOWING")
             preferences?.let { preferences ->
                 val useDynamicTheming = preferences.useDynamicTheming
                 val darkTheme = when (preferences.theme) {
