@@ -272,6 +272,14 @@ class ExpensesViewModel @Inject constructor(
         multiSelectionModeActive.value = false
     }
 
+    override fun onSelectOrDeselectAllOptionClick(isAllSelected: Boolean) {
+        if (isAllSelected) {
+            cancelMultiSelectionMode()
+        } else viewModelScope.launch {
+            selectedExpenseIds.value = expenseList.first().map { it.id }
+        }
+    }
+
     override fun onDeleteOptionClick() {
         showDeleteSelectedExpenseConfirmation.value = true
     }

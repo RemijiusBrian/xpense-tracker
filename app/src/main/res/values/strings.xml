@@ -137,4 +137,6 @@
     <string name="delete_selected_expenses_message">Are you sure you want to delete the selected expenses? This action cannot be undone.</string>
     <string name="option_delete">Delete</string>
     <string name="count_selected">%d selected</string>
+    <string name="select_all">Select All</string>
+    <string name="deselect_all">Deselect All</string>
 </resources>

@@ -19,6 +19,9 @@ data class ExpensesState(
     val selectedExpenseIds: List<Long> = emptyList(),
     val showDeleteExpensesConfirmation: Boolean = false
 ) {
+    val areAllExpensesSelected: Boolean
+        get() = expenses.all { it.id in selectedExpenseIds }
+
     companion object {
         val INITIAL: ExpensesState = ExpensesState()
     }

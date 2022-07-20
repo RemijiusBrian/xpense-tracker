@@ -11,6 +11,7 @@ interface ExpensesActions {
     fun onExpenseClick(id: Long)
     fun onExpenseLongClick(id: Long)
     fun onCancelMultiSelectionMode()
+    fun onSelectOrDeselectAllOptionClick(isAllSelected: Boolean)
     fun onDeleteOptionClick()
     fun onDeleteExpensesDismiss()
     fun onDeleteExpensesConfirm()

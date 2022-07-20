@@ -93,13 +93,29 @@ fun ExpenseListScreenContent(
                                         contentDescription = stringResource(R.string.content_description_toggle_menu)
                                     )
                                 }
-
                                 DropdownMenu(
                                     expanded = expanded,
                                     onDismissRequest = { expanded = false }) {
                                     DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                text = stringResource(
+                                                    if (state.areAllExpensesSelected) R.string.deselect_all
+                                                    else R.string.select_all
+                                                )
+                                            )
+                                        },
+                                        onClick = {
+                                            expanded = false
+                                            actions.onSelectOrDeselectAllOptionClick(state.areAllExpensesSelected)
+                                        }
+                                    )
+                                    DropdownMenuItem(
                                         text = { Text(stringResource(R.string.option_delete)) },
-                                        onClick = actions::onDeleteOptionClick
+                                        onClick = {
+                                            expanded = false
+                                            actions.onDeleteOptionClick()
+                                        }
                                     )
                                 }
                             }
@@ -677,6 +693,7 @@ private fun PreviewScreenContent() {
                 override fun onExpenseClick(id: Long) {}
                 override fun onExpenseLongClick(id: Long) {}
                 override fun onCancelMultiSelectionMode() {}
+                override fun onSelectOrDeselectAllOptionClick(isAllSelected: Boolean) {}
                 override fun onDeleteOptionClick() {}
                 override fun onDeleteExpensesDismiss() {}
                 override fun onDeleteExpensesConfirm() {}
