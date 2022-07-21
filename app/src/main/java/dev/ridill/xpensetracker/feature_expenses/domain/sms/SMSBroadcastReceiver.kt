@@ -26,26 +26,21 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var notificationHelper: NotificationHelper<Expense>
 
+    @Inject
+    lateinit var paymentSmsDataService: PaymentSmsDataService
+
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent == null || intent.action != "android.provider.Telephony.SMS_RECEIVED") return
         Telephony.Sms.Intents.getMessagesFromIntent(intent).forEach { sms ->
-            // Check if SMS is transactional
-            val sender = sms.originatingAddress ?: return@forEach
-            if (!sender.matches(BANK_SENDER_PATTERN.toRegex())) return@forEach
-            val body = sms.messageBody.ifEmpty { return@forEach }
-            if (!body.contains("debited", ignoreCase = false)) return@forEach
+            if (!paymentSmsDataService.isMerchantSms(sms.originatingAddress)) return@forEach
 
-            val amount = AMOUNT_PATTERN.toRegex().find(body)?.value.orEmpty()
-                .ifEmpty { return@forEach }
-                .let { value ->
-                    value.substring(startIndex = value.indexOfFirst { it.isDigit() }).trim()
-                }
+            val body = sms.messageBody
+            if (!paymentSmsDataService.isSmsForMonetaryDebit(body)) return@forEach
+            val amount = paymentSmsDataService.extractAmount(body) ?: return@forEach
             val date = System.currentTimeMillis()
             val name = buildString {
-                append("Transaction at ")
-                append(
-                    MERCHANT_PATTERN.toRegex().find(body)?.value.orEmpty().ifEmpty { "Merchant" }
-                )
+                append("Payment ")
+                append(paymentSmsDataService.extractMerchantName(body))
             }
             addExpense(name, amount, date)
         }
@@ -63,9 +58,3 @@ class SMSBroadcastReceiver : BroadcastReceiver() {
         notificationHelper.showNotification(expense.copy(id = insertedId))
     }
 }
-
-private const val BANK_SENDER_PATTERN = "[a-zA-Z0-9]{2}-[a-zA-Z0-9]{6}"
-private const val AMOUNT_PATTERN =
-    "(?i)(?:RS|INR|MRP)\\.?\\s?(\\d+(:?,\\d+)?(,\\d+)?(\\.\\d{1,2})?)"
-private const val MERCHANT_PATTERN =
-    "(?i)(?:\\sat\\s|in\\*)([A-Za-z0-9]*\\s?-?\\s?[A-Za-z0-9]*\\s?-?\\.?)"
