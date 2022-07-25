@@ -24,14 +24,12 @@ class XTPreferencesManagerImpl(
             val theme = AppTheme.valueOf(
                 preferences[Keys.APP_THEME] ?: AppTheme.SYSTEM_DEFAULT.name
             )
-            val useDynamicTheming = preferences[Keys.USE_DYNAMIC_THEMING] ?: true
             val balanceWarningPercent =
                 preferences[Keys.BALANCE_WARNING_PERCENT] ?: 0.25f
 
             XTPreferences(
                 expenditureLimit = expenditureLimit,
                 theme = theme,
-                useDynamicTheming = useDynamicTheming,
                 balanceWarningPercent = balanceWarningPercent
             )
         }
@@ -52,14 +50,6 @@ class XTPreferencesManagerImpl(
         }
     }
 
-    override suspend fun updateUseDynamicTheming(use: Boolean) {
-        withContext(dispatcherProvider.io) {
-            dataStore.edit { preferences ->
-                preferences[Keys.USE_DYNAMIC_THEMING] = use
-            }
-        }
-    }
-
     override suspend fun updateBalanceWarningPercent(value: Float) {
         withContext(dispatcherProvider.io) {
             dataStore.edit { preferences ->
@@ -71,7 +61,6 @@ class XTPreferencesManagerImpl(
     private object Keys {
         val EXPENDITURE_LIMIT = longPreferencesKey("EXPENDITURE_LIMIT")
         val APP_THEME = stringPreferencesKey("APP_THEME")
-        val USE_DYNAMIC_THEMING = booleanPreferencesKey("USE_DYNAMIC_THEMING")
         val BALANCE_WARNING_PERCENT = floatPreferencesKey("BALANCE_WARNING_PERCENT")
     }
 }

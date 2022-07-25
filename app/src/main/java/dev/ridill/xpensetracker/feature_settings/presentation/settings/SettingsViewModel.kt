@@ -51,7 +51,6 @@ class SettingsViewModel @Inject constructor(
             ) ->
         SettingsState(
             appTheme = preferences.theme,
-            useDynamicTheme = preferences.useDynamicTheming,
             expenditureLimit = TextUtil.formatAmountWithCurrency(preferences.expenditureLimit),
             showThemeSelection = showThemeSelection,
             showExpenditureUpdate = showExpenditureUpdate,
@@ -84,12 +83,6 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             preferencesManager.updateAppTheme(theme)
             showThemeSelection.value = false
-        }
-    }
-
-    override fun onUseDynamicCheckedChange(isChecked: Boolean) {
-        viewModelScope.launch {
-            preferencesManager.updateUseDynamicTheming(isChecked)
         }
     }
 

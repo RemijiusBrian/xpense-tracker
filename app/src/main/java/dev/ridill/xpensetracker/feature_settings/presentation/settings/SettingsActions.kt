@@ -6,7 +6,6 @@ interface SettingsActions {
     fun onThemePreferenceClick()
     fun onAppThemeSelectionDismiss()
     fun onAppThemeSelectionConfirm(theme: AppTheme)
-    fun onUseDynamicCheckedChange(isChecked: Boolean)
     fun onExpenditureLimitPreferenceClick()
     fun onExpenditureLimitUpdateDismiss()
     fun onExpenditureLimitUpdateConfirm(amount: String)

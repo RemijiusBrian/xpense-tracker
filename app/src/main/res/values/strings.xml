@@ -52,7 +52,7 @@
 
     <!-- Preferences -->
     <string name="general">General</string>
-    <string name="theme">General</string>
+    <string name="theme">Theme</string>
     <string name="dynamic_theme">Use Dynamic Theme</string>
     <string name="dynamic_theme_summary">App theme dynamically changes with your system theme</string>
     <string name="dynamic_theme_unsupported_message">Dynamic theming is not supported by your device</string>

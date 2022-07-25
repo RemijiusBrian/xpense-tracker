@@ -27,10 +27,8 @@ import dev.ridill.xpensetracker.core.ui.components.*
 import dev.ridill.xpensetracker.core.ui.navigation.screen_specs.SettingsScreenSpec
 import dev.ridill.xpensetracker.core.ui.theme.ContentAlpha
 import dev.ridill.xpensetracker.core.ui.theme.SpacingMedium
-import dev.ridill.xpensetracker.core.ui.theme.WEIGHT_1
 import dev.ridill.xpensetracker.core.ui.util.TextUtil
 import dev.ridill.xpensetracker.core.util.Constants
-import dev.ridill.xpensetracker.core.util.isBuildVersionAndroid12OrAbove
 import dev.ridill.xpensetracker.feature_settings.presentation.components.ExpenditureLimitUpdateDialog
 import kotlin.math.roundToInt
 
@@ -41,7 +39,6 @@ fun SettingsScreenContent(
     actions: SettingsActions,
     navigateUp: () -> Unit
 ) {
-    val isDynamicThemeSupported = remember { isBuildVersionAndroid12OrAbove() }
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -65,16 +62,6 @@ fun SettingsScreenContent(
                 title = R.string.theme,
                 summary = stringResource(state.appTheme.label),
                 onClick = actions::onThemePreferenceClick
-            )
-            SwitchPreference(
-                title = R.string.dynamic_theme,
-                checked = state.useDynamicTheme,
-                onCheckedChange = actions::onUseDynamicCheckedChange,
-                summary = stringResource(
-                    if (isDynamicThemeSupported) R.string.dynamic_theme_summary
-                    else R.string.dynamic_theme_unsupported_message
-                ),
-                enabled = isDynamicThemeSupported
             )
 
             // Expense Section
@@ -192,59 +179,6 @@ private fun BasicPreference(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun SwitchPreference(
-    @StringRes title: Int,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    summary: String? = null,
-    icon: ImageVector? = null,
-    enabled: Boolean = true
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(if (enabled) Modifier.clickable { onCheckedChange(!checked) } else Modifier)
-            .padding(SpacingMedium)
-            .then(modifier),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (icon != null) {
-            Icon(imageVector = icon, contentDescription = null)
-            Spacer(Modifier.width(SpacingMedium))
-        }
-        Column(Modifier.weight(WEIGHT_1)) {
-            Text(
-                text = stringResource(title),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
-                    .copy(
-                        alpha = if (enabled) Constants.ONE_F
-                        else ContentAlpha.PERCENT_16
-                    )
-            )
-            if (summary != null) {
-                Text(
-                    text = summary,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                        .copy(
-                            alpha = if (enabled) ContentAlpha.PERCENT_60
-                            else ContentAlpha.PERCENT_16
-                        )
-                )
-            }
-        }
-        Spacer(Modifier.width(SpacingMedium))
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = enabled
-        )
     }
 }
 

@@ -33,26 +33,19 @@ class XTActivity : ComponentActivity() {
 
             @Suppress("NAME_SHADOWING")
             preferences?.let { preferences ->
-                val useDynamicTheming = preferences.useDynamicTheming
                 val darkTheme = when (preferences.theme) {
                     AppTheme.SYSTEM_DEFAULT -> isSystemInDarkTheme()
                     AppTheme.LIGHT -> false
                     AppTheme.DARK -> true
                 }
-                ScreenContent(
-                    darkTheme = darkTheme,
-                    useDynamicTheming = useDynamicTheming
-                )
+                ScreenContent(darkTheme = darkTheme)
             }
         }
     }
 }
 
 @Composable
-private fun ScreenContent(
-    darkTheme: Boolean,
-    useDynamicTheming: Boolean
-) {
+private fun ScreenContent(darkTheme: Boolean) {
     val permissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             android.Manifest.permission.RECEIVE_SMS
@@ -73,10 +66,7 @@ private fun ScreenContent(
         }
     }
 
-    XpenseTrackerTheme(
-        darkTheme = darkTheme,
-        useDynamicTheming = useDynamicTheming
-    ) {
+    XpenseTrackerTheme(darkTheme = darkTheme) {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
